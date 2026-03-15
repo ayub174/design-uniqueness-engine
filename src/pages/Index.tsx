@@ -124,7 +124,7 @@ const Index = () => {
                   </button>
                   <button
                     onClick={() => setSearchMode("natural")}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                       searchMode === "natural"
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:text-foreground"
