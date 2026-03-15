@@ -110,7 +110,7 @@ const Index = () => {
 
               {/* Search mode toggle */}
               <motion.div variants={fadeUp} custom={3} className="mt-10">
-                <div className="flex items-center gap-1 mb-3 bg-card border border-border p-1 w-fit">
+                <div className="flex items-center gap-1 mb-3 bg-card border border-border p-1 rounded-full w-fit">
                   <button
                     onClick={() => setSearchMode("standard")}
                     className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
