@@ -32,6 +32,7 @@ const featuredJobs = [
 ];
 
 const Index = () => {
+  const [searchMode, setSearchMode] = useState<"standard" | "natural">("standard");
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 150]);
