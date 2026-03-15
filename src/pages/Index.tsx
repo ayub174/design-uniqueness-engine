@@ -107,23 +107,54 @@ const Index = () => {
                 Inga floskler — bara rätt matchning.
               </motion.p>
 
-              {/* Search bar */}
-              <motion.div
-                variants={fadeUp}
-                custom={3}
-                className="mt-10 flex flex-col sm:flex-row gap-3"
-              >
-                <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Titel, kompetens eller företag..."
-                    className="pl-11 h-14 text-base bg-card border-border"
-                  />
+              {/* Search mode toggle */}
+              <motion.div variants={fadeUp} custom={3} className="mt-10">
+                <div className="flex items-center gap-1 mb-3 bg-card border border-border p-1 w-fit">
+                  <button
+                    onClick={() => setSearchMode("standard")}
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
+                      searchMode === "standard"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Search className="h-3.5 w-3.5" />
+                    Vanlig sök
+                  </button>
+                  <button
+                    onClick={() => setSearchMode("natural")}
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
+                      searchMode === "natural"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                    Naturlig sök
+                  </button>
                 </div>
-                <Button className="h-14 px-8 text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
-                  Sök jobb
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-1">
+                    {searchMode === "standard" ? (
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    )}
+                    <Input
+                      placeholder={
+                        searchMode === "standard"
+                          ? "Titel, kompetens eller företag..."
+                          : "Beskriv ditt drömjobb med egna ord..."
+                      }
+                      className="pl-11 h-14 text-base bg-card border-border"
+                    />
+                  </div>
+                  <Button className="h-14 px-8 text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
+                    {searchMode === "standard" ? "Sök jobb" : "Hitta matchningar"}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </motion.div>
 
               <motion.div
