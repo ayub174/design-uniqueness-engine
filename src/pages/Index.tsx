@@ -18,11 +18,11 @@ const stagger = {
 };
 
 const platformFeatures = [
-  { icon: Briefcase, label: "Söka jobb", desc: "Tusentals tjänster från Sveriges bästa företag. Filtrera på plats, bransch och lön.", emoji: "💼" },
-  { icon: GraduationCap, label: "Söka utbildningar", desc: "Hitta kurser och program som boostar din karriär och gör dig mer attraktiv.", emoji: "🎓" },
-  { icon: FileText, label: "Skapa CV & Personligt brev", desc: "AI-drivna verktyg som hjälper dig skriva en ansökan som sticker ut.", emoji: "✍️" },
-  { icon: Handshake, label: "Matcha med arbetsgivare", desc: "Smart matchning baserad på din profil, erfarenhet och preferenser.", emoji: "🤝" },
-  { icon: ClipboardList, label: "Spåra ansökningar", desc: "Håll koll på status, deadlines och nästa steg för alla dina ansökningar.", emoji: "📋" },
+  { icon: Search, label: "Hitta rätt jobb", desc: "Sök bland tusentals tjänster från Sveriges bästa företag — filtrera på plats, bransch och lön.", step: "01" },
+  { icon: GraduationCap, label: "Utveckla din kompetens", desc: "Hitta kurser och utbildningar som stärker din profil och öppnar nya dörrar.", step: "02" },
+  { icon: FileText, label: "Bygg din ansökan", desc: "Skapa CV och personligt brev med AI-drivna verktyg som lyfter din ansökan.", step: "03" },
+  { icon: Handshake, label: "Matcha med arbetsgivare", desc: "Bli hittad — vår smarta matchning kopplar ihop dig med rätt företag.", step: "04" },
+  { icon: ClipboardList, label: "Följ din resa", desc: "Spåra alla ansökningar, deadlines och nästa steg på ett och samma ställe.", step: "05" },
 ];
 
 const categories = [
