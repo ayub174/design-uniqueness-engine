@@ -40,11 +40,10 @@ const featuredJobs = [
 ];
 
 const naturalSearchExamples = [
-  "UX-designer på startup i Stockholm",
-  "Remote data science, bra balans",
-  "Marknad på techbolag i Göteborg",
-  "Junior fullstack med mentorskap",
-  "Projektledare inom hållbarhet",
+  "Visa mig remote-jobb inom tech",
+  "Hitta marknadsförare i Stockholm",
+  "Sök deltidsjobb inom vården",
+  "Jag vill jobba med design i Göteborg",
 ];
 
 const Index = () => {
