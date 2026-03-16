@@ -36,6 +36,12 @@
 
     --radius: 0.75rem;
 
+    --primary-light: 168 45% 92%;
+    --primary-muted: 168 40% 80%;
+    --primary-medium: 168 50% 55%;
+    --primary-deep: 168 65% 32%;
+    --primary-darkest: 168 70% 22%;
+
     --sidebar-background: 40 30% 96%;
     --sidebar-foreground: 230 24% 15%;
     --sidebar-primary: 168 65% 42%;
