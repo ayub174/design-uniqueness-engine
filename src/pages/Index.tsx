@@ -197,61 +197,49 @@ const Index = () => {
             >
               <div className="w-full max-w-md">
                 {/* Active feature card */}
-                <div className="relative mb-6">
+                <div className="relative min-h-[220px]">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeFeature}
-                      initial={{ opacity: 0, y: 20, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -20, scale: 0.97 }}
-                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      initial={{ opacity: 0, x: 40, filter: "blur(8px)" }}
+                      animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, x: -40, filter: "blur(8px)" }}
+                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                       className="relative bg-card border border-border rounded-2xl p-8 overflow-hidden"
                     >
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.05] rounded-bl-[4rem]" />
-                      <span className="text-4xl mb-4 block">{platformFeatures[activeFeature].emoji}</span>
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.04] rounded-bl-[4rem]" />
+                      <div className="flex items-center gap-3 mb-5">
+                        <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10">
+                          {(() => { const Icon = platformFeatures[activeFeature].icon; return <Icon className="h-5 w-5 text-primary" />; })()}
+                        </div>
+                        <span className="font-mono text-xs text-muted-foreground/50 tracking-widest">{platformFeatures[activeFeature].step} / 05</span>
+                      </div>
                       <h3 className="font-serif text-2xl font-medium text-foreground mb-3">
                         {platformFeatures[activeFeature].label}
                       </h3>
                       <p className="text-muted-foreground leading-relaxed text-sm">
                         {platformFeatures[activeFeature].desc}
                       </p>
-                      <Button variant="ghost" className="mt-6 text-primary hover:text-primary/80 gap-2 p-0 h-auto text-sm font-medium">
-                        Utforska <ArrowRight className="h-3.5 w-3.5" />
-                      </Button>
                     </motion.div>
                   </AnimatePresence>
                 </div>
 
-                {/* Feature selector pills */}
-                <div className="flex gap-2 flex-wrap">
-                  {platformFeatures.map((feat, i) => (
-                    <button
-                      key={feat.label}
-                      onClick={() => setActiveFeature(i)}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-medium transition-all duration-300 border ${
-                        i === activeFeature
-                          ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
-                          : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
-                      }`}
-                    >
-                      <feat.icon className="h-3.5 w-3.5" />
-                      {feat.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Progress bar */}
-                <div className="mt-4 flex gap-1.5">
-                  {platformFeatures.map((_, i) => (
-                    <div key={i} className="flex-1 h-1 rounded-full bg-border overflow-hidden">
-                      <motion.div
-                        className="h-full bg-primary rounded-full"
-                        initial={{ width: "0%" }}
-                        animate={{ width: i === activeFeature ? "100%" : i < activeFeature ? "100%" : "0%" }}
-                        transition={i === activeFeature ? { duration: 4, ease: "linear" } : { duration: 0.3 }}
+                {/* Minimal dot indicators + progress */}
+                <div className="mt-5 flex items-center gap-3">
+                  <div className="flex gap-2">
+                    {platformFeatures.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setActiveFeature(i)}
+                        className={`h-2 rounded-full transition-all duration-500 ${
+                          i === activeFeature ? "w-8 bg-primary" : "w-2 bg-border hover:bg-muted-foreground/30"
+                        }`}
                       />
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  <span className="text-xs text-muted-foreground/40 ml-auto font-mono">
+                    {platformFeatures[activeFeature].step}/{String(platformFeatures.length).padStart(2, "0")}
+                  </span>
                 </div>
               </div>
             </motion.div>
