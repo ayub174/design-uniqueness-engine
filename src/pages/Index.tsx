@@ -160,19 +160,16 @@ const Index = () => {
                 custom={1}
                 className="font-serif text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.05] tracking-tight text-foreground"
               >
-                Hitta jobbet som
+                Hela din karriär,
                 <br />
-                <span className="italic text-primary">förändrar</span>
-                <br />
-                allt.
+                <span className="italic text-primary">ett</span> ställe.
               </motion.h1>
               <motion.p
                 variants={fadeUp}
                 custom={2}
                 className="mt-8 text-lg md:text-xl text-muted-foreground max-w-md leading-relaxed"
               >
-                Vi kopplar ihop ambitiösa talanger med företag som bygger framtiden.
-                Inga floskler — bara rätt matchning.
+                Jobb, utbildning, CV och matchning — allt du behöver för nästa steg, samlat i en plattform.
               </motion.p>
 
               {/* Search mode toggle */}
