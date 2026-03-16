@@ -247,31 +247,7 @@ const Index = () => {
         </div>
       </motion.section>
 
-      {/* Marquee divider */}
-      <div className="border-y border-border overflow-hidden py-4">
-        <motion.div
-          animate={{ x: [0, -1000] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="flex gap-12 whitespace-nowrap text-sm font-medium tracking-widest uppercase text-muted-foreground/50"
-        >
-          {Array.from({ length: 10 }).map((_, i) => (
-            <span key={i} className="flex items-center gap-12">
-              <span>Spotify</span>
-              <span className="text-primary">·</span>
-              <span>Klarna</span>
-              <span className="text-primary">·</span>
-              <span>Volvo</span>
-              <span className="text-primary">·</span>
-              <span>Figma</span>
-              <span className="text-primary">·</span>
-              <span>IKEA</span>
-              <span className="text-primary">·</span>
-              <span>H&M Group</span>
-              <span className="text-primary">·</span>
-            </span>
-          ))}
-        </motion.div>
-      </div>
+
 
       {/* Categories */}
       <section className="py-24 md:py-32 px-6 md:px-12">
