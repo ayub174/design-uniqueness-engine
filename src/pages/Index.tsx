@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
-import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, MessageSquare } from "lucide-react";
+import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -130,7 +130,7 @@ const Index = () => {
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    <MessageSquare className="h-3.5 w-3.5" />
+                    <Sparkles className="h-3.5 w-3.5" />
                     Naturlig sök
                   </button>
                 </div>
@@ -140,7 +140,7 @@ const Index = () => {
                     {searchMode === "standard" ? (
                       <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     ) : (
-                      <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     )}
                     <Input
                       placeholder={
