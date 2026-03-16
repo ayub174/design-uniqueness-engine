@@ -130,7 +130,7 @@ const Index = () => {
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    <MessageSquare className="h-3.5 w-3.5" />
+                    <Sparkles className="h-3.5 w-3.5" />
                     Naturlig sök
                   </button>
                 </div>
