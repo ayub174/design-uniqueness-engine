@@ -1,8 +1,11 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, Sparkles, GraduationCap, FileText, Handshake, ClipboardList } from "lucide-react";
+import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, Sparkles, GraduationCap, FileText, Handshake, ClipboardList, CheckCircle2, BookOpen, Filter, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import cvBuilderImg from "@/assets/cv-builder-mockup.png";
+import coverLetterImg from "@/assets/cover-letter-mockup.png";
+import educationImg from "@/assets/education-search-mockup.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -319,44 +322,148 @@ const Index = () => {
 
 
 
-      {/* Categories */}
+      {/* CV & Cover Letter Builder */}
       <section className="py-24 md:py-32 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="grid md:grid-cols-12 gap-12 md:gap-8"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={stagger}
           >
-            <motion.div variants={fadeUp} custom={0} className="md:col-span-4">
-              <p className="text-xs font-medium tracking-widest uppercase text-primary mb-4">Utforska</p>
+            <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
+              <p className="text-xs font-medium tracking-widest uppercase text-primary mb-4">Bygg din ansökan</p>
               <h2 className="font-serif text-4xl md:text-5xl font-medium leading-tight text-foreground">
-                Branscher som
-                <br />
-                <span className="italic">söker dig</span>
+                CV & personligt brev — <span className="italic">enkelt gjort</span>
               </h2>
-              <p className="mt-6 text-muted-foreground leading-relaxed max-w-sm">
-                Oavsett om du kodar, designar eller driver tillväxt — vi har rätt möjligheter redo.
+              <p className="mt-6 text-muted-foreground leading-relaxed max-w-xl mx-auto">
+                Våra AI-drivna verktyg hjälper dig att skapa professionella ansökningshandlingar som sticker ut. Fyll i dina uppgifter, välj en mall och låt oss göra resten.
               </p>
             </motion.div>
 
-            <div className="md:col-span-8 grid sm:grid-cols-2 gap-4">
-              {categories.map((cat, i) => (
-                <motion.div
-                  key={cat.label}
-                  variants={fadeUp}
-                  custom={i + 1}
-                  className="group relative bg-card border border-border p-8 hover:border-primary/40 transition-all duration-500 cursor-pointer overflow-hidden"
-                >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/[0.04] group-hover:bg-primary/[0.08] transition-colors duration-500" />
-                  <cat.icon className="h-5 w-5 text-primary mb-4" />
-                  <h3 className="font-serif text-xl font-medium text-foreground mb-1">{cat.label}</h3>
-                  <p className="text-sm text-muted-foreground">{cat.count.toLocaleString()} öppna tjänster</p>
-                  <ArrowRight className="absolute bottom-8 right-8 h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0" />
-                </motion.div>
-              ))}
-            </div>
+            {/* CV Builder */}
+            <motion.div
+              variants={fadeUp}
+              custom={1}
+              className="grid md:grid-cols-2 gap-8 md:gap-16 items-center mb-20 md:mb-28"
+            >
+              <div className="order-2 md:order-1">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10">
+                    <FileText className="h-5 w-5 text-primary" />
+                  </div>
+                  <span className="text-xs font-medium tracking-widest uppercase text-primary">CV-byggaren</span>
+                </div>
+                <h3 className="font-serif text-3xl md:text-4xl font-medium text-foreground mb-4">
+                  Skapa ett CV som <span className="italic">öppnar dörrar</span>
+                </h3>
+                <p className="text-muted-foreground leading-relaxed mb-8">
+                  Fyll i dina erfarenheter och utbildningar — välj bland professionella mallar och se resultatet i realtid. Exportera som PDF, redo att skicka.
+                </p>
+                <ul className="space-y-4">
+                  {["Välj bland snygga, ATS-vänliga mallar", "AI-förslag som förbättrar dina formuleringar", "Realtidsförhandsgranskning bredvid formuläret", "Exportera som PDF med ett klick"].map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm text-foreground/80">
+                      <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <Button className="mt-8 h-12 px-8 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
+                  Bygg ditt CV <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="order-1 md:order-2">
+                <div className="relative rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
+                  <img src={cvBuilderImg} alt="CV-byggaren visar formulär och förhandsgranskning sida vid sida" className="w-full h-auto" />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Cover Letter Builder */}
+            <motion.div
+              variants={fadeUp}
+              custom={2}
+              className="grid md:grid-cols-2 gap-8 md:gap-16 items-center"
+            >
+              <div>
+                <div className="relative rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
+                  <img src={coverLetterImg} alt="Personligt brev-byggaren med AI-förslag markerade i texten" className="w-full h-auto" />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                  </div>
+                  <span className="text-xs font-medium tracking-widest uppercase text-primary">Personligt brev</span>
+                </div>
+                <h3 className="font-serif text-3xl md:text-4xl font-medium text-foreground mb-4">
+                  AI-driven hjälp för <span className="italic">rätt ton</span>
+                </h3>
+                <p className="text-muted-foreground leading-relaxed mb-8">
+                  Klistra in jobbannonsens länk — vår AI anpassar ditt personliga brev till tjänsten. Du behåller kontrollen, vi ger dig skjutsen.
+                </p>
+                <ul className="space-y-4">
+                  {["Anpassar automatiskt till jobbannonsen", "Föreslår tonläge och nyckelord", "Matchningsscore — se hur bra ditt brev passar", "Redigera fritt med AI-stöd i realtid"].map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm text-foreground/80">
+                      <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <Button className="mt-8 h-12 px-8 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
+                  Skriv personligt brev <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Education / Utbildningar */}
+      <section className="py-24 md:py-32 px-6 md:px-12 bg-card">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="grid md:grid-cols-2 gap-8 md:gap-16 items-center"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={stagger}
+          >
+            <motion.div variants={fadeUp} custom={0}>
+              <p className="text-xs font-medium tracking-widest uppercase text-primary mb-4">Utbildningar</p>
+              <h2 className="font-serif text-4xl md:text-5xl font-medium leading-tight text-foreground">
+                Hitta kurser som <span className="italic">tar dig vidare</span>
+              </h2>
+              <p className="mt-6 text-muted-foreground leading-relaxed max-w-md">
+                Sök bland tusentals utbildningar — från korta onlinekurser till längre program. Oavsett om du vill byta karriär, specialisera dig eller bara lära dig något nytt.
+              </p>
+              <div className="mt-8 grid grid-cols-2 gap-4">
+                {[
+                  { icon: BookOpen, label: "Onlinekurser", desc: "Lär dig i din egen takt" },
+                  { icon: GraduationCap, label: "YH & Högskola", desc: "Meriterade program" },
+                  { icon: Award, label: "Certifieringar", desc: "Stärk din profil" },
+                  { icon: Filter, label: "Smarta filter", desc: "Hitta rätt på sekunder" },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-start gap-3 p-4 rounded-xl bg-background border border-border">
+                    <item.icon className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{item.label}</p>
+                      <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Button className="mt-10 h-12 px-8 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
+                Utforska utbildningar <ArrowRight className="h-4 w-4" />
+              </Button>
+            </motion.div>
+
+            <motion.div variants={fadeUp} custom={1}>
+              <div className="relative rounded-2xl overflow-hidden border border-border shadow-lg bg-background">
+                <img src={educationImg} alt="Utbildningsplattformen med kurskort och filter" className="w-full h-auto" />
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
