@@ -17,6 +17,14 @@ const stagger = {
   visible: { transition: { staggerChildren: 0.12 } },
 };
 
+const platformFeatures = [
+  { icon: Briefcase, label: "Söka jobb", desc: "Tusentals tjänster från Sveriges bästa företag. Filtrera på plats, bransch och lön.", emoji: "💼" },
+  { icon: GraduationCap, label: "Söka utbildningar", desc: "Hitta kurser och program som boostar din karriär och gör dig mer attraktiv.", emoji: "🎓" },
+  { icon: FileText, label: "Skapa CV & Personligt brev", desc: "AI-drivna verktyg som hjälper dig skriva en ansökan som sticker ut.", emoji: "✍️" },
+  { icon: Handshake, label: "Matcha med arbetsgivare", desc: "Smart matchning baserad på din profil, erfarenhet och preferenser.", emoji: "🤝" },
+  { icon: ClipboardList, label: "Spåra ansökningar", desc: "Håll koll på status, deadlines och nästa steg för alla dina ansökningar.", emoji: "📋" },
+];
+
 const categories = [
   { label: "Tech & Engineering", count: 2340, icon: Zap },
   { label: "Design & Creative", count: 891, icon: Star },
