@@ -76,7 +76,7 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-3">
             <Button variant="ghost" className="text-sm font-medium hidden sm:inline-flex">Logga in</Button>
-            <Button className="text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6">
+            <Button className="text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 px-6">
               Kom igång
             </Button>
           </div>
