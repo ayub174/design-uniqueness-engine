@@ -334,7 +334,7 @@ const Index = () => {
             <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
               <p className="text-xs font-medium tracking-widest uppercase text-primary mb-4">Bygg din ansökan</p>
               <h2 className="font-serif text-4xl md:text-5xl font-medium leading-tight text-foreground">
-                CV & personligt brev — <span className="italic">enkelt gjort</span>
+                CV + Personligt Brev = <span className="italic">Chappie</span>
               </h2>
               <p className="mt-6 text-muted-foreground leading-relaxed max-w-xl mx-auto">
                 Våra AI-drivna verktyg hjälper dig att skapa professionella ansökningshandlingar som sticker ut. Fyll i dina uppgifter, välj en mall och låt oss göra resten.
