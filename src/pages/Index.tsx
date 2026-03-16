@@ -39,9 +39,20 @@ const featuredJobs = [
   { title: "Data Scientist", company: "Volvo Cars", location: "Göteborg", type: "Hybrid", salary: "55–75k SEK" },
 ];
 
+const naturalSearchExamples = [
+  "Jag vill jobba med UX-design på ett startup i Stockholm",
+  "Remote-jobb inom data science med bra work-life balance",
+  "Marknadsföring på ett techbolag i Göteborg, gärna hybrid",
+  "Juniorroll inom fullstack-utveckling med mentorskap",
+  "Projektledare inom hållbarhet med möjlighet att resa",
+];
+
 const Index = () => {
   const [searchMode, setSearchMode] = useState<"standard" | "natural">("standard");
   const [activeFeature, setActiveFeature] = useState(0);
+  const [typedText, setTypedText] = useState("");
+  const [naturalInputValue, setNaturalInputValue] = useState("");
+  const [isUserTyping, setIsUserTyping] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 150]);
@@ -54,6 +65,46 @@ const Index = () => {
     }, 4000);
     return () => clearInterval(timer);
   }, []);
+
+  // Typewriter effect for natural search
+  useEffect(() => {
+    if (searchMode !== "natural" || isUserTyping) {
+      setTypedText("");
+      return;
+    }
+
+    let exampleIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const tick = () => {
+      const current = naturalSearchExamples[exampleIndex];
+
+      if (!isDeleting) {
+        charIndex++;
+        setTypedText(current.slice(0, charIndex));
+        if (charIndex === current.length) {
+          timeout = setTimeout(() => { isDeleting = true; tick(); }, 2000);
+          return;
+        }
+        timeout = setTimeout(tick, 45 + Math.random() * 35);
+      } else {
+        charIndex--;
+        setTypedText(current.slice(0, charIndex));
+        if (charIndex === 0) {
+          isDeleting = false;
+          exampleIndex = (exampleIndex + 1) % naturalSearchExamples.length;
+          timeout = setTimeout(tick, 400);
+          return;
+        }
+        timeout = setTimeout(tick, 25);
+      }
+    };
+
+    timeout = setTimeout(tick, 600);
+    return () => clearTimeout(timeout);
+  }, [searchMode, isUserTyping]);
 
   return (
     <div className="min-h-screen bg-background relative grain-overlay overflow-hidden">
@@ -174,7 +225,19 @@ const Index = () => {
                     <div className="relative flex-1">
                       <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="Beskriv ditt drömjobb med egna ord..."
+                        value={isUserTyping ? naturalInputValue : typedText}
+                        onChange={(e) => {
+                          setIsUserTyping(true);
+                          setNaturalInputValue(e.target.value);
+                        }}
+                        onFocus={() => {
+                          setIsUserTyping(true);
+                          setNaturalInputValue("");
+                        }}
+                        onBlur={() => {
+                          if (!naturalInputValue) setIsUserTyping(false);
+                        }}
+                        placeholder=""
                         className="pl-11 h-14 text-base bg-card border-border"
                       />
                     </div>
