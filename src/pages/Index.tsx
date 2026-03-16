@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, Sparkles, GraduationCap, FileText, Handshake, ClipboardList, CheckCircle2, BookOpen, Filter, Award } from "lucide-react";
+import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, Sparkles, GraduationCap, FileText, Handshake, ClipboardList, CheckCircle2, BookOpen, Filter, Award, Building2, SlidersHorizontal, ArrowUpDown, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import cvBuilderImg from "@/assets/cv-builder-mockup.png";
@@ -245,6 +245,24 @@ const Index = () => {
                     {searchMode === "standard" ? "Sök jobb" : "Hitta matchningar"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
+                </div>
+                {/* Filter bar */}
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  {[
+                    { icon: MapPin, label: "Ort" },
+                    { icon: Building2, label: "Yrke" },
+                    { icon: SlidersHorizontal, label: "Filter" },
+                    { icon: ArrowUpDown, label: "Nyast först" },
+                    { icon: Bell, label: "Bevaka" },
+                  ].map((filter) => (
+                    <button
+                      key={filter.label}
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full border border-border bg-card text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
+                    >
+                      <filter.icon className="h-3.5 w-3.5" />
+                      {filter.label}
+                    </button>
+                  ))}
                 </div>
               </motion.div>
 
