@@ -180,41 +180,71 @@ const Index = () => {
               </motion.div>
             </motion.div>
 
-            {/* Right — interactive platform features */}
+            {/* Right — auto-rotating feature cards */}
             <motion.div
               className="md:col-span-5 lg:col-span-6 hidden md:flex flex-col items-end justify-end"
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="w-full max-w-md space-y-2">
-                <p className="text-xs font-medium tracking-widest uppercase text-primary mb-4">Allt du behöver</p>
-                {[
-                  { icon: Briefcase, label: "Söka jobb", desc: "Tusentals tjänster från Sveriges bästa företag", color: "from-primary/20 to-primary/5" },
-                  { icon: GraduationCap, label: "Söka utbildningar", desc: "Hitta kurser och program som boostar din karriär", color: "from-accent/30 to-accent/5" },
-                  { icon: FileText, label: "Skapa CV & Personligt brev", desc: "AI-drivna verktyg som lyfter din ansökan", color: "from-primary/15 to-primary/5" },
-                  { icon: Handshake, label: "Matcha med arbetsgivare", desc: "Smart matchning baserad på din profil", color: "from-accent/25 to-accent/5" },
-                  { icon: ClipboardList, label: "Spåra ansökningar", desc: "Håll koll på alla dina ansökningar på ett ställe", color: "from-primary/20 to-primary/5" },
-                ].map((item, i) => (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.6 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                    whileHover={{ x: -4, scale: 1.01 }}
-                    className="group relative flex items-center gap-4 p-4 rounded-2xl bg-card border border-border hover:border-primary/30 cursor-pointer transition-colors duration-300 overflow-hidden"
-                  >
-                    <div className={`absolute inset-0 bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                    <div className="relative z-10 flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300 shrink-0">
-                      <item.icon className="h-5 w-5 text-primary" />
+              <div className="w-full max-w-md">
+                {/* Active feature card */}
+                <div className="relative mb-6">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeFeature}
+                      initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -20, scale: 0.97 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="relative bg-card border border-border rounded-2xl p-8 overflow-hidden"
+                    >
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.05] rounded-bl-[4rem]" />
+                      <span className="text-4xl mb-4 block">{platformFeatures[activeFeature].emoji}</span>
+                      <h3 className="font-serif text-2xl font-medium text-foreground mb-3">
+                        {platformFeatures[activeFeature].label}
+                      </h3>
+                      <p className="text-muted-foreground leading-relaxed text-sm">
+                        {platformFeatures[activeFeature].desc}
+                      </p>
+                      <Button variant="ghost" className="mt-6 text-primary hover:text-primary/80 gap-2 p-0 h-auto text-sm font-medium">
+                        Utforska <ArrowRight className="h-3.5 w-3.5" />
+                      </Button>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* Feature selector pills */}
+                <div className="flex gap-2 flex-wrap">
+                  {platformFeatures.map((feat, i) => (
+                    <button
+                      key={feat.label}
+                      onClick={() => setActiveFeature(i)}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-medium transition-all duration-300 border ${
+                        i === activeFeature
+                          ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
+                          : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
+                      }`}
+                    >
+                      <feat.icon className="h-3.5 w-3.5" />
+                      {feat.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Progress bar */}
+                <div className="mt-4 flex gap-1.5">
+                  {platformFeatures.map((_, i) => (
+                    <div key={i} className="flex-1 h-1 rounded-full bg-border overflow-hidden">
+                      <motion.div
+                        className="h-full bg-primary rounded-full"
+                        initial={{ width: "0%" }}
+                        animate={{ width: i === activeFeature ? "100%" : i < activeFeature ? "100%" : "0%" }}
+                        transition={i === activeFeature ? { duration: 4, ease: "linear" } : { duration: 0.3 }}
+                      />
                     </div>
-                    <div className="relative z-10 flex-1 min-w-0">
-                      <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors duration-300">{item.label}</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate">{item.desc}</p>
-                    </div>
-                    <ArrowRight className="relative z-10 h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 shrink-0" />
-                  </motion.div>
-                ))}
+                  ))}
+                </div>
               </div>
             </motion.div>
           </div>
