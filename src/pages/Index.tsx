@@ -282,7 +282,7 @@ const Index = () => {
                         <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10">
                           {(() => { const Icon = platformFeatures[activeFeature].icon; return <Icon className="h-5 w-5 text-primary" />; })()}
                         </div>
-                        <span className="font-mono text-xs text-muted-foreground/50 tracking-widest">{platformFeatures[activeFeature].step} / 05</span>
+                        
                       </div>
                       <h3 className="font-serif text-2xl font-medium text-foreground mb-3">
                         {platformFeatures[activeFeature].label}
