@@ -225,7 +225,19 @@ const Index = () => {
                     <div className="relative flex-1">
                       <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="Beskriv ditt drömjobb med egna ord..."
+                        value={isUserTyping ? naturalInputValue : typedText}
+                        onChange={(e) => {
+                          setIsUserTyping(true);
+                          setNaturalInputValue(e.target.value);
+                        }}
+                        onFocus={() => {
+                          setIsUserTyping(true);
+                          setNaturalInputValue("");
+                        }}
+                        onBlur={() => {
+                          if (!naturalInputValue) setIsUserTyping(false);
+                        }}
+                        placeholder=""
                         className="pl-11 h-14 text-base bg-card border-border"
                       />
                     </div>
