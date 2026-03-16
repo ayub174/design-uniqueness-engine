@@ -153,21 +153,32 @@ const Index = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <div className="relative flex-1">
-                    {searchMode === "standard" ? (
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    ) : (
+                  {searchMode === "standard" ? (
+                    <>
+                      <div className="relative flex-1">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Titel, kompetens eller företag..."
+                          className="pl-11 h-14 text-base bg-card border-border"
+                        />
+                      </div>
+                      <div className="relative flex-1 sm:max-w-[200px]">
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Stad..."
+                          className="pl-11 h-14 text-base bg-card border-border"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="relative flex-1">
                       <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    )}
-                    <Input
-                      placeholder={
-                        searchMode === "standard"
-                          ? "Titel, kompetens eller företag..."
-                          : "Beskriv ditt drömjobb med egna ord..."
-                      }
-                      className="pl-11 h-14 text-base bg-card border-border"
-                    />
-                  </div>
+                      <Input
+                        placeholder="Beskriv ditt drömjobb med egna ord..."
+                        className="pl-11 h-14 text-base bg-card border-border"
+                      />
+                    </div>
+                  )}
                   <Button className="h-14 px-8 text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
                     {searchMode === "standard" ? "Sök jobb" : "Hitta matchningar"}
                     <ArrowRight className="h-4 w-4" />
