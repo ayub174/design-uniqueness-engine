@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Briefcase, Send, MessageSquare, Award, CheckCircle,
-  GripVertical, ArrowLeft, MoreHorizontal, Plus, Archive, Download,
+  GripVertical, ArrowLeft, MoreHorizontal, Plus, MapPin, Building2,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -19,6 +20,7 @@ interface Job {
   company: string;
   location: string;
   date: string;
+  type?: string;
 }
 
 type ColumnId = "saved" | "applied" | "interview" | "offer" | "closed";
@@ -27,26 +29,52 @@ interface Column {
   id: ColumnId;
   label: string;
   icon: React.ElementType;
-  color: string;
-  headerBg: string;
-  badgeBg: string;
+  shade: string;       // header bg using CSS vars
+  shadeFg: string;     // header text
+  dotColor: string;    // status dot on cards
+  emptyText: string;
 }
 
 const columns: Column[] = [
-  { id: "saved", label: "Sparade jobb", icon: Briefcase, color: "text-primary-foreground", headerBg: "bg-secondary", badgeBg: "bg-secondary/70" },
-  { id: "applied", label: "Ansökt", icon: Send, color: "text-primary-foreground", headerBg: "bg-primary", badgeBg: "bg-primary/70" },
-  { id: "interview", label: "Intervju", icon: MessageSquare, color: "text-primary-foreground", headerBg: "bg-amber-500", badgeBg: "bg-amber-400" },
-  { id: "offer", label: "Erbjudande", icon: Award, color: "text-primary-foreground", headerBg: "bg-emerald-600", badgeBg: "bg-emerald-500" },
-  { id: "closed", label: "Avslutad", icon: CheckCircle, color: "text-primary-foreground", headerBg: "bg-destructive", badgeBg: "bg-destructive/70" },
+  {
+    id: "saved", label: "Sparade jobb", icon: Heart,
+    shade: "bg-[hsl(168,45%,92%)]", shadeFg: "text-[hsl(168,70%,22%)]",
+    dotColor: "bg-[hsl(168,40%,80%)]",
+    emptyText: "Spara jobb genom att klicka på hjärtat",
+  },
+  {
+    id: "applied", label: "Ansökt", icon: Send,
+    shade: "bg-[hsl(168,40%,80%)]", shadeFg: "text-[hsl(168,70%,22%)]",
+    dotColor: "bg-[hsl(168,50%,55%)]",
+    emptyText: "Dra jobb hit när du har ansökt",
+  },
+  {
+    id: "interview", label: "Intervju", icon: MessageSquare,
+    shade: "bg-[hsl(168,50%,55%)]", shadeFg: "text-[hsl(168,70%,22%)]",
+    dotColor: "bg-[hsl(168,65%,42%)]",
+    emptyText: "Fått intervju? Dra kortet hit",
+  },
+  {
+    id: "offer", label: "Erbjudande", icon: Award,
+    shade: "bg-primary", shadeFg: "text-primary-foreground",
+    dotColor: "bg-[hsl(168,65%,32%)]",
+    emptyText: "Grattis! Dra erbjudanden hit",
+  },
+  {
+    id: "closed", label: "Avslutad", icon: CheckCircle,
+    shade: "bg-[hsl(168,70%,22%)]", shadeFg: "text-[hsl(168,45%,92%)]",
+    dotColor: "bg-[hsl(168,70%,22%)]",
+    emptyText: "Avslutade processer hamnar här",
+  },
 ];
 
 const sampleJobs: Record<ColumnId, Job[]> = {
   saved: [
-    { id: "1", title: "Senior Product Designer", company: "Figma", location: "Stockholm", date: "2026-03-14" },
-    { id: "2", title: "UX Researcher", company: "Spotify", location: "Stockholm", date: "2026-03-12" },
+    { id: "1", title: "Senior Product Designer", company: "Figma", location: "Stockholm", date: "14 mar", type: "Hybrid" },
+    { id: "2", title: "UX Researcher", company: "Spotify", location: "Stockholm", date: "12 mar", type: "Remote" },
   ],
   applied: [
-    { id: "3", title: "Full-Stack Engineer", company: "Klarna", location: "Göteborg", date: "2026-03-10" },
+    { id: "3", title: "Full-Stack Engineer", company: "Klarna", location: "Göteborg", date: "10 mar", type: "On-site" },
   ],
   interview: [],
   offer: [],
@@ -55,11 +83,11 @@ const sampleJobs: Record<ColumnId, Job[]> = {
 
 type Tab = "active" | "followups" | "archive" | "export";
 
-const tabs: { id: Tab; label: string }[] = [
+const tabs: { id: Tab; label: string; icon?: React.ElementType }[] = [
   { id: "active", label: "Aktiv" },
   { id: "followups", label: "Uppföljningar" },
   { id: "archive", label: "Arkiv" },
-  { id: "export", label: "Exportera ansökningar" },
+  { id: "export", label: "Exportera" },
 ];
 
 const MyJobs = () => {
@@ -155,17 +183,17 @@ const MyJobs = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + colIndex * 0.08, duration: 0.5 }}
-                className="flex flex-col rounded-xl border border-border bg-card/40 overflow-hidden min-h-[500px]"
+                className="flex flex-col rounded-xl border border-border bg-card/30 overflow-hidden min-h-[500px]"
               >
                 {/* Column Header */}
-                <div className={`${col.headerBg} px-4 py-3 flex items-center justify-between`}>
-                  <div className="flex items-center gap-2">
-                    <col.icon className={`w-4 h-4 ${col.color}`} />
-                    <span className={`font-sans font-semibold text-sm ${col.color}`}>
+                <div className={`${col.shade} px-4 py-3 flex items-center justify-between`}>
+                  <div className="flex items-center gap-2.5">
+                    <col.icon className={`w-4 h-4 ${col.shadeFg}`} />
+                    <span className={`font-sans font-semibold text-sm ${col.shadeFg}`}>
                       {col.label}
                     </span>
                   </div>
-                  <span className={`${col.badgeBg} ${col.color} text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center`}>
+                  <span className={`${col.shadeFg} opacity-70 text-xs font-bold bg-white/20 backdrop-blur-sm rounded-full w-6 h-6 flex items-center justify-center`}>
                     {jobs[col.id].length}
                   </span>
                 </div>
@@ -176,20 +204,22 @@ const MyJobs = () => {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className={`flex-1 p-2 transition-colors ${
+                      className={`flex-1 p-2.5 transition-colors ${
                         snapshot.isDraggingOver ? "bg-primary/5" : ""
                       }`}
                     >
                       <AnimatePresence>
                         {jobs[col.id].length === 0 && !snapshot.isDraggingOver && (
                           <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex flex-col items-center justify-center py-12 text-muted-foreground"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="flex flex-col items-center justify-center py-16 text-muted-foreground"
                           >
-                            <col.icon className="w-8 h-8 mb-2 opacity-30" />
-                            <span className="text-xs font-sans">
-                              {col.id === "saved" ? "Spara jobb genom att klicka på hjärtat" : "Dra jobb hit"}
+                            <div className="w-14 h-14 rounded-2xl bg-muted/60 flex items-center justify-center mb-3">
+                              <col.icon className="w-6 h-6 opacity-40" />
+                            </div>
+                            <span className="text-xs font-sans text-center px-4 leading-relaxed">
+                              {col.emptyText}
                             </span>
                           </motion.div>
                         )}
@@ -202,31 +232,56 @@ const MyJobs = () => {
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className={`mb-2 p-3 rounded-lg border border-border bg-background shadow-sm hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing ${
-                                snapshot.isDragging ? "shadow-lg ring-2 ring-primary/20" : ""
+                              className={`mb-2.5 p-3.5 rounded-xl border border-border bg-background shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group ${
+                                snapshot.isDragging ? "shadow-xl ring-2 ring-primary/20 scale-[1.02]" : ""
                               }`}
                             >
-                              <div className="flex items-start justify-between">
+                              {/* Status dot + title row */}
+                              <div className="flex items-start gap-2.5">
+                                <div className={`w-2.5 h-2.5 rounded-full ${col.dotColor} mt-1.5 shrink-0`} />
                                 <div className="flex-1 min-w-0">
-                                  <h3 className="font-sans font-semibold text-sm text-foreground truncate">
-                                    {job.title}
-                                  </h3>
-                                  <p className="text-xs text-muted-foreground mt-0.5">
-                                    {job.company}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground mt-0.5">
-                                    {job.location}
-                                  </p>
+                                  <div className="flex items-start justify-between">
+                                    <h3 className="font-sans font-semibold text-sm text-foreground leading-snug">
+                                      {job.title}
+                                    </h3>
+                                    <button className="text-muted-foreground hover:text-foreground p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <MoreHorizontal className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+
+                                  {/* Company */}
+                                  <div className="flex items-center gap-1.5 mt-1.5">
+                                    <div className="w-5 h-5 rounded-md bg-muted flex items-center justify-center shrink-0">
+                                      <Building2 className="w-3 h-3 text-muted-foreground" />
+                                    </div>
+                                    <span className="text-xs text-muted-foreground font-sans">
+                                      {job.company}
+                                    </span>
+                                  </div>
+
+                                  {/* Location + type */}
+                                  <div className="flex items-center gap-3 mt-1.5">
+                                    <div className="flex items-center gap-1">
+                                      <MapPin className="w-3 h-3 text-muted-foreground/60" />
+                                      <span className="text-[11px] text-muted-foreground">
+                                        {job.location}
+                                      </span>
+                                    </div>
+                                    {job.type && (
+                                      <span className="text-[10px] font-sans font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                                        {job.type}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                                <button className="text-muted-foreground hover:text-foreground p-0.5">
-                                  <MoreHorizontal className="w-3.5 h-3.5" />
-                                </button>
                               </div>
-                              <div className="mt-2 flex items-center justify-between">
+
+                              {/* Footer */}
+                              <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
                                 <span className="text-[10px] text-muted-foreground font-sans">
                                   {job.date}
                                 </span>
-                                <GripVertical className="w-3 h-3 text-muted-foreground/40" />
+                                <GripVertical className="w-3 h-3 text-muted-foreground/30 opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
                             </div>
                           )}
