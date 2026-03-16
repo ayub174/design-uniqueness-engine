@@ -1,8 +1,11 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, Sparkles, GraduationCap, FileText, Handshake, ClipboardList } from "lucide-react";
+import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, Sparkles, GraduationCap, FileText, Handshake, ClipboardList, CheckCircle2, BookOpen, Filter, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import cvBuilderImg from "@/assets/cv-builder-mockup.png";
+import coverLetterImg from "@/assets/cover-letter-mockup.png";
+import educationImg from "@/assets/education-search-mockup.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
