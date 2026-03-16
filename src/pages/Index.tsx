@@ -171,30 +171,41 @@ const Index = () => {
               </motion.div>
             </motion.div>
 
-            {/* Right — editorial accent */}
+            {/* Right — interactive platform features */}
             <motion.div
               className="md:col-span-5 lg:col-span-6 hidden md:flex flex-col items-end justify-end"
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="relative w-full max-w-md">
-                {/* Decorative large number */}
-                <span className="font-serif text-[12rem] lg:text-[16rem] font-bold leading-none text-primary/[0.07] select-none absolute -top-20 -right-8">
-                  01
-                </span>
-                <div className="relative z-10 bg-card border border-border p-8 md:p-10">
-                  <p className="text-xs font-medium tracking-widest uppercase text-muted-foreground mb-4">Utvald roll</p>
-                  <h3 className="font-serif text-2xl font-medium text-foreground mb-2">Lead Product Designer</h3>
-                  <p className="text-muted-foreground mb-6">Figma · Stockholm · Hybrid</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-primary">75–95k SEK/mån</span>
-                    <Button variant="outline" size="sm" className="border-foreground text-foreground hover:bg-foreground hover:text-background text-xs">
-                      Visa mer
-                    </Button>
-                  </div>
-                </div>
-                <div className="absolute -bottom-4 -left-4 w-full h-full border border-primary/20 -z-10" />
+              <div className="w-full max-w-md space-y-2">
+                <p className="text-xs font-medium tracking-widest uppercase text-primary mb-4">Allt du behöver</p>
+                {[
+                  { icon: Briefcase, label: "Söka jobb", desc: "Tusentals tjänster från Sveriges bästa företag", color: "from-primary/20 to-primary/5" },
+                  { icon: GraduationCap, label: "Söka utbildningar", desc: "Hitta kurser och program som boostar din karriär", color: "from-accent/30 to-accent/5" },
+                  { icon: FileText, label: "Skapa CV & Personligt brev", desc: "AI-drivna verktyg som lyfter din ansökan", color: "from-primary/15 to-primary/5" },
+                  { icon: Handshake, label: "Matcha med arbetsgivare", desc: "Smart matchning baserad på din profil", color: "from-accent/25 to-accent/5" },
+                  { icon: ClipboardList, label: "Spåra ansökningar", desc: "Håll koll på alla dina ansökningar på ett ställe", color: "from-primary/20 to-primary/5" },
+                ].map((item, i) => (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 0.6 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    whileHover={{ x: -4, scale: 1.01 }}
+                    className="group relative flex items-center gap-4 p-4 rounded-2xl bg-card border border-border hover:border-primary/30 cursor-pointer transition-colors duration-300 overflow-hidden"
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                    <div className="relative z-10 flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300 shrink-0">
+                      <item.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="relative z-10 flex-1 min-w-0">
+                      <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors duration-300">{item.label}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="relative z-10 h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 shrink-0" />
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
           </div>
