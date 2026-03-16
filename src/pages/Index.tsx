@@ -270,7 +270,7 @@ const Index = () => {
             >
               <div className="w-full max-w-md">
                 {/* Active feature card */}
-                <div className="relative min-h-[220px]">
+                <div className="relative min-h-[300px]">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeFeature}
