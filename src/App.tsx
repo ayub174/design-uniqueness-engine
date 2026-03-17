@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import Login from "./pages/Login.tsx";
 import MyJobs from "./pages/MyJobs.tsx";
 import Jobs from "./pages/Jobs.tsx";
+import Threads from "./pages/Threads.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/jobb" element={<Jobs />} />
           <Route path="/mina-jobb" element={<MyJobs />} />
+          <Route path="/tradar" element={<Threads />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
