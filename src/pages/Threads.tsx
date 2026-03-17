@@ -330,7 +330,7 @@ const ThreadCard = ({
               </span>
             )}
             {thread.isHot && (
-              <span className="flex items-center gap-0.5 text-orange-500 font-medium ml-1">
+              <span className="flex items-center gap-0.5 text-destructive font-medium ml-1">
                 <Flame className="w-3 h-3" /> Hett
               </span>
             )}
