@@ -775,6 +775,11 @@ const Threads = () => {
   const [likedThreads, setLikedThreads] = useState<Set<string>>(new Set());
   const [savedThreads, setSavedThreads] = useState<Set<string>>(new Set());
   const [activeThread, setActiveThread] = useState<string | null>(null);
+  const [showCategoryPanel, setShowCategoryPanel] = useState(false);
+
+  // Check if the selected category is not in the popular pills
+  const isNonPopularSelected = selectedCategory !== "all" && !popularCategories.includes(selectedCategory);
+  const selectedCatData = categories[selectedCategory];
 
   const filteredThreads = threads.filter((t) => {
     const matchCat = selectedCategory === "all" || t.category === selectedCategory;
