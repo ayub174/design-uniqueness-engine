@@ -279,105 +279,91 @@ const Index = () => {
               </motion.div>
             </motion.div>
 
-            {/* Right — auto-rotating feature cards */}
+            {/* Right — abstract art */}
             <motion.div
-              className="md:col-span-5 lg:col-span-6 hidden md:flex flex-col items-end justify-end relative"
-              initial={{ opacity: 0, x: 60 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="md:col-span-5 lg:col-span-6 hidden md:flex items-center justify-center relative"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
-              {/* Abstract decorative blobs */}
-              <div className="absolute inset-0 -right-20 -top-20 pointer-events-none overflow-visible">
+              <div className="relative w-full h-[500px]">
+                {/* Large primary glow */}
                 <motion.div
-                  animate={{ scale: [1, 1.08, 1], rotate: [0, 8, 0] }}
-                  transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -top-16 -right-12 w-72 h-72 rounded-full bg-primary/[0.07] blur-3xl"
+                  animate={{ scale: [1, 1.1, 1], rotate: [0, 15, 0] }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-primary/[0.08] blur-3xl"
                 />
+
+                {/* Rotating ring system */}
                 <motion.div
-                  animate={{ scale: [1, 1.12, 1], rotate: [0, -6, 0] }}
-                  transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                  className="absolute top-32 -right-24 w-56 h-56 rounded-full bg-primary/[0.05] blur-2xl"
-                />
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72"
+                >
+                  <div className="w-full h-full rounded-full border border-primary/10" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/40" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 rounded-full bg-primary/25" />
+                </motion.div>
+
                 <motion.div
-                  animate={{ scale: [1, 1.06, 1], y: [0, -12, 0] }}
-                  transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-                  className="absolute top-8 right-16 w-40 h-40 rounded-full bg-primary/[0.04] blur-xl"
-                />
-                {/* Subtle ring */}
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96"
+                >
+                  <div className="w-full h-full rounded-full border border-dashed border-primary/[0.06]" />
+                  <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary/30" />
+                </motion.div>
+
+                {/* Central shape cluster */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <motion.div
+                    animate={{ y: [0, -12, 0], rotate: [0, 5, 0] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-28 h-28 rounded-3xl bg-primary/[0.12] border border-primary/[0.15] backdrop-blur-sm"
+                  />
+                </div>
+
                 <motion.div
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                  className="absolute top-4 right-0 w-64 h-64 rounded-full border border-primary/[0.08]"
+                  animate={{ y: [0, 10, 0], x: [0, -5, 0] }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                  className="absolute top-[20%] right-[15%] w-16 h-16 rounded-2xl bg-primary/[0.08] border border-primary/[0.1] rotate-12"
                 />
-                {/* Dotted arc */}
-                <svg className="absolute -top-8 -right-8 w-80 h-80 opacity-[0.06]" viewBox="0 0 320 320">
-                  <circle cx="160" cy="160" r="140" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeDasharray="6 10" />
-                  <circle cx="160" cy="160" r="100" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="3 8" />
+
+                <motion.div
+                  animate={{ y: [0, -8, 0], x: [0, 6, 0] }}
+                  transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+                  className="absolute bottom-[25%] left-[18%] w-20 h-20 rounded-full bg-primary/[0.06] border border-primary/[0.08]"
+                />
+
+                <motion.div
+                  animate={{ y: [0, 6, 0] }}
+                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                  className="absolute top-[30%] left-[12%] w-10 h-10 rounded-xl bg-primary/[0.1] rotate-45"
+                />
+
+                {/* SVG decorative arcs */}
+                <svg className="absolute inset-0 w-full h-full opacity-[0.05]" viewBox="0 0 500 500">
+                  <circle cx="250" cy="250" r="180" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="8 12" />
+                  <circle cx="250" cy="250" r="120" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.8" strokeDasharray="4 10" />
+                  <circle cx="250" cy="250" r="60" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.5" strokeDasharray="2 8" />
                 </svg>
-                {/* Small floating dots */}
-                <motion.div
-                  animate={{ y: [0, -8, 0], opacity: [0.3, 0.6, 0.3] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-20 right-48 w-2 h-2 rounded-full bg-primary/30"
-                />
-                <motion.div
-                  animate={{ y: [0, 10, 0], opacity: [0.2, 0.5, 0.2] }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                  className="absolute top-64 right-8 w-1.5 h-1.5 rounded-full bg-primary/25"
-                />
-                <motion.div
-                  animate={{ y: [0, -6, 0], opacity: [0.4, 0.7, 0.4] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-                  className="absolute top-48 right-36 w-2.5 h-2.5 rounded-full bg-primary/20"
-                />
-              </div>
 
-              <div className="w-full max-w-md relative z-10">
-                {/* Active feature card */}
-                <div className="relative min-h-[450px]">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeFeature}
-                      initial={{ opacity: 0, x: 40, filter: "blur(8px)" }}
-                      animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, x: -40, filter: "blur(8px)" }}
-                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                      className="relative bg-card border border-border rounded-2xl p-8 overflow-hidden"
-                    >
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.04] rounded-bl-[4rem]" />
-                      <div className="flex items-center gap-3 mb-5">
-                        <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10">
-                          {(() => { const Icon = platformFeatures[activeFeature].icon; return <Icon className="h-5 w-5 text-primary" />; })()}
-                        </div>
-                        
-                      </div>
-                      <h3 className="font-serif text-2xl font-medium text-foreground mb-3">
-                        {platformFeatures[activeFeature].label}
-                      </h3>
-                      <p className="text-muted-foreground leading-relaxed text-sm">
-                        {platformFeatures[activeFeature].desc}
-                      </p>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-
-                {/* Minimal dot indicators + progress */}
-                <div className="mt-5 flex items-center gap-3">
-                  <div className="flex gap-2">
-                    {platformFeatures.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setActiveFeature(i)}
-                        className={`h-2 rounded-full transition-all duration-500 ${
-                          i === activeFeature ? "w-8 bg-primary" : "w-2 bg-border hover:bg-muted-foreground/30"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs text-muted-foreground/40 ml-auto font-mono">
-                    {platformFeatures[activeFeature].step}/{String(platformFeatures.length).padStart(2, "0")}
-                  </span>
-                </div>
+                {/* Floating particles */}
+                {[
+                  { top: "15%", left: "40%", size: "w-1.5 h-1.5", delay: 0, dur: 6 },
+                  { top: "70%", left: "65%", size: "w-2 h-2", delay: 2, dur: 8 },
+                  { top: "45%", left: "80%", size: "w-1 h-1", delay: 4, dur: 5 },
+                  { top: "80%", left: "30%", size: "w-1.5 h-1.5", delay: 1, dur: 7 },
+                  { top: "25%", left: "70%", size: "w-1 h-1", delay: 3, dur: 9 },
+                ].map((p, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ y: [0, -10, 0], opacity: [0.2, 0.6, 0.2] }}
+                    transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
+                    className={`absolute ${p.size} rounded-full bg-primary/30`}
+                    style={{ top: p.top, left: p.left }}
+                  />
+                ))}
               </div>
             </motion.div>
           </div>
