@@ -4,7 +4,9 @@ import {
   MessageSquare, Eye, Search, ArrowLeft, Bookmark, Reply, Share2,
   Send, Shield, Zap, Crown, ThumbsUp, Plus, TrendingUp,
   Users, Clock, Award, Briefcase, GraduationCap, Building2,
-  DollarSign, Lightbulb, Heart,
+  DollarSign, Lightbulb, Heart, ChevronDown, X, Handshake,
+  Scale, Globe, Code, Stethoscope, Palette, BarChart3, Rocket,
+  BookOpen, UserCheck, Filter,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
