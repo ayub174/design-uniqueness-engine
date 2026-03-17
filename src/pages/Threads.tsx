@@ -462,7 +462,7 @@ const ThreadDetail = ({
               <span className="text-muted-foreground/40">•</span>
               <span>{thread.timeAgo} sedan</span>
               {thread.isHot && (
-                <span className="flex items-center gap-0.5 text-orange-500 font-medium">
+                <span className="flex items-center gap-0.5 text-destructive font-medium">
                   <Flame className="w-3 h-3" /> Hett
                 </span>
               )}
