@@ -223,7 +223,7 @@ const threads: Thread[] = [
 const AuthorBadge = ({ type }: { type?: string }) => {
   if (!type) return null;
   if (type === "verified") return <Shield className="w-3.5 h-3.5 text-primary" />;
-  if (type === "mod") return <Crown className="w-3.5 h-3.5 text-amber-500" />;
+  if (type === "mod") return <Crown className="w-3.5 h-3.5 text-primary" />;
   if (type === "top") return <Zap className="w-3.5 h-3.5 text-primary" />;
   return null;
 };
