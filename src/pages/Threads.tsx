@@ -947,6 +947,16 @@ const Threads = () => {
                     </div>
                   </div>
 
+                  {/* Category Panel */}
+                  <AnimatePresence>
+                    <CategoryPanel
+                      isOpen={showCategoryPanel}
+                      onClose={() => setShowCategoryPanel(false)}
+                      selectedCategory={selectedCategory}
+                      onSelect={setSelectedCategory}
+                    />
+                  </AnimatePresence>
+
                   {/* Thread list */}
                   <div className="space-y-3">
                     {sortedThreads.map((thread, i) => (
