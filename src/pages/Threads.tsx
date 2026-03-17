@@ -1,10 +1,12 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MessageSquare, Eye, Search, ArrowLeft, Bookmark, Reply, Share2,
   Send, Shield, Zap, Crown, ThumbsUp, Plus, TrendingUp,
   Users, Clock, Award, Briefcase, GraduationCap, Building2,
-  DollarSign, Lightbulb, Heart,
+  DollarSign, Lightbulb, Heart, ChevronDown, X, Handshake,
+  Scale, Globe, Code, Stethoscope, Palette, BarChart3, Rocket,
+  BookOpen, UserCheck, Filter,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,12 +45,120 @@ interface Thread {
   replyData?: Reply[];
 }
 
-const categories: Record<string, { label: string; icon: typeof Briefcase }> = {
-  career: { label: "Karriär", icon: Briefcase },
-  salary: { label: "Lön & Förmåner", icon: DollarSign },
-  interview: { label: "Intervju", icon: Lightbulb },
-  cv: { label: "CV & Profil", icon: GraduationCap },
-  workplace: { label: "Arbetsliv", icon: Building2 },
+/* ─── Category system ─── */
+interface CategoryDef {
+  label: string;
+  icon: typeof Briefcase;
+  group: string;
+}
+
+const categoryGroups: Record<string, { label: string; icon: typeof Briefcase }> = {
+  karriar: { label: "Karriär & Utveckling", icon: Rocket },
+  lon: { label: "Lön & Förmåner", icon: DollarSign },
+  jobbsok: { label: "Jobbsökning", icon: Search },
+  arbetsliv: { label: "Arbetsliv", icon: Building2 },
+  bransch: { label: "Bransch", icon: Globe },
+};
+
+const categories: Record<string, CategoryDef> = {
+  career: { label: "Karriär", icon: Briefcase, group: "karriar" },
+  career_switch: { label: "Karriärväxling", icon: Rocket, group: "karriar" },
+  education: { label: "Utbildning", icon: BookOpen, group: "karriar" },
+  mentorship: { label: "Mentorskap", icon: UserCheck, group: "karriar" },
+  salary: { label: "Lön", icon: DollarSign, group: "lon" },
+  benefits: { label: "Förmåner", icon: Handshake, group: "lon" },
+  negotiation: { label: "Förhandling", icon: Scale, group: "lon" },
+  interview: { label: "Intervju", icon: Lightbulb, group: "jobbsok" },
+  cv: { label: "CV & Profil", icon: GraduationCap, group: "jobbsok" },
+  networking: { label: "Nätverk", icon: Users, group: "jobbsok" },
+  workplace: { label: "Arbetsmiljö", icon: Building2, group: "arbetsliv" },
+  leadership: { label: "Ledarskap", icon: Crown, group: "arbetsliv" },
+  remote: { label: "Remote & Hybrid", icon: Globe, group: "arbetsliv" },
+  tech: { label: "Tech & IT", icon: Code, group: "bransch" },
+  healthcare: { label: "Vård & Hälsa", icon: Stethoscope, group: "bransch" },
+  creative: { label: "Kreativt", icon: Palette, group: "bransch" },
+  finance: { label: "Ekonomi", icon: BarChart3, group: "bransch" },
+};
+
+// Top-level pills shown by default
+const popularCategories = ["career", "salary", "interview", "cv", "workplace"];
+
+/* ─── Category Panel ─── */
+const CategoryPanel = ({
+  isOpen,
+  onClose,
+  selectedCategory,
+  onSelect,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedCategory: string;
+  onSelect: (id: string) => void;
+}) => {
+  if (!isOpen) return null;
+
+  const grouped = Object.entries(categoryGroups).map(([groupId, group]) => ({
+    ...group,
+    groupId,
+    items: Object.entries(categories).filter(([, cat]) => cat.group === groupId),
+  }));
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.2 }}
+      className="overflow-hidden"
+    >
+      <div className="bg-card border border-border rounded-xl p-5 mb-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-serif text-sm font-semibold text-foreground">Alla kategorier</h3>
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {grouped.map((group) => {
+            const GroupIcon = group.icon;
+            return (
+              <div key={group.groupId}>
+                <div className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                  <GroupIcon className="w-3 h-3" />
+                  {group.label}
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {group.items.map(([id, cat]) => {
+                    const CatIcon = cat.icon;
+                    return (
+                      <button
+                        key={id}
+                        onClick={() => { onSelect(id); onClose(); }}
+                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                          selectedCategory === id
+                            ? "bg-primary/10 text-primary border border-primary/30"
+                            : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent"
+                        }`}
+                      >
+                        <CatIcon className="w-3 h-3" />
+                        {cat.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <button
+          onClick={() => { onSelect("all"); onClose(); }}
+          className="mt-4 text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+        >
+          ← Visa alla diskussioner
+        </button>
+      </div>
+    </motion.div>
+  );
 };
 
 const threads: Thread[] = [
@@ -665,6 +775,11 @@ const Threads = () => {
   const [likedThreads, setLikedThreads] = useState<Set<string>>(new Set());
   const [savedThreads, setSavedThreads] = useState<Set<string>>(new Set());
   const [activeThread, setActiveThread] = useState<string | null>(null);
+  const [showCategoryPanel, setShowCategoryPanel] = useState(false);
+
+  // Check if the selected category is not in the popular pills
+  const isNonPopularSelected = selectedCategory !== "all" && !popularCategories.includes(selectedCategory);
+  const selectedCatData = categories[selectedCategory];
 
   const filteredThreads = threads.filter((t) => {
     const matchCat = selectedCategory === "all" || t.category === selectedCategory;
@@ -775,7 +890,7 @@ const Threads = () => {
                       })}
                     </div>
 
-                    {/* Categories */}
+                    {/* Categories - Popular pills */}
                     <div className="flex items-center gap-1 flex-wrap">
                       <button
                         onClick={() => setSelectedCategory("all")}
@@ -787,7 +902,9 @@ const Threads = () => {
                       >
                         Alla
                       </button>
-                      {Object.entries(categories).map(([id, cat]) => {
+                      {popularCategories.map((id) => {
+                        const cat = categories[id];
+                        if (!cat) return null;
                         const CatIcon = cat.icon;
                         return (
                           <button
@@ -804,8 +921,41 @@ const Threads = () => {
                           </button>
                         );
                       })}
+                      {/* Show active non-popular category as a removable pill */}
+                      {isNonPopularSelected && selectedCatData && (
+                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium border border-primary/30 bg-primary/5 text-primary">
+                          {React.createElement(selectedCatData.icon, { className: "w-3 h-3" })}
+                          {selectedCatData.label}
+                          <button onClick={() => setSelectedCategory("all")} className="ml-0.5 hover:text-primary/70">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      )}
+                      {/* "Alla kategorier" toggle */}
+                      <button
+                        onClick={() => setShowCategoryPanel(!showCategoryPanel)}
+                        className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
+                          showCategoryPanel
+                            ? "border-primary/30 bg-primary/5 text-primary"
+                            : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <Filter className="w-3 h-3" />
+                        Fler
+                        <ChevronDown className={`w-3 h-3 transition-transform ${showCategoryPanel ? "rotate-180" : ""}`} />
+                      </button>
                     </div>
                   </div>
+
+                  {/* Category Panel */}
+                  <AnimatePresence>
+                    <CategoryPanel
+                      isOpen={showCategoryPanel}
+                      onClose={() => setShowCategoryPanel(false)}
+                      selectedCategory={selectedCategory}
+                      onSelect={setSelectedCategory}
+                    />
+                  </AnimatePresence>
 
                   {/* Thread list */}
                   <div className="space-y-3">
