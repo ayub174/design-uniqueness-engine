@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, Sparkles, GraduationCap, FileText, Handshake, ClipboardList, CheckCircle2, BookOpen, Filter, Award, Building2, SlidersHorizontal, ArrowUpDown, Bell } from "lucide-react";
+import { Search, ArrowRight, Briefcase, MapPin, Zap, Users, TrendingUp, Star, Sparkles, GraduationCap, FileText, Handshake, ClipboardList, CheckCircle2, BookOpen, Filter, Award, Building2, SlidersHorizontal, ArrowUpDown, Bell, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import cvBuilderImg from "@/assets/cv-builder-mockup.png";
