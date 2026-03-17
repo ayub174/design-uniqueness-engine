@@ -291,7 +291,7 @@ const Index = () => {
                 <motion.div
                   animate={{ scale: [1, 1.1, 1], rotate: [0, 15, 0] }}
                   transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-primary/[0.08] blur-3xl"
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-primary/[0.07] blur-3xl"
                 />
 
                 {/* Rotating ring system */}
@@ -311,54 +311,121 @@ const Index = () => {
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96"
                 >
                   <div className="w-full h-full rounded-full border border-dashed border-primary/[0.06]" />
-                  <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary/30" />
                 </motion.div>
 
-                {/* Central shape cluster */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <motion.div
-                    animate={{ y: [0, -12, 0], rotate: [0, 5, 0] }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                    className="w-28 h-28 rounded-3xl bg-primary/[0.12] border border-primary/[0.15] backdrop-blur-sm"
-                  />
-                </div>
+                {/* SVG decorative arcs */}
+                <svg className="absolute inset-0 w-full h-full opacity-[0.04]" viewBox="0 0 500 500">
+                  <circle cx="250" cy="250" r="180" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="8 12" />
+                  <circle cx="250" cy="250" r="120" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.8" strokeDasharray="4 10" />
+                </svg>
 
+                {/* Floating career cards */}
+                {/* CV card */}
+                <motion.div
+                  animate={{ y: [0, -14, 0], rotate: [0, 2, 0] }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-[12%] right-[8%] bg-card/80 backdrop-blur-md border border-border rounded-2xl p-4 shadow-lg shadow-primary/[0.04] w-48"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <FileText className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-foreground">CV uppdaterat</p>
+                      <p className="text-[10px] text-muted-foreground">Just nu</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="h-1.5 rounded-full bg-primary/20 w-full" />
+                    <div className="h-1.5 rounded-full bg-primary/12 w-3/4" />
+                    <div className="h-1.5 rounded-full bg-primary/8 w-1/2" />
+                  </div>
+                </motion.div>
+
+                {/* Match notification */}
                 <motion.div
                   animate={{ y: [0, 10, 0], x: [0, -5, 0] }}
-                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                  className="absolute top-[20%] right-[15%] w-16 h-16 rounded-2xl bg-primary/[0.08] border border-primary/[0.1] rotate-12"
-                />
+                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+                  className="absolute top-[45%] left-[5%] bg-card/80 backdrop-blur-md border border-primary/20 rounded-2xl p-3.5 shadow-lg shadow-primary/[0.06] w-52"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-foreground">3 nya matchningar!</p>
+                      <p className="text-[10px] text-muted-foreground">Baserat på din profil</p>
+                    </div>
+                  </div>
+                </motion.div>
 
+                {/* Salary insight card */}
                 <motion.div
                   animate={{ y: [0, -8, 0], x: [0, 6, 0] }}
                   transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-                  className="absolute bottom-[25%] left-[18%] w-20 h-20 rounded-full bg-primary/[0.06] border border-primary/[0.08]"
-                />
+                  className="absolute bottom-[18%] right-[5%] bg-card/80 backdrop-blur-md border border-border rounded-2xl p-3.5 shadow-lg shadow-primary/[0.04] w-44"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                    <p className="text-[11px] font-semibold text-foreground">Löneutveckling</p>
+                  </div>
+                  <div className="flex items-end gap-1 h-8">
+                    {[35, 45, 40, 55, 50, 65, 70].map((h, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ height: 0 }}
+                        animate={{ height: `${h}%` }}
+                        transition={{ delay: 1 + i * 0.1, duration: 0.6 }}
+                        className="flex-1 rounded-sm bg-primary/25"
+                      />
+                    ))}
+                  </div>
+                </motion.div>
 
+                {/* Interview badge */}
                 <motion.div
                   animate={{ y: [0, 6, 0] }}
                   transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                  className="absolute top-[30%] left-[12%] w-10 h-10 rounded-xl bg-primary/[0.1] rotate-45"
-                />
+                  className="absolute top-[22%] left-[25%] bg-card/80 backdrop-blur-md border border-border rounded-full px-3.5 py-2 shadow-md flex items-center gap-2"
+                >
+                  <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center">
+                    <Calendar className="w-3 h-3 text-primary" />
+                  </div>
+                  <span className="text-[11px] font-medium text-foreground">Intervju imorgon 09:00</span>
+                </motion.div>
 
-                {/* SVG decorative arcs */}
-                <svg className="absolute inset-0 w-full h-full opacity-[0.05]" viewBox="0 0 500 500">
-                  <circle cx="250" cy="250" r="180" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="8 12" />
-                  <circle cx="250" cy="250" r="120" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.8" strokeDasharray="4 10" />
-                  <circle cx="250" cy="250" r="60" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.5" strokeDasharray="2 8" />
-                </svg>
+                {/* Small floating skill tags */}
+                <motion.div
+                  animate={{ y: [0, -6, 0], opacity: [0.7, 1, 0.7] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                  className="absolute bottom-[35%] left-[20%] bg-primary/10 text-primary text-[10px] font-semibold px-3 py-1.5 rounded-full border border-primary/15"
+                >
+                  React
+                </motion.div>
+                <motion.div
+                  animate={{ y: [0, 8, 0], opacity: [0.6, 1, 0.6] }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                  className="absolute top-[60%] right-[22%] bg-primary/10 text-primary text-[10px] font-semibold px-3 py-1.5 rounded-full border border-primary/15"
+                >
+                  Projektledning
+                </motion.div>
+                <motion.div
+                  animate={{ y: [0, -5, 0], opacity: [0.5, 0.9, 0.5] }}
+                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+                  className="absolute bottom-[12%] left-[35%] bg-primary/10 text-primary text-[10px] font-semibold px-3 py-1.5 rounded-full border border-primary/15"
+                >
+                  UX Design
+                </motion.div>
 
                 {/* Floating particles */}
                 {[
-                  { top: "15%", left: "40%", size: "w-1.5 h-1.5", delay: 0, dur: 6 },
-                  { top: "70%", left: "65%", size: "w-2 h-2", delay: 2, dur: 8 },
-                  { top: "45%", left: "80%", size: "w-1 h-1", delay: 4, dur: 5 },
-                  { top: "80%", left: "30%", size: "w-1.5 h-1.5", delay: 1, dur: 7 },
-                  { top: "25%", left: "70%", size: "w-1 h-1", delay: 3, dur: 9 },
+                  { top: "8%", left: "50%", size: "w-1.5 h-1.5", delay: 0, dur: 6 },
+                  { top: "75%", left: "55%", size: "w-1 h-1", delay: 2, dur: 8 },
+                  { top: "40%", left: "85%", size: "w-1.5 h-1.5", delay: 4, dur: 5 },
                 ].map((p, i) => (
                   <motion.div
                     key={i}
-                    animate={{ y: [0, -10, 0], opacity: [0.2, 0.6, 0.2] }}
+                    animate={{ y: [0, -10, 0], opacity: [0.15, 0.5, 0.15] }}
                     transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
                     className={`absolute ${p.size} rounded-full bg-primary/30`}
                     style={{ top: p.top, left: p.left }}
