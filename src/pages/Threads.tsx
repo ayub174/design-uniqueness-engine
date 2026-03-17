@@ -890,7 +890,7 @@ const Threads = () => {
                       })}
                     </div>
 
-                    {/* Categories */}
+                    {/* Categories - Popular pills */}
                     <div className="flex items-center gap-1 flex-wrap">
                       <button
                         onClick={() => setSelectedCategory("all")}
@@ -902,7 +902,9 @@ const Threads = () => {
                       >
                         Alla
                       </button>
-                      {Object.entries(categories).map(([id, cat]) => {
+                      {popularCategories.map((id) => {
+                        const cat = categories[id];
+                        if (!cat) return null;
                         const CatIcon = cat.icon;
                         return (
                           <button
@@ -919,6 +921,29 @@ const Threads = () => {
                           </button>
                         );
                       })}
+                      {/* Show active non-popular category as a removable pill */}
+                      {isNonPopularSelected && selectedCatData && (
+                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium border border-primary/30 bg-primary/5 text-primary">
+                          {React.createElement(selectedCatData.icon, { className: "w-3 h-3" })}
+                          {selectedCatData.label}
+                          <button onClick={() => setSelectedCategory("all")} className="ml-0.5 hover:text-primary/70">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      )}
+                      {/* "Alla kategorier" toggle */}
+                      <button
+                        onClick={() => setShowCategoryPanel(!showCategoryPanel)}
+                        className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
+                          showCategoryPanel
+                            ? "border-primary/30 bg-primary/5 text-primary"
+                            : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <Filter className="w-3 h-3" />
+                        Fler
+                        <ChevronDown className={`w-3 h-3 transition-transform ${showCategoryPanel ? "rotate-180" : ""}`} />
+                      </button>
                     </div>
                   </div>
 
