@@ -23,6 +23,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/jobb" element={<Jobs />} />
           <Route path="/mina-jobb" element={<MyJobs />} />
+          <Route path="/tradar" element={<Threads />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
