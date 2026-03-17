@@ -281,12 +281,58 @@ const Index = () => {
 
             {/* Right — auto-rotating feature cards */}
             <motion.div
-              className="md:col-span-5 lg:col-span-6 hidden md:flex flex-col items-end justify-end"
+              className="md:col-span-5 lg:col-span-6 hidden md:flex flex-col items-end justify-end relative"
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="w-full max-w-md">
+              {/* Abstract decorative blobs */}
+              <div className="absolute inset-0 -right-20 -top-20 pointer-events-none overflow-visible">
+                <motion.div
+                  animate={{ scale: [1, 1.08, 1], rotate: [0, 8, 0] }}
+                  transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -top-16 -right-12 w-72 h-72 rounded-full bg-primary/[0.07] blur-3xl"
+                />
+                <motion.div
+                  animate={{ scale: [1, 1.12, 1], rotate: [0, -6, 0] }}
+                  transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                  className="absolute top-32 -right-24 w-56 h-56 rounded-full bg-primary/[0.05] blur-2xl"
+                />
+                <motion.div
+                  animate={{ scale: [1, 1.06, 1], y: [0, -12, 0] }}
+                  transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+                  className="absolute top-8 right-16 w-40 h-40 rounded-full bg-primary/[0.04] blur-xl"
+                />
+                {/* Subtle ring */}
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-4 right-0 w-64 h-64 rounded-full border border-primary/[0.08]"
+                />
+                {/* Dotted arc */}
+                <svg className="absolute -top-8 -right-8 w-80 h-80 opacity-[0.06]" viewBox="0 0 320 320">
+                  <circle cx="160" cy="160" r="140" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeDasharray="6 10" />
+                  <circle cx="160" cy="160" r="100" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="3 8" />
+                </svg>
+                {/* Small floating dots */}
+                <motion.div
+                  animate={{ y: [0, -8, 0], opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-20 right-48 w-2 h-2 rounded-full bg-primary/30"
+                />
+                <motion.div
+                  animate={{ y: [0, 10, 0], opacity: [0.2, 0.5, 0.2] }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                  className="absolute top-64 right-8 w-1.5 h-1.5 rounded-full bg-primary/25"
+                />
+                <motion.div
+                  animate={{ y: [0, -6, 0], opacity: [0.4, 0.7, 0.4] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+                  className="absolute top-48 right-36 w-2.5 h-2.5 rounded-full bg-primary/20"
+                />
+              </div>
+
+              <div className="w-full max-w-md relative z-10">
                 {/* Active feature card */}
                 <div className="relative min-h-[450px]">
                   <AnimatePresence mode="wait">
