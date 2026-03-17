@@ -2,8 +2,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MessageSquare, Eye, ChevronUp, ChevronDown, Search,
-  ArrowLeft, Pin, Bookmark, Reply, Share2, MoreHorizontal,
-  Send, Shield, Zap, Crown, Flame, Plus,
+  ArrowLeft, Pin, Bookmark, Reply, Share2,
+  Send, Shield, Zap, Crown, Flame, Plus, TrendingUp,
+  Users, Clock, Award, Filter,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,12 +42,12 @@ interface Thread {
   replyData?: Reply[];
 }
 
-const categories: Record<string, { label: string; color: string }> = {
-  career: { label: "Karriär", color: "border-l-primary" },
-  salary: { label: "Lön", color: "border-l-accent" },
-  interview: { label: "Intervju", color: "border-l-primary" },
-  cv: { label: "CV", color: "border-l-accent" },
-  workplace: { label: "Jobb", color: "border-l-primary" },
+const categories: Record<string, { label: string; icon: string }> = {
+  career: { label: "Karriär", icon: "💼" },
+  salary: { label: "Lön", icon: "💰" },
+  interview: { label: "Intervju", icon: "🎯" },
+  cv: { label: "CV", icon: "📄" },
+  workplace: { label: "Jobb", icon: "🏢" },
 };
 
 const threads: Thread[] = [
@@ -221,46 +222,178 @@ const threads: Thread[] = [
 
 const AuthorBadge = ({ type }: { type?: string }) => {
   if (!type) return null;
-  const cls = "w-3 h-3 text-primary";
-  if (type === "verified") return <Shield className={cls} />;
-  if (type === "mod") return <Crown className={cls} />;
-  if (type === "top") return <Zap className={cls} />;
+  if (type === "verified") return <Shield className="w-3.5 h-3.5 text-primary" />;
+  if (type === "mod") return <Crown className="w-3.5 h-3.5 text-primary" />;
+  if (type === "top") return <Zap className="w-3.5 h-3.5 text-primary" />;
   return null;
 };
 
-const VoteBlock = ({
+/* ─── Vote Column ─── */
+const VoteColumn = ({
   count,
   voted,
   onUp,
   onDown,
-  compact,
+  horizontal,
 }: {
   count: number;
   voted: "up" | "down" | null;
   onUp: (e: React.MouseEvent) => void;
   onDown: (e: React.MouseEvent) => void;
-  compact?: boolean;
+  horizontal?: boolean;
 }) => (
-  <div className={`flex ${compact ? "flex-row items-center gap-0.5" : "flex-col items-center gap-0"}`}>
+  <div className={`flex ${horizontal ? "flex-row items-center gap-1" : "flex-col items-center"} select-none`}>
     <button
       onClick={onUp}
-      className={`p-0.5 rounded transition-colors ${voted === "up" ? "text-primary" : "text-muted-foreground/40 hover:text-primary"}`}
+      className={`p-1 rounded-md transition-all ${
+        voted === "up"
+          ? "text-primary bg-primary/10"
+          : "text-muted-foreground/50 hover:text-primary hover:bg-primary/5"
+      }`}
     >
-      <ChevronUp className={compact ? "w-4 h-4" : "w-5 h-5"} />
+      <ChevronUp className="w-5 h-5" />
     </button>
-    <span className={`text-xs font-bold tabular-nums min-w-[2ch] text-center ${
+    <span className={`text-xs font-bold tabular-nums min-w-[2.5ch] text-center ${
       voted === "up" ? "text-primary" : voted === "down" ? "text-destructive" : "text-foreground"
     }`}>
       {count}
     </span>
     <button
       onClick={onDown}
-      className={`p-0.5 rounded transition-colors ${voted === "down" ? "text-destructive" : "text-muted-foreground/40 hover:text-destructive"}`}
+      className={`p-1 rounded-md transition-all ${
+        voted === "down"
+          ? "text-destructive bg-destructive/10"
+          : "text-muted-foreground/50 hover:text-destructive hover:bg-destructive/5"
+      }`}
     >
-      <ChevronDown className={compact ? "w-4 h-4" : "w-5 h-5"} />
+      <ChevronDown className="w-5 h-5" />
     </button>
   </div>
 );
+
+/* ─── Thread Card ─── */
+const ThreadCard = ({
+  thread,
+  index,
+  votedThreads,
+  savedThreads,
+  handleVote,
+  toggleSave,
+  getVoteCount,
+  onClick,
+}: {
+  thread: Thread;
+  index: number;
+  votedThreads: Record<string, "up" | "down" | null>;
+  savedThreads: Set<string>;
+  handleVote: (id: string, dir: "up" | "down") => void;
+  toggleSave: (id: string) => void;
+  getVoteCount: (t: Thread) => number;
+  onClick: () => void;
+}) => {
+  const cat = categories[thread.category];
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04, duration: 0.3 }}
+      className={`group bg-card border border-border rounded-xl overflow-hidden transition-all hover:border-primary/30 hover:shadow-sm ${
+        thread.replyData ? "cursor-pointer" : ""
+      }`}
+      onClick={onClick}
+    >
+      <div className="flex">
+        {/* Vote sidebar */}
+        <div className="hidden sm:flex flex-col items-center py-3 px-2 bg-muted/30">
+          <VoteColumn
+            count={getVoteCount(thread)}
+            voted={votedThreads[thread.id] || null}
+            onUp={(e) => { e.stopPropagation(); handleVote(thread.id, "up"); }}
+            onDown={(e) => { e.stopPropagation(); handleVote(thread.id, "down"); }}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 p-3 sm:p-4">
+          {/* Meta line */}
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1.5 flex-wrap">
+            <span className="text-sm">{cat?.icon}</span>
+            <span className="font-medium text-foreground/70">{cat?.label}</span>
+            <span className="text-muted-foreground/40">•</span>
+            <span>av <span className="font-medium text-foreground/80 hover:underline">{thread.author}</span></span>
+            <AuthorBadge type={thread.authorBadge} />
+            <span className="text-muted-foreground/40">•</span>
+            <span>{thread.timeAgo} sedan</span>
+            {thread.isPinned && (
+              <span className="flex items-center gap-0.5 text-primary font-medium ml-1">
+                <Pin className="w-3 h-3" /> Fäst
+              </span>
+            )}
+            {thread.isHot && (
+              <span className="flex items-center gap-0.5 text-destructive font-medium ml-1">
+                <Flame className="w-3 h-3" /> Hett
+              </span>
+            )}
+          </div>
+
+          {/* Title */}
+          <h3 className="font-serif text-base sm:text-lg font-medium text-foreground leading-snug group-hover:text-primary transition-colors mb-1.5">
+            {thread.title}
+          </h3>
+
+          {/* Preview text */}
+          <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-3">
+            {thread.content}
+          </p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {thread.tags.map((tag) => (
+              <span key={tag} className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full hover:bg-muted/80 transition-colors">
+                #{tag}
+              </span>
+            ))}
+          </div>
+
+          {/* Action bar */}
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            {/* Mobile votes */}
+            <div className="sm:hidden mr-2">
+              <VoteColumn
+                count={getVoteCount(thread)}
+                voted={votedThreads[thread.id] || null}
+                onUp={(e) => { e.stopPropagation(); handleVote(thread.id, "up"); }}
+                onDown={(e) => { e.stopPropagation(); handleVote(thread.id, "down"); }}
+                horizontal
+              />
+            </div>
+            <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full hover:bg-muted transition-colors" onClick={(e) => e.stopPropagation()}>
+              <MessageSquare className="w-3.5 h-3.5" />
+              <span className="font-medium">{thread.replies} svar</span>
+            </button>
+            <span className="flex items-center gap-1.5 px-2.5 py-1.5">
+              <Eye className="w-3.5 h-3.5" />
+              {thread.views.toLocaleString("sv-SE")}
+            </span>
+            <button
+              onClick={(e) => { e.stopPropagation(); toggleSave(thread.id); }}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full hover:bg-muted transition-colors ml-auto ${
+                savedThreads.has(thread.id) ? "text-primary" : ""
+              }`}
+            >
+              <Bookmark className={`w-3.5 h-3.5 ${savedThreads.has(thread.id) ? "fill-primary" : ""}`} />
+              <span className="hidden sm:inline font-medium">Spara</span>
+            </button>
+            <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full hover:bg-muted transition-colors" onClick={(e) => e.stopPropagation()}>
+              <Share2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline font-medium">Dela</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.article>
+  );
+};
 
 /* ─── Detail View ─── */
 const ThreadDetail = ({
@@ -278,145 +411,232 @@ const ThreadDetail = ({
 }) => {
   const [replyVotes, setReplyVotes] = useState<Record<string, "up" | "down" | null>>({});
   const [replyText, setReplyText] = useState("");
+  const cat = categories[thread.category];
 
   const handleReplyVote = (replyId: string, dir: "up" | "down") => {
     setReplyVotes((prev) => ({ ...prev, [replyId]: prev[replyId] === dir ? null : dir }));
   };
-
   const getReplyVoteCount = (reply: Reply) => {
     const v = replyVotes[reply.id];
     return reply.votes + (v === "up" ? 1 : v === "down" ? -1 : 0);
   };
 
-  const cat = categories[thread.category];
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.25 }}
     >
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4 group"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        Tillbaka
+        Tillbaka till trådar
       </button>
 
-      {/* Main post */}
-      <article className={`border-l-2 ${cat?.color || "border-l-primary"} bg-card border border-border rounded-r-xl pl-5 pr-6 py-6`}>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-          <span className="font-medium text-primary">{cat?.label}</span>
-          <span>·</span>
-          <span>{thread.timeAgo} sedan</span>
-          {thread.isHot && (
-            <span className="flex items-center gap-1 text-primary font-medium">
-              <Flame className="w-3 h-3" /> het
-            </span>
-          )}
-        </div>
-
-        <h1 className="font-serif text-xl md:text-2xl font-medium text-foreground leading-tight mb-4">
-          {thread.title}
-        </h1>
-
-        <div className="flex items-center gap-2.5 mb-5">
-          <Avatar className="w-7 h-7">
-            <AvatarFallback className="text-[10px] font-bold bg-muted text-muted-foreground">
-              {thread.authorInitials}
-            </AvatarFallback>
-          </Avatar>
-          <span className="text-sm font-medium text-foreground">{thread.author}</span>
-          <AuthorBadge type={thread.authorBadge} />
-          <span className="text-xs text-muted-foreground">· {thread.authorRole}</span>
-        </div>
-
-        <div className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line mb-5">
-          {thread.content}
-        </div>
-
-        <div className="flex flex-wrap gap-1.5 mb-5">
-          {thread.tags.map((tag) => (
-            <span key={tag} className="text-[11px] text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
-              #{tag}
-            </span>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-4 pt-4 border-t border-border text-sm text-muted-foreground">
-          <VoteBlock
-            count={getVoteCount(thread)}
-            voted={votedThreads[thread.id] || null}
-            onUp={(e) => { e.stopPropagation(); handleVote(thread.id, "up"); }}
-            onDown={(e) => { e.stopPropagation(); handleVote(thread.id, "down"); }}
-            compact
-          />
-          <span className="flex items-center gap-1.5"><MessageSquare className="w-4 h-4" />{thread.replies}</span>
-          <span className="flex items-center gap-1.5"><Eye className="w-4 h-4" />{thread.views.toLocaleString("sv-SE")}</span>
-          <button className="ml-auto flex items-center gap-1.5 hover:text-foreground transition-colors"><Share2 className="w-4 h-4" />Dela</button>
-          <button className="flex items-center gap-1.5 hover:text-primary transition-colors"><Bookmark className="w-4 h-4" />Spara</button>
-        </div>
-      </article>
-
-      {/* Replies */}
-      <div className="mt-8 space-y-3">
-        <p className="text-sm font-medium text-muted-foreground mb-4">{thread.replies} svar</p>
-
-        {thread.replyData?.map((reply, i) => (
-          <motion.div
-            key={reply.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.06, duration: 0.3 }}
-            className={`flex gap-3 p-4 rounded-xl ${
-              reply.isOP
-                ? "bg-primary/[0.04] border border-primary/15"
-                : "bg-card border border-border"
-            }`}
-          >
-            <VoteBlock
-              count={getReplyVoteCount(reply)}
-              voted={replyVotes[reply.id] || null}
-              onUp={() => handleReplyVote(reply.id, "up")}
-              onDown={() => handleReplyVote(reply.id, "down")}
+      {/* Main post card */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="flex">
+          <div className="hidden sm:flex flex-col items-center py-4 px-3 bg-muted/30">
+            <VoteColumn
+              count={getVoteCount(thread)}
+              voted={votedThreads[thread.id] || null}
+              onUp={(e) => { e.stopPropagation(); handleVote(thread.id, "up"); }}
+              onDown={(e) => { e.stopPropagation(); handleVote(thread.id, "down"); }}
             />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-semibold text-foreground">{reply.author}</span>
-                <AuthorBadge type={reply.authorBadge} />
-                {reply.isOP && (
-                  <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">OP</span>
-                )}
-                <span className="text-xs text-muted-foreground">· {reply.timeAgo}</span>
-              </div>
-              <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line mb-2">{reply.content}</p>
-              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                <Reply className="w-3.5 h-3.5" /> Svara
+          </div>
+
+          <div className="flex-1 p-5 sm:p-6">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3 flex-wrap">
+              <span className="text-sm">{cat?.icon}</span>
+              <span className="font-medium text-foreground/70">{cat?.label}</span>
+              <span className="text-muted-foreground/40">•</span>
+              <span>av</span>
+              <Avatar className="w-5 h-5 inline-flex">
+                <AvatarFallback className="text-[9px] font-bold bg-muted text-muted-foreground">{thread.authorInitials}</AvatarFallback>
+              </Avatar>
+              <span className="font-medium text-foreground/80">{thread.author}</span>
+              <AuthorBadge type={thread.authorBadge} />
+              <span className="text-muted-foreground/40">•</span>
+              <span>{thread.timeAgo} sedan</span>
+              {thread.isHot && (
+                <span className="flex items-center gap-0.5 text-destructive font-medium">
+                  <Flame className="w-3 h-3" /> Hett
+                </span>
+              )}
+            </div>
+
+            <h1 className="font-serif text-xl sm:text-2xl font-semibold text-foreground leading-tight mb-4">
+              {thread.title}
+            </h1>
+
+            <div className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line mb-5">
+              {thread.content}
+            </div>
+
+            <div className="flex flex-wrap gap-1.5 mb-5">
+              {thread.tags.map((tag) => (
+                <span key={tag} className="text-[11px] text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1 pt-4 border-t border-border text-xs text-muted-foreground">
+              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted transition-colors font-medium">
+                <MessageSquare className="w-4 h-4" /> {thread.replies} svar
+              </button>
+              <span className="flex items-center gap-1.5 px-3 py-1.5">
+                <Eye className="w-4 h-4" /> {thread.views.toLocaleString("sv-SE")}
+              </span>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted transition-colors ml-auto font-medium">
+                <Share2 className="w-4 h-4" /> Dela
+              </button>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted transition-colors font-medium">
+                <Bookmark className="w-4 h-4" /> Spara
               </button>
             </div>
-          </motion.div>
-        ))}
-
-        {/* Composer */}
-        <div className="mt-6 p-4 bg-card border border-border rounded-xl">
-          <Textarea
-            placeholder="Skriv ett svar..."
-            value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-            className="min-h-[80px] bg-background border-border resize-none mb-3 text-sm"
-          />
-          <div className="flex justify-end">
-            <Button size="sm" className="gap-2">
-              <Send className="w-3.5 h-3.5" /> Svara
-            </Button>
           </div>
+        </div>
+      </div>
+
+      {/* Reply composer */}
+      <div className="mt-4 bg-card border border-border rounded-xl p-4">
+        <p className="text-xs font-medium text-muted-foreground mb-2">Svara som <span className="text-foreground">Gäst</span></p>
+        <Textarea
+          placeholder="Vad tänker du?"
+          value={replyText}
+          onChange={(e) => setReplyText(e.target.value)}
+          className="min-h-[80px] bg-background border-border resize-none mb-3 text-sm rounded-lg"
+        />
+        <div className="flex justify-end">
+          <Button size="sm" className="gap-2 px-5">
+            <Send className="w-3.5 h-3.5" /> Svara
+          </Button>
+        </div>
+      </div>
+
+      {/* Replies */}
+      <div className="mt-6">
+        <p className="text-sm font-medium text-foreground mb-4">{thread.replies} svar</p>
+
+        <div className="space-y-2">
+          {thread.replyData?.map((reply, i) => (
+            <motion.div
+              key={reply.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05, duration: 0.25 }}
+              className={`bg-card border rounded-xl overflow-hidden ${
+                reply.isOP ? "border-primary/20" : "border-border"
+              }`}
+            >
+              <div className="flex">
+                <div className="hidden sm:flex flex-col items-center py-3 px-2 bg-muted/30">
+                  <VoteColumn
+                    count={getReplyVoteCount(reply)}
+                    voted={replyVotes[reply.id] || null}
+                    onUp={() => handleReplyVote(reply.id, "up")}
+                    onDown={() => handleReplyVote(reply.id, "down")}
+                  />
+                </div>
+                <div className="flex-1 p-4">
+                  <div className="flex items-center gap-2 mb-2 text-xs">
+                    <Avatar className="w-5 h-5">
+                      <AvatarFallback className="text-[9px] font-bold bg-muted text-muted-foreground">{reply.authorInitials}</AvatarFallback>
+                    </Avatar>
+                    <span className="font-semibold text-foreground text-sm">{reply.author}</span>
+                    <AuthorBadge type={reply.authorBadge} />
+                    {reply.isOP && (
+                      <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">OP</span>
+                    )}
+                    <span className="text-muted-foreground">• {reply.timeAgo}</span>
+                  </div>
+                  <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line mb-2">{reply.content}</p>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <div className="sm:hidden mr-1">
+                      <VoteColumn
+                        count={getReplyVoteCount(reply)}
+                        voted={replyVotes[reply.id] || null}
+                        onUp={() => handleReplyVote(reply.id, "up")}
+                        onDown={() => handleReplyVote(reply.id, "down")}
+                        horizontal
+                      />
+                    </div>
+                    <button className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-muted transition-colors font-medium">
+                      <Reply className="w-3.5 h-3.5" /> Svara
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </motion.div>
   );
 };
+
+/* ─── Sidebar ─── */
+const CommunitySidebar = () => (
+  <div className="hidden lg:block w-72 shrink-0 space-y-4">
+    {/* Community card */}
+    <div className="bg-card border border-border rounded-xl overflow-hidden">
+      <div className="h-16 bg-gradient-to-r from-primary/20 to-primary/5" />
+      <div className="p-4 -mt-4">
+        <h3 className="font-serif text-lg font-semibold text-foreground">c/karriär</h3>
+        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+          Sveriges största community för karriärfrågor. Dela erfarenheter, ställ frågor och hjälp varandra framåt.
+        </p>
+        <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> 12,4k</span>
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> 347 online
+          </span>
+        </div>
+        <Button size="sm" className="w-full mt-3 gap-2">
+          <Plus className="w-3.5 h-3.5" /> Ny tråd
+        </Button>
+      </div>
+    </div>
+
+    {/* Trending */}
+    <div className="bg-card border border-border rounded-xl p-4">
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
+        <TrendingUp className="w-4 h-4 text-primary" /> Trendar just nu
+      </h4>
+      <div className="space-y-2.5">
+        {[
+          { tag: "löneförhandling", count: "2.1k" },
+          { tag: "karriärväxling", count: "1.8k" },
+          { tag: "remote", count: "1.2k" },
+          { tag: "intervjutips", count: "980" },
+          { tag: "bootcamp", count: "640" },
+        ].map((t) => (
+          <div key={t.tag} className="flex items-center justify-between text-xs group cursor-pointer">
+            <span className="text-muted-foreground group-hover:text-foreground transition-colors">#{t.tag}</span>
+            <span className="text-muted-foreground/60">{t.count} inlägg</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Rules */}
+    <div className="bg-card border border-border rounded-xl p-4">
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
+        <Award className="w-4 h-4 text-primary" /> Regler
+      </h4>
+      <ol className="space-y-2 text-xs text-muted-foreground list-decimal list-inside">
+        <li>Var respektfull mot alla</li>
+        <li>Inga personangrepp</li>
+        <li>Håll diskussionen on-topic</li>
+        <li>Ingen spam eller reklam</li>
+      </ol>
+    </div>
+  </div>
+);
 
 /* ─── Main Page ─── */
 const Threads = () => {
@@ -444,7 +664,6 @@ const Threads = () => {
   const handleVote = (id: string, dir: "up" | "down") => {
     setVotedThreads((prev) => ({ ...prev, [id]: prev[id] === dir ? null : dir }));
   };
-
   const toggleSave = (id: string) => {
     setSavedThreads((prev) => {
       const next = new Set(prev);
@@ -452,7 +671,6 @@ const Threads = () => {
       return next;
     });
   };
-
   const getVoteCount = (t: Thread) => {
     const v = votedThreads[t.id];
     return t.votes + (v === "up" ? 1 : v === "down" ? -1 : 0);
@@ -464,210 +682,135 @@ const Threads = () => {
     <div className="min-h-screen bg-background">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between h-14">
-          <div className="flex items-center gap-4">
-            <Link to="/" className="font-serif text-xl font-semibold text-foreground">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-12">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="font-serif text-lg font-semibold text-foreground">
               Chappie<span className="text-primary">.</span>
             </Link>
-            <span className="text-border">|</span>
-            <span className="text-sm font-medium text-foreground">Trådar</span>
+            <div className="hidden sm:flex h-5 w-px bg-border" />
+            <span className="hidden sm:block text-sm text-muted-foreground">Trådar</span>
           </div>
-          <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
-            <Link to="/jobb" className="hover:text-foreground transition-colors">Jobb</Link>
-            <Link to="/tradar" className="text-foreground">Trådar</Link>
+          <div className="relative hidden md:block w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+            <Input
+              placeholder="Sök trådar..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-8 bg-muted/50 border-transparent text-sm rounded-full focus-visible:border-border"
+            />
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="text-sm hidden sm:inline-flex">Logga in</Button>
-            <Button size="sm" className="text-sm px-4">Kom igång</Button>
+            <Button variant="ghost" size="sm" className="text-xs h-8">Logga in</Button>
+            <Button size="sm" className="text-xs h-8 px-4">Kom igång</Button>
           </div>
         </div>
       </nav>
 
-      <div className="pt-14 max-w-5xl mx-auto px-6">
-        {/* Top bar */}
-        {!activeThread && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border"
-          >
-            <div>
-              <h1 className="font-serif text-2xl font-medium text-foreground">Trådar</h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                <span className="inline-flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />347 online</span>
-                <span className="mx-2">·</span>12 438 medlemmar
-              </p>
-            </div>
-            <Button size="sm" className="gap-2 self-start">
-              <Plus className="w-4 h-4" /> Ny tråd
-            </Button>
-          </motion.div>
-        )}
-
-        {/* Controls + Content */}
-        <div className="py-6">
-          <AnimatePresence mode="wait">
-            {activeThreadData ? (
-              <ThreadDetail
-                key="detail"
-                thread={activeThreadData}
-                onBack={() => setActiveThread(null)}
-                votedThreads={votedThreads}
-                handleVote={handleVote}
-                getVoteCount={getVoteCount}
-              />
-            ) : (
-              <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                {/* Filter row */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
-                  <div className="relative flex-1 max-w-xs">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Sök..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9 h-9 bg-card border-border text-sm"
-                    />
-                  </div>
-
-                  {/* Category pills */}
-                  <div className="flex items-center gap-1 flex-wrap">
-                    <button
-                      onClick={() => setSelectedCategory("all")}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                        selectedCategory === "all"
-                          ? "bg-secondary text-secondary-foreground"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      Alla
-                    </button>
-                    {Object.entries(categories).map(([id, cat]) => (
-                      <button
-                        key={id}
-                        onClick={() => setSelectedCategory(id)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                          selectedCategory === id
-                            ? "bg-secondary text-secondary-foreground"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                        }`}
-                      >
-                        {cat.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Sort */}
-                  <div className="flex items-center gap-1 sm:ml-auto text-xs">
+      <div className="pt-12 max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="flex gap-6 py-5">
+          {/* Main feed */}
+          <div className="flex-1 min-w-0">
+            <AnimatePresence mode="wait">
+              {activeThreadData ? (
+                <ThreadDetail
+                  key="detail"
+                  thread={activeThreadData}
+                  onBack={() => setActiveThread(null)}
+                  votedThreads={votedThreads}
+                  handleVote={handleVote}
+                  getVoteCount={getVoteCount}
+                />
+              ) : (
+                <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  {/* Sort tabs + filter */}
+                  <div className="bg-card border border-border rounded-xl p-2 mb-3 flex items-center gap-1 flex-wrap">
                     {[
-                      { id: "hot", label: "Hett" },
-                      { id: "new", label: "Nytt" },
-                      { id: "top", label: "Topp" },
-                    ].map((s) => (
+                      { id: "hot", label: "Hett", icon: Flame },
+                      { id: "new", label: "Nytt", icon: Clock },
+                      { id: "top", label: "Topp", icon: TrendingUp },
+                    ].map((s) => {
+                      const Icon = s.icon;
+                      return (
+                        <button
+                          key={s.id}
+                          onClick={() => setSortBy(s.id)}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                            sortBy === s.id
+                              ? "bg-muted text-foreground"
+                              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                          }`}
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                          {s.label}
+                        </button>
+                      );
+                    })}
+
+                    <div className="h-4 w-px bg-border mx-1 hidden sm:block" />
+
+                    {/* Category filter */}
+                    <div className="flex items-center gap-1 flex-wrap">
                       <button
-                        key={s.id}
-                        onClick={() => setSortBy(s.id)}
-                        className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
-                          sortBy === s.id
-                            ? "text-primary bg-primary/10"
+                        onClick={() => setSelectedCategory("all")}
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                          selectedCategory === "all"
+                            ? "bg-primary/10 text-primary"
                             : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        {s.label}
+                        Alla
                       </button>
+                      {Object.entries(categories).map(([id, cat]) => (
+                        <button
+                          key={id}
+                          onClick={() => setSelectedCategory(id)}
+                          className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                            selectedCategory === id
+                              ? "bg-primary/10 text-primary"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          <span className="text-sm">{cat.icon}</span>
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Mobile search */}
+                    <div className="relative md:hidden ml-auto">
+                      <Search className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                  </div>
+
+                  {/* Thread list */}
+                  <div className="space-y-2">
+                    {sortedThreads.map((thread, i) => (
+                      <ThreadCard
+                        key={thread.id}
+                        thread={thread}
+                        index={i}
+                        votedThreads={votedThreads}
+                        savedThreads={savedThreads}
+                        handleVote={handleVote}
+                        toggleSave={toggleSave}
+                        getVoteCount={getVoteCount}
+                        onClick={() => thread.replyData ? setActiveThread(thread.id) : undefined}
+                      />
                     ))}
                   </div>
-                </div>
 
-                {/* Thread list */}
-                <div className="space-y-px">
-                  {sortedThreads.map((thread, i) => {
-                    const cat = categories[thread.category];
-                    return (
-                      <motion.article
-                        key={thread.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: i * 0.03 }}
-                        onClick={() => thread.replyData ? setActiveThread(thread.id) : null}
-                        className={`group flex items-start gap-3 border-l-2 ${cat?.color || "border-l-primary"} pl-4 pr-4 py-3.5 transition-colors ${
-                          thread.replyData ? "cursor-pointer" : ""
-                        } hover:bg-card/80 rounded-r-lg ${
-                          thread.isPinned ? "bg-card/50" : ""
-                        }`}
-                      >
-                        {/* Votes */}
-                        <div className="hidden sm:flex flex-col items-center shrink-0 w-10 pt-0.5">
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleVote(thread.id, "up"); }}
-                            className={`p-0 transition-colors ${
-                              votedThreads[thread.id] === "up" ? "text-primary" : "text-muted-foreground/30 hover:text-primary"
-                            }`}
-                          >
-                            <ChevronUp className="w-4 h-4" />
-                          </button>
-                          <span className={`text-[11px] font-bold tabular-nums ${
-                            votedThreads[thread.id] === "up" ? "text-primary" :
-                            votedThreads[thread.id] === "down" ? "text-destructive" : "text-muted-foreground"
-                          }`}>
-                            {getVoteCount(thread)}
-                          </span>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleVote(thread.id, "down"); }}
-                            className={`p-0 transition-colors ${
-                              votedThreads[thread.id] === "down" ? "text-destructive" : "text-muted-foreground/30 hover:text-destructive"
-                            }`}
-                          >
-                            <ChevronDown className="w-4 h-4" />
-                          </button>
-                        </div>
+                  <div className="mt-6 text-center pb-8">
+                    <Button variant="outline" size="sm" className="text-muted-foreground text-xs">
+                      Visa fler trådar
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 text-[11px] text-muted-foreground mb-0.5">
-                            <span className="font-medium">{cat?.label}</span>
-                            <span>·</span>
-                            <span>{thread.author}</span>
-                            <AuthorBadge type={thread.authorBadge} />
-                            <span>·</span>
-                            <span>{thread.timeAgo}</span>
-                            {thread.isPinned && <Pin className="w-3 h-3 text-primary" />}
-                            {thread.isHot && <Flame className="w-3 h-3 text-primary" />}
-                          </div>
-
-                          <h3 className="text-sm font-medium text-foreground leading-snug group-hover:text-primary transition-colors">
-                            {thread.title}
-                          </h3>
-
-                          <div className="flex items-center gap-3 mt-1.5 text-[11px] text-muted-foreground">
-                            <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3" />{thread.replies}</span>
-                            <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{thread.views.toLocaleString("sv-SE")}</span>
-                            {thread.tags.map((tag) => (
-                              <span key={tag} className="hidden md:inline text-muted-foreground/60">#{tag}</span>
-                            ))}
-                            <button
-                              onClick={(e) => { e.stopPropagation(); toggleSave(thread.id); }}
-                              className={`ml-auto p-0.5 transition-colors ${
-                                savedThreads.has(thread.id) ? "text-primary" : "opacity-0 group-hover:opacity-100 hover:text-primary"
-                              }`}
-                            >
-                              <Bookmark className={`w-3.5 h-3.5 ${savedThreads.has(thread.id) ? "fill-primary" : ""}`} />
-                            </button>
-                          </div>
-                        </div>
-                      </motion.article>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-8 text-center">
-                  <Button variant="outline" size="sm" className="text-muted-foreground">
-                    Visa fler trådar
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Sidebar */}
+          {!activeThread && <CommunitySidebar />}
         </div>
       </div>
     </div>
