@@ -1415,9 +1415,54 @@ const Threads = () => {
     setActiveThread(null);
   };
 
+  // Create new thread
+  const handleCreateThread = useCallback((data: { title: string; content: string; category: string; tags: string[] }) => {
+    const newThread: Thread = {
+      id: `user-${Date.now()}`,
+      title: data.title,
+      author: "Gäst",
+      authorInitials: "G",
+      authorRole: "Användare",
+      category: data.category,
+      content: data.content,
+      likes: 0,
+      replies: 0,
+      views: 1,
+      timeAgo: "just nu",
+      tags: data.tags,
+      replyData: [],
+    };
+    setAllThreads(prev => [newThread, ...prev]);
+    setSelectedCategory(data.category);
+    setView("detail");
+    setActiveThread(newThread.id);
+  }, []);
+
+  // Add reply to thread
+  const handleAddReply = useCallback((threadId: string, content: string, quoted?: { author: string; content: string }) => {
+    const newReply: ReplyData = {
+      id: `reply-${Date.now()}`,
+      author: "Gäst",
+      authorInitials: "G",
+      content,
+      likes: 0,
+      timeAgo: "just nu",
+      quotedReply: quoted || undefined,
+    };
+    setAllThreads(prev => prev.map(t => {
+      if (t.id !== threadId) return t;
+      return {
+        ...t,
+        replies: t.replies + 1,
+        replyData: [...(t.replyData || []), newReply],
+      };
+    }));
+    toast.success("Ditt svar har publicerats!");
+  }, []);
+
   // Filtered & sorted threads
   const categoryThreads = selectedCategory
-    ? threads.filter((t) => t.category === selectedCategory)
+    ? allThreads.filter((t) => t.category === selectedCategory)
     : [];
 
   const sortedCategoryThreads = useMemo(() => {
