@@ -86,6 +86,143 @@ const initialThreads: Thread[] = [
     tags: ["karriärväxling", "UX"],
     industry: "Tech",
     experienceLevel: "Mid-level",
+    replyData: [
+      {
+        id: "k1", author: "JohanL", authorInitials: "JL", authorBadge: "verified",
+        content: "Otroligt inspirerande! Hur lång tid tog det från första kursen till att du fick jobbet?",
+        likes: 45, timeAgo: "2h",
+        children: [
+          { id: "k1-1", author: "EmmaK", authorInitials: "EK", isOP: true, content: "Ungefär 14 månader totalt. De första 6 månaderna var mest teori, sen började jag bygga projekt på riktigt.", likes: 32, timeAgo: "1h 50min", parentId: "k1" },
+          { id: "k1-2", author: "SaraB", authorInitials: "SB", content: "14 månader är faktiskt imponerande snabbt! Jobbade du heltid som lärare samtidigt?", likes: 18, timeAgo: "1h 40min", parentId: "k1-1", quotedReply: { author: "EmmaK", content: "Ungefär 14 månader totalt." } },
+          { id: "k1-3", author: "EmmaK", authorInitials: "EK", isOP: true, content: "Ja, heltid som lärare dagtid. Pluggade kvällar och helger. Var brutalt, men loven var guld värda.", likes: 28, timeAgo: "1h 30min", parentId: "k1-2" },
+        ],
+      },
+      {
+        id: "k2", author: "MarcusW", authorInitials: "MW",
+        content: "Funderar på samma resa men från ekonom. Vilka kurser rekommenderar du? Google UX Certificate eller Interaction Design Foundation?",
+        likes: 38, timeAgo: "2h",
+        children: [
+          { id: "k2-1", author: "EmmaK", authorInitials: "EK", isOP: true, content: "Google UX Certificate var min startpunkt — bra grundförståelse. Sen gick jag vidare med Designlab som har mentorer. IDF är bra för teori men saknar praktiska projekt.", likes: 41, timeAgo: "1h 45min", parentId: "k2" },
+          { id: "k2-2", author: "UXDesignerLisa", authorInitials: "UL", authorBadge: "verified", content: "Håller med om Google-certifikatet som start. Men viktigaste är att bygga en bra portfolio — det trumfar alla certifikat.", likes: 55, timeAgo: "1h 30min", parentId: "k2-1" },
+        ],
+      },
+      { id: "k3", author: "AnnaS", authorInitials: "AS", content: "Var det en stor löneskillnad? Lärarlöner är ju inte fantastiska men UX-designer kan väl variera mycket?", likes: 29, timeAgo: "2h 10min" },
+      {
+        id: "k4", author: "KristofferN", authorInitials: "KN", authorBadge: "top",
+        content: "Som rekryterare inom tech kan jag säga att karriärväxlare ofta har ett unikt perspektiv. Lärare specifikt är bra på att förklara komplexa saker — superviktigt i UX.",
+        likes: 67, timeAgo: "2h 15min",
+        children: [
+          { id: "k4-1", author: "DevPontus", authorInitials: "DP", content: "100% detta. Vår bästa UX:are var fd sjuksköterska. Empati och kommunikation slår allt.", likes: 34, timeAgo: "2h", parentId: "k4" },
+        ],
+      },
+      {
+        id: "k5", author: "NathalieR", authorInitials: "NR",
+        content: "Jag är lärare nu och har tänkt samma sak i typ 2 år men vågar inte ta steget. Hur hanterade du rädslan?",
+        likes: 52, timeAgo: "2h 20min",
+        children: [
+          { id: "k5-1", author: "EmmaK", authorInitials: "EK", isOP: true, content: "Jag började smått — en kurs i taget. Sa inte upp mig förrän jag hade fått ett jobberbjudande. Att ha en plan B gjorde det lättare.", likes: 44, timeAgo: "2h 5min", parentId: "k5" },
+          { id: "k5-2", author: "NathalieR", authorInitials: "NR", content: "Det låter klokt. Tror jag bygger upp det till något större i huvudet än vad det behöver vara.", likes: 19, timeAgo: "1h 55min", parentId: "k5-1" },
+        ],
+      },
+      { id: "k6", author: "FredrikÖ", authorInitials: "FÖ", content: "Grymt jobbat! Hur reagerade kollegor/chefer när du sa upp dig? Lärarbrist brukar ge skuldkänslor.", likes: 23, timeAgo: "2h 30min" },
+      {
+        id: "k7", author: "CarolineH", authorInitials: "CH", authorBadge: "verified",
+        content: "Bytte själv från jurist till produktdesigner för 3 år sedan. Bästa beslutet jag tagit. Saknar inget från advokatbyrån!",
+        likes: 71, timeAgo: "2h 35min",
+        children: [
+          { id: "k7-1", author: "JuristJohan", authorInitials: "JJ", content: "Wow, det är ett ännu större hopp! Hur lång tid tog din övergång?", likes: 15, timeAgo: "2h 20min", parentId: "k7" },
+          { id: "k7-2", author: "CarolineH", authorInitials: "CH", authorBadge: "verified", content: "Ca 18 månader. Gick ett bootcamp på Hyper Island parallellt med jobbet.", likes: 33, timeAgo: "2h 10min", parentId: "k7-1" },
+        ],
+      },
+      { id: "k8", author: "AlexD", authorInitials: "AD", content: "Vilka verktyg lärde du dig först? Figma antar jag?", likes: 14, timeAgo: "2h 40min" },
+      {
+        id: "k9", author: "OliviaE", authorInitials: "OE",
+        content: "Jag är förskollärare och drömmer om tjänstedesign. Tror du mina erfarenheter kan vara relevanta?",
+        likes: 31, timeAgo: "2h 45min",
+        children: [
+          { id: "k9-1", author: "EmmaK", authorInitials: "EK", isOP: true, content: "Absolut! Förskollärare har fantastisk empati och observation — grundläggande i design thinking. Kör på!", likes: 38, timeAgo: "2h 30min", parentId: "k9" },
+        ],
+      },
+      {
+        id: "k10", author: "DanielG", authorInitials: "DG",
+        content: "Fick du imposter syndrome i början? Hur hanterade du det bland folk med designutbildning?",
+        likes: 47, timeAgo: "3h",
+        children: [
+          { id: "k10-1", author: "EmmaK", authorInitials: "EK", isOP: true, content: "Massor! Första månaden var jag övertygad om att de gjort ett misstag. Men min chef sa att de anställde mig för mitt perspektiv, inte för att jag var en kopia av alla andra.", likes: 62, timeAgo: "2h 45min", parentId: "k10" },
+        ],
+      },
+      { id: "k11", author: "ViktorA", authorInitials: "VA", content: "Hur ser en typisk dag ut som UX-designer på Spotify? Nyfiken!", likes: 21, timeAgo: "3h 10min" },
+      { id: "k12", author: "ElinF", authorInitials: "EF", content: "Sparar denna tråd! Har funderat på att byta från marknadsföring till UX research.", likes: 16, timeAgo: "3h 15min" },
+      {
+        id: "k13", author: "TobiasK", authorInitials: "TK", authorBadge: "top",
+        content: "Tips till alla som vill byta: börja med att ta på er UX-uppgifter på nuvarande jobb. Frivillig redesign av interna verktyg t.ex. Bygger erfarenhet utan risk.",
+        likes: 83, timeAgo: "3h 20min",
+        children: [
+          { id: "k13-1", author: "RebeckaL", authorInitials: "RL", content: "Smart! Jag föreslog att redesigna vårt intranät och chefen sa ja direkt. Perfekt portfolio-projekt.", likes: 27, timeAgo: "3h 5min", parentId: "k13" },
+        ],
+      },
+      { id: "k14", author: "IbrahimM", authorInitials: "IM", content: "Hur viktigt var nätverkande i din jobbsökning? Kontakter eller ren ansökan?", likes: 19, timeAgo: "3h 30min" },
+      { id: "k15", author: "MalinP", authorInitials: "MP", content: "Fantastisk story! Hade du någon mentor under resan?", likes: 13, timeAgo: "3h 35min" },
+      {
+        id: "k16", author: "PatrikS", authorInitials: "PS",
+        content: "Jag gjorde liknande resa — från polis till frontend-utvecklare. Det går om man verkligen vill. Modet är det svåraste.",
+        likes: 56, timeAgo: "3h 40min",
+        children: [
+          { id: "k16-1", author: "SofiaJ", authorInitials: "SJ", content: "Från polis!? Det vill jag höra mer om! Starta en egen tråd?", likes: 22, timeAgo: "3h 25min", parentId: "k16" },
+          { id: "k16-2", author: "PatrikS", authorInitials: "PS", content: "Haha kanske! Kortversionen: tröttnade på skiftjobb, lärde mig koda via freeCodeCamp, fick internship efter 10 månader.", likes: 31, timeAgo: "3h 15min", parentId: "k16-1" },
+        ],
+      },
+      { id: "k17", author: "AmandaW", authorInitials: "AW", content: "Var det svårt att bygga portfolio utan riktig arbetslivserfarenhet inom UX?", likes: 24, timeAgo: "4h" },
+      { id: "k18", author: "OskarH", authorInitials: "OH", content: "Hur många jobb sökte du innan du fick napp?", likes: 17, timeAgo: "4h 10min" },
+      {
+        id: "k19", author: "JennyT", authorInitials: "JT", authorBadge: "verified",
+        content: "Som UX-lead vill jag säga: vi ÄLSKAR karriärväxlare. Ni tar med er perspektiv vi inte kan få från designskolor. Fortsätt söka — rätt företag ser värdet.",
+        likes: 91, timeAgo: "4h 15min",
+      },
+      { id: "k20", author: "SimonR", authorInitials: "SR", content: "Vilken lön landade du på som junior UX-designer? Om du vill dela såklart.", likes: 33, timeAgo: "4h 20min" },
+      { id: "k21", author: "HannaK", authorInitials: "HK", content: "Använder du dina pedagogiska skills i UX-arbetet? T.ex. user onboarding?", likes: 15, timeAgo: "4h 30min" },
+      {
+        id: "k22", author: "RasmusB", authorInitials: "RB",
+        content: "Det behöver inte vara allt eller inget. Jag jobbar 80% som lärare och frilansdesignar 20%. Bästa av två världar.",
+        likes: 42, timeAgo: "4h 35min",
+        children: [
+          { id: "k22-1", author: "EmmaK", authorInitials: "EK", isOP: true, content: "Det är ett jättebra alternativ! Önskar att jag hade vetat om det som en möjlighet tidigare.", likes: 19, timeAgo: "4h 20min", parentId: "k22" },
+        ],
+      },
+      { id: "k23", author: "ÅsaL", authorInitials: "ÅL", content: "Hur ser arbetsmarknaden ut just nu för junior UX-designers? Hör blandade signaler.", likes: 26, timeAgo: "4h 40min" },
+      { id: "k24", author: "ErikV", authorInitials: "EV", content: "Snyggt jobbat! Hur var intervjuprocessen? Vad frågade de om?", likes: 11, timeAgo: "4h 45min" },
+      { id: "k25", author: "KlaraM", authorInitials: "KM", content: "Jag går en bootcamp nu — detta ger mig hopp! Tack för att du delar din resa.", likes: 20, timeAgo: "5h" },
+      {
+        id: "k26", author: "MagnusF", authorInitials: "MF", authorBadge: "top",
+        content: "Viktigt att nämna: UX är brett. Research, interaction design, service design, content design... Hitta er nisch tidigt.",
+        likes: 58, timeAgo: "5h 10min",
+      },
+      { id: "k27", author: "LinnéaS", authorInitials: "LS", content: "Hade du portfolio-review med någon innan du sökte? Eller körde du solo?", likes: 9, timeAgo: "5h 15min" },
+      { id: "k28", author: "AntonJ", authorInitials: "AJ", content: "Hur var onboardingen på Spotify? Kände du dig förberedd?", likes: 14, timeAgo: "5h 20min" },
+      { id: "k29", author: "IdaG", authorInitials: "IG", content: "Tråden jag behövde idag. Tack alla som delar! ❤️", likes: 37, timeAgo: "5h 30min" },
+      {
+        id: "k30", author: "NiklasE", authorInitials: "NE",
+        content: "Obs att Stockholm vs resten av Sverige är helt olika marknader. I Stockholm finns fler möjligheter men också mycket mer konkurrens.",
+        likes: 44, timeAgo: "5h 35min",
+        children: [
+          { id: "k30-1", author: "LenaW", authorInitials: "LW", content: "Sant! Jag bor i Umeå och det finns typ 3 UX-jobb per år här. Remote är räddningen.", likes: 21, timeAgo: "5h 20min", parentId: "k30" },
+        ],
+      },
+      { id: "k31", author: "FilipA", authorInitials: "FA", content: "Vad tycker du om AI:s påverkan på UX-yrket? Orolig att det automatiseras.", likes: 28, timeAgo: "5h 40min" },
+      { id: "k32", author: "EllaT", authorInitials: "ET", content: "Gick du på några meetups eller konferenser? UX-communityt i Stockholm verkar aktivt.", likes: 12, timeAgo: "5h 45min" },
+      { id: "k33", author: "GustavL", authorInitials: "GL", content: "Jag byter från säljare till UX just nu. Tack för inspirationen!", likes: 18, timeAgo: "6h" },
+      { id: "k34", author: "MiaR", authorInitials: "MR", content: "Hur satte du upp din portfolio? Egen hemsida eller Behance/Dribbble?", likes: 22, timeAgo: "6h 10min" },
+      { id: "k35", author: "JoelK", authorInitials: "JK", content: "Fint att se att det går! Har du kontakt med andra fd lärare som bytt bana?", likes: 8, timeAgo: "6h 20min" },
+      {
+        id: "k36", author: "SandraP", authorInitials: "SP", authorBadge: "verified",
+        content: "Pro-tip: gå med i ADPList för gratis mentorship. Finns otroligt generösa designers som hjälper karriärväxlare.",
+        likes: 63, timeAgo: "6h 30min",
+      },
+      { id: "k37", author: "LudvigM", authorInitials: "LM2", content: "Läste du nåt om tillgänglighet (a11y)? Känslan är att det blir allt viktigare.", likes: 16, timeAgo: "6h 35min" },
+      { id: "k38", author: "WilmaÖ", authorInitials: "WÖ", content: "Saknar du läraryrket ibland? Eller var det en ren lättnad?", likes: 25, timeAgo: "7h" },
+      { id: "k39", author: "MaxN", authorInitials: "MN", content: "Hur många timmar i veckan la du på studier utanför jobbet?", likes: 19, timeAgo: "7h 10min" },
+      { id: "k40", author: "FridaC", authorInitials: "FC", content: "Tråden blev ju en hel masterclass! Borde pinnas. 📌", likes: 41, timeAgo: "7h 20min" },
+    ],
   },
   {
     id: "2",
