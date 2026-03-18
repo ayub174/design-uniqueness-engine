@@ -1693,7 +1693,7 @@ const Threads = () => {
                         <div className="text-center py-16 bg-card border border-border rounded-xl">
                           <MessageSquare className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
                           <p className="text-muted-foreground text-sm">Inga trådar i denna kategori ännu</p>
-                          <Button size="sm" className="mt-4 gap-2 text-xs">
+                          <Button size="sm" className="mt-4 gap-2 text-xs" onClick={() => setNewThreadOpen(true)}>
                             <Plus className="w-3.5 h-3.5" /> Starta den första diskussionen
                           </Button>
                         </div>
