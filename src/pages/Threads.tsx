@@ -1089,10 +1089,10 @@ const CategorySidebar = ({
   onNewThread: () => void;
 }) => (
   <motion.aside
-    animate={{ width: collapsed ? 0 : "30%" }}
+    animate={{ width: collapsed ? 0 : "24%" }}
     transition={{ duration: 0.25, ease: "easeInOut" }}
     className="shrink-0 overflow-hidden border-r border-border bg-card/50 hidden md:block"
-    style={{ minWidth: collapsed ? 0 : "240px", maxWidth: collapsed ? 0 : "360px" }}
+    style={{ minWidth: collapsed ? 0 : "200px", maxWidth: collapsed ? 0 : "288px" }}
   >
     <div style={{ minWidth: "240px" }} className="h-full flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-border">
