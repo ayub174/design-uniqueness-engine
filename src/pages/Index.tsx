@@ -177,24 +177,24 @@ const Index = () => {
 
               {/* Search mode toggle */}
               <motion.div variants={fadeUp} custom={3} className="mt-10">
-                <div className="flex items-center gap-1 mb-3 bg-card border border-border p-1 rounded-full w-fit">
+                <div className="flex items-center gap-1 mb-4 bg-card/80 backdrop-blur-sm border border-border p-1 rounded-full w-fit shadow-sm">
                   <button
                     onClick={() => setSearchMode("standard")}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                    className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all duration-200 ${
                       searchMode === "standard"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.4)]"
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/60"
                     }`}
                   >
-                    <Search className="h-3.5 w-3.5" />
+                    <SlidersHorizontal className="h-3.5 w-3.5" />
                     Vanlig sök
                   </button>
                   <button
                     onClick={() => setSearchMode("natural")}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                    className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all duration-200 ${
                       searchMode === "natural"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.4)]"
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/60"
                     }`}
                   >
                     <Sparkles className="h-3.5 w-3.5" />
@@ -202,27 +202,28 @@ const Index = () => {
                   </button>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 p-2 bg-card/80 backdrop-blur-sm border border-border rounded-2xl shadow-[0_2px_16px_-4px_hsl(var(--foreground)/0.08)]">
                   {searchMode === "standard" ? (
                     <>
-                      <div className="relative flex-1">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <div className="relative flex-1 group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" />
                         <Input
                           placeholder="Titel, kompetens eller företag..."
-                          className="pl-11 h-14 text-base bg-card border-border"
+                          className="pl-11 h-13 text-base bg-background/60 border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:bg-background hover:bg-background/80 transition-all duration-200 rounded-xl"
                         />
                       </div>
-                      <div className="relative flex-1 sm:max-w-[200px]">
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <div className="hidden sm:block w-px bg-border self-stretch my-2" />
+                      <div className="relative flex-1 sm:max-w-[200px] group">
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" />
                         <Input
                           placeholder="Stad..."
-                          className="pl-11 h-14 text-base bg-card border-border"
+                          className="pl-11 h-13 text-base bg-background/60 border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:bg-background hover:bg-background/80 transition-all duration-200 rounded-xl"
                         />
                       </div>
                     </>
                   ) : (
-                    <div className="relative flex-1">
-                      <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="relative flex-1 group">
+                      <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" />
                       <Input
                         value={isUserTyping ? naturalInputValue : typedText}
                         onChange={(e) => {
@@ -237,11 +238,11 @@ const Index = () => {
                           if (!naturalInputValue) setIsUserTyping(false);
                         }}
                         placeholder=""
-                        className="pl-11 h-14 text-base bg-card border-border"
+                        className="pl-11 h-13 text-base bg-background/60 border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:bg-background hover:bg-background/80 transition-all duration-200 rounded-xl"
                       />
                     </div>
                   )}
-                  <Button className="h-14 px-8 text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
+                  <Button className="h-13 px-8 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)] active:scale-[0.98] gap-2 rounded-xl transition-all duration-200">
                     {searchMode === "standard" ? "Sök jobb" : "Hitta matchningar"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -251,13 +252,13 @@ const Index = () => {
                   {[
                     { icon: MapPin, label: "Ort" },
                     { icon: Building2, label: "Yrke" },
-                    { icon: SlidersHorizontal, label: "Filter" },
+                    { icon: Filter, label: "Filter" },
                     { icon: ArrowUpDown, label: "Nyast först" },
                     { icon: Bell, label: "Bevaka" },
                   ].map((filter) => (
                     <button
                       key={filter.label}
-                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full border border-border bg-card text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full border border-border bg-card/60 backdrop-blur-sm text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.3)] active:scale-[0.97] transition-all duration-200"
                     >
                       <filter.icon className="h-3.5 w-3.5" />
                       {filter.label}
