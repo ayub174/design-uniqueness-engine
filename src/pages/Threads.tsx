@@ -989,7 +989,17 @@ const ThreadDetail = ({
           className="min-h-[80px] bg-background border-border resize-none mb-3 text-sm rounded-lg"
         />
         <div className="flex justify-end">
-          <Button size="sm" className="gap-2 px-5">
+          <Button
+            size="sm"
+            className="gap-2 px-5"
+            disabled={!replyText.trim()}
+            onClick={() => {
+              if (!replyText.trim()) return;
+              onAddReply(thread.id, replyText.trim(), quotedReply || undefined);
+              setReplyText("");
+              setQuotedReply(null);
+            }}
+          >
             <Send className="w-3.5 h-3.5" /> {quotedReply ? "Svara med citat" : "Svara"}
           </Button>
         </div>
