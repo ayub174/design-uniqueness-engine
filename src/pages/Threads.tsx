@@ -386,8 +386,8 @@ const CategoryOverview = ({
       })).filter((g) => g.items.length > 0)
     : grouped;
 
-  const totalThreads = threads.length;
-  const totalReplies = threads.reduce((s, t) => s + t.replies, 0);
+  const totalThreads = allThreads.length;
+  const totalReplies = allThreads.reduce((s, t) => s + t.replies, 0);
 
   return (
     <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
