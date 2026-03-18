@@ -1602,7 +1602,15 @@ const Threads = () => {
             >
               Forum
             </button>
-            {view !== "overview" && selectedCatData && (
+            {view === "create" && (
+              <>
+                <ChevronRight className="hidden sm:block w-3.5 h-3.5 text-muted-foreground/40" />
+                <span className="hidden sm:block text-sm font-medium text-foreground">
+                  Ny diskussion
+                </span>
+              </>
+            )}
+            {view !== "overview" && view !== "create" && selectedCatData && (
               <>
                 <ChevronRight className="hidden sm:block w-3.5 h-3.5 text-muted-foreground/40" />
                 <button
