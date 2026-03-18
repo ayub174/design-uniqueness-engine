@@ -15,8 +15,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
@@ -1164,118 +1162,257 @@ const InfoPanel = () => (
   </div>
 );
 
-/* ─── New Thread Dialog ─── */
-const NewThreadDialog = ({
-  open,
-  onOpenChange,
+/* ─── Create Thread View (full page, Reddit-inspired layout) ─── */
+const CreateThreadView = ({
   onSubmit,
+  onCancel,
   defaultCategory,
 }: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   onSubmit: (thread: { title: string; content: string; category: string; tags: string[] }) => void;
+  onCancel: () => void;
   defaultCategory: string | null;
 }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState(defaultCategory || "");
   const [tagsInput, setTagsInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [titleFocused, setTitleFocused] = useState(false);
+  const [contentFocused, setContentFocused] = useState(false);
+
+  const canSubmit = title.trim().length >= 5 && content.trim().length >= 10 && !!category;
+
+  const handleAddTag = () => {
+    const tag = tagsInput.trim().toLowerCase();
+    if (tag && tags.length < 5 && !tags.includes(tag)) {
+      setTags([...tags, tag]);
+      setTagsInput("");
+    }
+  };
+
+  const handleTagKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      handleAddTag();
+    }
+    if (e.key === "Backspace" && !tagsInput && tags.length > 0) {
+      setTags(tags.slice(0, -1));
+    }
+  };
+
+  const removeTag = (tag: string) => setTags(tags.filter(t => t !== tag));
 
   const handleSubmit = () => {
-    if (!title.trim() || !content.trim() || !category) {
-      toast.error("Fyll i alla obligatoriska fält");
+    if (!canSubmit) {
+      if (!category) toast.error("Välj en kategori");
+      else if (title.trim().length < 5) toast.error("Titeln måste vara minst 5 tecken");
+      else if (content.trim().length < 10) toast.error("Innehållet måste vara minst 10 tecken");
       return;
     }
-    if (title.trim().length < 5) {
-      toast.error("Titeln måste vara minst 5 tecken");
-      return;
-    }
-    if (content.trim().length < 10) {
-      toast.error("Innehållet måste vara minst 10 tecken");
-      return;
-    }
-    const tags = tagsInput.split(",").map(t => t.trim()).filter(Boolean).slice(0, 5);
     onSubmit({ title: title.trim(), content: content.trim(), category, tags });
-    setTitle("");
-    setContent("");
-    setTagsInput("");
-    onOpenChange(false);
     toast.success("Tråden har skapats!");
   };
 
-  // Reset category when dialog opens with a new default
   React.useEffect(() => {
-    if (open && defaultCategory) setCategory(defaultCategory);
-  }, [open, defaultCategory]);
+    if (defaultCategory) setCategory(defaultCategory);
+  }, [defaultCategory]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="font-serif text-lg">Starta ny diskussion</DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-4 mt-2">
+    <motion.div
+      key="create"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.25 }}
+      className="max-w-2xl mx-auto"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onCancel}
+            className="flex items-center justify-center w-9 h-9 rounded-xl bg-card border border-border hover:bg-muted transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+          </button>
           <div>
-            <label className="text-xs font-medium text-foreground mb-1.5 block">Kategori *</label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Välj kategori..." />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(categories).map(([catId, cat]) => (
-                  <SelectItem key={catId} value={catId}>
-                    {cat.label} — {cat.description}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <h1 className="font-serif text-xl sm:text-2xl font-semibold text-foreground">
+              Starta diskussion
+            </h1>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Dela en fråga, erfarenhet eller tanke med communityn
+            </p>
           </div>
+        </div>
+      </div>
 
-          <div>
-            <label className="text-xs font-medium text-foreground mb-1.5 block">Titel *</label>
-            <Input
-              placeholder="En tydlig och beskrivande titel..."
+      {/* Form card */}
+      <div className="bg-card border border-border rounded-2xl overflow-hidden">
+        {/* Category selector */}
+        <div className="px-5 pt-5 pb-4 border-b border-border">
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">
+            Välj kategori
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(categories).map(([catId, cat]) => {
+              const CatIcon = cat.icon;
+              const isSelected = category === catId;
+              return (
+                <button
+                  key={catId}
+                  onClick={() => setCategory(catId)}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all border ${
+                    isSelected
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-muted/50"
+                  }`}
+                >
+                  <CatIcon className={`w-3.5 h-3.5 ${isSelected ? "text-primary-foreground" : ""}`} />
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Title */}
+        <div className="px-5 pt-5 pb-1">
+          <div className={`relative rounded-xl border transition-colors ${
+            titleFocused ? "border-primary bg-background" : "border-border bg-muted/30"
+          }`}>
+            <input
+              type="text"
+              placeholder="Titel *"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              maxLength={200}
-              className="text-sm"
+              onFocus={() => setTitleFocused(true)}
+              onBlur={() => setTitleFocused(false)}
+              maxLength={300}
+              className="w-full px-4 py-3.5 bg-transparent text-foreground text-base font-medium placeholder:text-muted-foreground/50 focus:outline-none rounded-xl"
             />
-            <p className="text-[10px] text-muted-foreground mt-1">{title.length}/200</p>
           </div>
+          <div className="flex items-center justify-between mt-1.5 px-1">
+            {title.length > 0 && title.length < 5 && (
+              <p className="text-[11px] text-destructive">Minst 5 tecken</p>
+            )}
+            <p className="text-[11px] text-muted-foreground/50 ml-auto tabular-nums">
+              {title.length}/300
+            </p>
+          </div>
+        </div>
 
-          <div>
-            <label className="text-xs font-medium text-foreground mb-1.5 block">Innehåll *</label>
+        {/* Tags */}
+        <div className="px-5 pb-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary/10 text-primary rounded-lg text-xs font-medium"
+              >
+                #{tag}
+                <button
+                  onClick={() => removeTag(tag)}
+                  className="hover:text-destructive transition-colors ml-0.5"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            {tags.length < 5 && (
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder={tags.length === 0 ? "Lägg till taggar..." : "Lägg till fler..."}
+                  value={tagsInput}
+                  onChange={(e) => setTagsInput(e.target.value.replace(",", ""))}
+                  onKeyDown={handleTagKeyDown}
+                  onBlur={handleAddTag}
+                  maxLength={30}
+                  className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none py-1 w-32"
+                />
+              </div>
+            )}
+          </div>
+          {tags.length > 0 && (
+            <p className="text-[10px] text-muted-foreground/40 mt-1">{tags.length}/5 taggar</p>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="px-5 pb-5">
+          <div className={`relative rounded-xl border transition-colors ${
+            contentFocused ? "border-primary bg-background" : "border-border bg-muted/30"
+          }`}>
             <Textarea
-              placeholder="Beskriv din fråga, erfarenhet eller tanke i detalj..."
+              placeholder="Beskriv din fråga, erfarenhet eller tanke..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              onFocus={() => setContentFocused(true)}
+              onBlur={() => setContentFocused(false)}
               maxLength={5000}
-              className="min-h-[140px] text-sm resize-none"
-            />
-            <p className="text-[10px] text-muted-foreground mt-1">{content.length}/5000</p>
-          </div>
-
-          <div>
-            <label className="text-xs font-medium text-foreground mb-1.5 block">Taggar (valfritt)</label>
-            <Input
-              placeholder="karriär, tips, diskussion (kommaseparerade)"
-              value={tagsInput}
-              onChange={(e) => setTagsInput(e.target.value)}
-              maxLength={100}
-              className="text-sm"
+              className="w-full min-h-[200px] px-4 py-3.5 bg-transparent text-foreground text-sm leading-relaxed placeholder:text-muted-foreground/50 focus:outline-none border-0 focus-visible:ring-0 resize-none rounded-xl"
             />
           </div>
+          <div className="flex items-center justify-between mt-1.5 px-1">
+            {content.length > 0 && content.length < 10 && (
+              <p className="text-[11px] text-destructive">Minst 10 tecken</p>
+            )}
+            <p className="text-[11px] text-muted-foreground/50 ml-auto tabular-nums">
+              {content.length}/5000
+            </p>
+          </div>
+        </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Avbryt</Button>
-            <Button size="sm" className="gap-2" onClick={handleSubmit}>
-              <Send className="w-3.5 h-3.5" /> Publicera
+        {/* Guidelines + Actions */}
+        <div className="px-5 pb-5 border-t border-border pt-4">
+          <div className="flex items-start gap-3 mb-5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 shrink-0 mt-0.5">
+              <Lightbulb className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-xs font-medium text-foreground mb-1">Tips för ett bra inlägg</p>
+              <ul className="text-[11px] text-muted-foreground space-y-0.5">
+                <li>• Var tydlig och specifik i din titel</li>
+                <li>• Ge tillräckligt med kontext i brödtexten</li>
+                <li>• Använd relevanta taggar så fler hittar tråden</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-10 px-5 text-sm rounded-xl"
+              onClick={onCancel}
+            >
+              Avbryt
+            </Button>
+            <Button
+              size="sm"
+              className={`h-10 px-6 text-sm rounded-xl gap-2 transition-all ${
+                canSubmit
+                  ? "shadow-md hover:shadow-lg"
+                  : "opacity-50 cursor-not-allowed"
+              }`}
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+            >
+              <Send className="w-4 h-4" />
+              Publicera
             </Button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+
+      {/* Community guidelines */}
+      <div className="mt-4 px-1">
+        <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
+          Genom att publicera godkänner du Chappies communityregler. Var professionell, respektfull
+          och dela konkreta erfarenheter.
+        </p>
+      </div>
+    </motion.div>
   );
 };
 
@@ -1285,7 +1422,7 @@ const NewThreadDialog = ({
 const Threads = () => {
   const isMobile = useIsMobile();
   const [allThreads, setAllThreads] = useState<Thread[]>(initialThreads);
-  const [view, setView] = useState<"overview" | "category" | "detail">("overview");
+  const [view, setView] = useState<"overview" | "category" | "detail" | "create">("overview");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeThread, setActiveThread] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("popular");
@@ -1295,7 +1432,6 @@ const Threads = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [newThreadOpen, setNewThreadOpen] = useState(false);
 
   const toggleLike = (id: string) => {
     setLikedThreads((prev) => {
@@ -1448,7 +1584,7 @@ const Threads = () => {
                     view={view}
                     onClose={() => setMobileMenuOpen(false)}
                     allThreads={allThreads}
-                    onNewThread={() => setNewThreadOpen(true)}
+                    onNewThread={() => { setMobileMenuOpen(false); setView("create"); }}
                   />
                 </SheetContent>
               </Sheet>
@@ -1464,7 +1600,15 @@ const Threads = () => {
             >
               Forum
             </button>
-            {view !== "overview" && selectedCatData && (
+            {view === "create" && (
+              <>
+                <ChevronRight className="hidden sm:block w-3.5 h-3.5 text-muted-foreground/40" />
+                <span className="hidden sm:block text-sm font-medium text-foreground">
+                  Ny diskussion
+                </span>
+              </>
+            )}
+            {view !== "overview" && view !== "create" && selectedCatData && (
               <>
                 <ChevronRight className="hidden sm:block w-3.5 h-3.5 text-muted-foreground/40" />
                 <button
@@ -1495,7 +1639,7 @@ const Threads = () => {
             onBackToOverview={handleBackToOverview}
             view={view}
             allThreads={allThreads}
-            onNewThread={() => setNewThreadOpen(true)}
+            onNewThread={() => setView("create")}
           />
         )}
 
@@ -1519,7 +1663,20 @@ const Threads = () => {
             <div className="flex gap-6">
               <div className="flex-1 min-w-0">
                 <AnimatePresence mode="wait">
-                  {view === "detail" && activeThreadData ? (
+                  {view === "create" ? (
+                    <CreateThreadView
+                      key="create"
+                      onSubmit={handleCreateThread}
+                      onCancel={() => {
+                        if (selectedCategory) {
+                          setView("category");
+                        } else {
+                          setView("overview");
+                        }
+                      }}
+                      defaultCategory={selectedCategory}
+                    />
+                  ) : view === "detail" && activeThreadData ? (
                     <ThreadDetail
                       key="detail"
                       thread={activeThreadData}
@@ -1570,7 +1727,7 @@ const Threads = () => {
                             );
                           })}
                         </div>
-                        <Button size="sm" className="ml-auto gap-2 text-xs h-8 px-4" onClick={() => setNewThreadOpen(true)}>
+                        <Button size="sm" className="ml-auto gap-2 text-xs h-8 px-4" onClick={() => setView("create")}>
                           <Plus className="w-3.5 h-3.5" /> Ny tråd
                         </Button>
                       </div>
@@ -1602,7 +1759,7 @@ const Threads = () => {
                         <div className="text-center py-16 bg-card border border-border rounded-xl">
                           <MessageSquare className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
                           <p className="text-muted-foreground text-sm">Inga trådar i denna kategori ännu</p>
-                          <Button size="sm" className="mt-4 gap-2 text-xs" onClick={() => setNewThreadOpen(true)}>
+                          <Button size="sm" className="mt-4 gap-2 text-xs" onClick={() => setView("create")}>
                             <Plus className="w-3.5 h-3.5" /> Starta den första diskussionen
                           </Button>
                         </div>
@@ -1620,7 +1777,7 @@ const Threads = () => {
                 </AnimatePresence>
               </div>
 
-              {view !== "detail" && (
+              {view !== "detail" && view !== "create" && (
                 <div className="hidden xl:block w-64 shrink-0">
                   <InfoPanel />
                 </div>
@@ -1630,12 +1787,6 @@ const Threads = () => {
         </div>
       </div>
 
-      <NewThreadDialog
-        open={newThreadOpen}
-        onOpenChange={setNewThreadOpen}
-        onSubmit={handleCreateThread}
-        defaultCategory={selectedCategory}
-      />
     </div>
   );
 };
