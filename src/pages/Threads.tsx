@@ -1598,7 +1598,7 @@ const Threads = () => {
       {/* Two-column layout */}
       <div className="pt-14 flex flex-1 max-w-[1400px] mx-auto w-full">
         {/* Left sidebar — desktop only */}
-        {!isMobile && (
+        {!isMobile && view !== "detail" && (
           <CategorySidebar
             collapsed={sidebarCollapsed}
             onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -1614,7 +1614,7 @@ const Threads = () => {
         {/* Main content area */}
         <div className="flex-1 min-w-0 flex flex-col">
           {/* Collapsed sidebar toggle — desktop only */}
-          {!isMobile && sidebarCollapsed && (
+          {!isMobile && sidebarCollapsed && view !== "detail" && (
             <div className="border-b border-border px-4 py-2">
               <button
                 onClick={() => setSidebarCollapsed(false)}
