@@ -1692,6 +1692,7 @@ const Threads = () => {
                       onSelectCategory={handleSelectCategory}
                       searchQuery={searchQuery}
                       setSearchQuery={setSearchQuery}
+                      allThreads={allThreads}
                     />
                   )}
                 </AnimatePresence>
