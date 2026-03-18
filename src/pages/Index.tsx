@@ -202,27 +202,28 @@ const Index = () => {
                   </button>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 p-2 bg-card/80 backdrop-blur-sm border border-border rounded-2xl shadow-[0_2px_16px_-4px_hsl(var(--foreground)/0.08)]">
                   {searchMode === "standard" ? (
                     <>
-                      <div className="relative flex-1">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <div className="relative flex-1 group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" />
                         <Input
                           placeholder="Titel, kompetens eller företag..."
-                          className="pl-11 h-14 text-base bg-card border-border"
+                          className="pl-11 h-13 text-base bg-background/60 border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:bg-background hover:bg-background/80 transition-all duration-200 rounded-xl"
                         />
                       </div>
-                      <div className="relative flex-1 sm:max-w-[200px]">
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <div className="hidden sm:block w-px bg-border self-stretch my-2" />
+                      <div className="relative flex-1 sm:max-w-[200px] group">
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" />
                         <Input
                           placeholder="Stad..."
-                          className="pl-11 h-14 text-base bg-card border-border"
+                          className="pl-11 h-13 text-base bg-background/60 border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:bg-background hover:bg-background/80 transition-all duration-200 rounded-xl"
                         />
                       </div>
                     </>
                   ) : (
-                    <div className="relative flex-1">
-                      <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="relative flex-1 group">
+                      <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" />
                       <Input
                         value={isUserTyping ? naturalInputValue : typedText}
                         onChange={(e) => {
@@ -237,11 +238,11 @@ const Index = () => {
                           if (!naturalInputValue) setIsUserTyping(false);
                         }}
                         placeholder=""
-                        className="pl-11 h-14 text-base bg-card border-border"
+                        className="pl-11 h-13 text-base bg-background/60 border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:bg-background hover:bg-background/80 transition-all duration-200 rounded-xl"
                       />
                     </div>
                   )}
-                  <Button className="h-14 px-8 text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
+                  <Button className="h-13 px-8 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)] active:scale-[0.98] gap-2 rounded-xl transition-all duration-200">
                     {searchMode === "standard" ? "Sök jobb" : "Hitta matchningar"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
