@@ -244,7 +244,7 @@ const initialThreads: Thread[] = [
     authorInitials: "FF",
     authorRole: "Frilansare",
     authorBadge: "top",
-    category: "workplace",
+    category: "arbetsliv",
     content: "Har jobbat remote i 2 år nu och funderar på att gå tillbaka till kontor. Saknar den sociala biten men älskar friheten.",
     likes: 145,
     replies: 82,
