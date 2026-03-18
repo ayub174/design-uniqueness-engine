@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MessageSquare, Eye, Search, ArrowLeft, Bookmark, Reply, Share2,
@@ -15,7 +15,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 interface ReplyData {
   id: string;
@@ -87,7 +90,7 @@ const categories: Record<string, CategoryDef> = {
 };
 
 /* ─── Thread data ─── */
-const threads: Thread[] = [
+const initialThreads: Thread[] = [
   {
     id: "1",
     title: "Bytte från lärare till UX-designer — så här gick jag tillväga",
@@ -315,8 +318,8 @@ const timeToMinutes = (t: string) => {
   return 9999;
 };
 
-const getCategoryStats = (catId: string) => {
-  const catThreads = threads.filter((t) => t.category === catId);
+const getCategoryStats = (catId: string, threadList: Thread[]) => {
+  const catThreads = threadList.filter((t) => t.category === catId);
   const totalReplies = catThreads.reduce((sum, t) => sum + t.replies, 0);
   const latestThread = [...catThreads].sort((a, b) => timeToMinutes(a.timeAgo) - timeToMinutes(b.timeAgo))[0];
   return { threadCount: catThreads.length, replyCount: totalReplies, latestThread };
@@ -359,10 +362,12 @@ const CategoryOverview = ({
   onSelectCategory,
   searchQuery,
   setSearchQuery,
+  allThreads,
 }: {
   onSelectCategory: (id: string) => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  allThreads: Thread[];
 }) => {
   const grouped = Object.entries(categoryGroups).map(([groupId, group]) => ({
     ...group,
@@ -381,8 +386,8 @@ const CategoryOverview = ({
       })).filter((g) => g.items.length > 0)
     : grouped;
 
-  const totalThreads = threads.length;
-  const totalReplies = threads.reduce((s, t) => s + t.replies, 0);
+  const totalThreads = allThreads.length;
+  const totalReplies = allThreads.reduce((s, t) => s + t.replies, 0);
 
   return (
     <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -440,7 +445,7 @@ const CategoryOverview = ({
 
               <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
                 {group.items.map(([catId, cat]) => {
-                  const stats = getCategoryStats(catId);
+                  const stats = getCategoryStats(catId, allThreads);
                   const CatIcon = cat.icon;
                   const latest = stats.latestThread;
 
@@ -807,11 +812,13 @@ const ThreadDetail = ({
   onBack,
   likedThreads,
   toggleLike,
+  onAddReply,
 }: {
   thread: Thread;
   onBack: () => void;
   likedThreads: Set<string>;
   toggleLike: (id: string) => void;
+  onAddReply: (threadId: string, content: string, quoted?: { author: string; content: string }) => void;
 }) => {
   const [replyLikes, setReplyLikes] = useState<Set<string>>(new Set());
   const [replyText, setReplyText] = useState("");
@@ -982,7 +989,17 @@ const ThreadDetail = ({
           className="min-h-[80px] bg-background border-border resize-none mb-3 text-sm rounded-lg"
         />
         <div className="flex justify-end">
-          <Button size="sm" className="gap-2 px-5">
+          <Button
+            size="sm"
+            className="gap-2 px-5"
+            disabled={!replyText.trim()}
+            onClick={() => {
+              if (!replyText.trim()) return;
+              onAddReply(thread.id, replyText.trim(), quotedReply || undefined);
+              setReplyText("");
+              setQuotedReply(null);
+            }}
+          >
             <Send className="w-3.5 h-3.5" /> {quotedReply ? "Svara med citat" : "Svara"}
           </Button>
         </div>
@@ -1013,12 +1030,16 @@ const SidebarContent = ({
   onBackToOverview,
   view,
   onClose,
+  allThreads,
+  onNewThread,
 }: {
   selectedCategory: string | null;
   onSelectCategory: (id: string) => void;
   onBackToOverview: () => void;
   view: string;
   onClose?: () => void;
+  allThreads: Thread[];
+  onNewThread?: () => void;
 }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
     new Set(Object.keys(categoryGroups))
@@ -1103,7 +1124,7 @@ const SidebarContent = ({
                     {group.items.map(([catId, cat]) => {
                       const CatIcon = cat.icon;
                       const isActive = selectedCategory === catId && view !== "overview";
-                      const stats = getCategoryStats(catId);
+                      const stats = getCategoryStats(catId, allThreads);
                       return (
                         <button
                           key={catId}
@@ -1132,7 +1153,7 @@ const SidebarContent = ({
 
       {/* Sidebar footer */}
       <div className="p-4 border-t border-border">
-        <Button size="sm" className="w-full gap-2 text-xs">
+        <Button size="sm" className="w-full gap-2 text-xs" onClick={() => { onNewThread?.(); onClose?.(); }}>
           <Plus className="w-3.5 h-3.5" /> Starta diskussion
         </Button>
       </div>
@@ -1148,6 +1169,8 @@ const CategorySidebar = ({
   onSelectCategory,
   onBackToOverview,
   view,
+  allThreads,
+  onNewThread,
 }: {
   collapsed: boolean;
   onToggle: () => void;
@@ -1155,6 +1178,8 @@ const CategorySidebar = ({
   onSelectCategory: (id: string) => void;
   onBackToOverview: () => void;
   view: string;
+  allThreads: Thread[];
+  onNewThread: () => void;
 }) => (
   <motion.aside
     animate={{ width: collapsed ? 0 : "30%" }}
@@ -1163,7 +1188,6 @@ const CategorySidebar = ({
     style={{ minWidth: collapsed ? 0 : "240px", maxWidth: collapsed ? 0 : "360px" }}
   >
     <div style={{ minWidth: "240px" }} className="h-full flex flex-col">
-      {/* Sidebar header */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
@@ -1185,6 +1209,8 @@ const CategorySidebar = ({
         onSelectCategory={onSelectCategory}
         onBackToOverview={onBackToOverview}
         view={view}
+        allThreads={allThreads}
+        onNewThread={onNewThread}
       />
     </div>
   </motion.aside>
@@ -1229,11 +1255,127 @@ const InfoPanel = () => (
   </div>
 );
 
+/* ─── New Thread Dialog ─── */
+const NewThreadDialog = ({
+  open,
+  onOpenChange,
+  onSubmit,
+  defaultCategory,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (thread: { title: string; content: string; category: string; tags: string[] }) => void;
+  defaultCategory: string | null;
+}) => {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [category, setCategory] = useState(defaultCategory || "");
+  const [tagsInput, setTagsInput] = useState("");
+
+  const handleSubmit = () => {
+    if (!title.trim() || !content.trim() || !category) {
+      toast.error("Fyll i alla obligatoriska fält");
+      return;
+    }
+    if (title.trim().length < 5) {
+      toast.error("Titeln måste vara minst 5 tecken");
+      return;
+    }
+    if (content.trim().length < 10) {
+      toast.error("Innehållet måste vara minst 10 tecken");
+      return;
+    }
+    const tags = tagsInput.split(",").map(t => t.trim()).filter(Boolean).slice(0, 5);
+    onSubmit({ title: title.trim(), content: content.trim(), category, tags });
+    setTitle("");
+    setContent("");
+    setTagsInput("");
+    onOpenChange(false);
+    toast.success("Tråden har skapats!");
+  };
+
+  // Reset category when dialog opens with a new default
+  React.useEffect(() => {
+    if (open && defaultCategory) setCategory(defaultCategory);
+  }, [open, defaultCategory]);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-lg">Starta ny diskussion</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4 mt-2">
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">Kategori *</label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Välj kategori..." />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(categories).map(([catId, cat]) => (
+                  <SelectItem key={catId} value={catId}>
+                    {cat.label} — {cat.description}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">Titel *</label>
+            <Input
+              placeholder="En tydlig och beskrivande titel..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={200}
+              className="text-sm"
+            />
+            <p className="text-[10px] text-muted-foreground mt-1">{title.length}/200</p>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">Innehåll *</label>
+            <Textarea
+              placeholder="Beskriv din fråga, erfarenhet eller tanke i detalj..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              maxLength={5000}
+              className="min-h-[140px] text-sm resize-none"
+            />
+            <p className="text-[10px] text-muted-foreground mt-1">{content.length}/5000</p>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">Taggar (valfritt)</label>
+            <Input
+              placeholder="karriär, tips, diskussion (kommaseparerade)"
+              value={tagsInput}
+              onChange={(e) => setTagsInput(e.target.value)}
+              maxLength={100}
+              className="text-sm"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Avbryt</Button>
+            <Button size="sm" className="gap-2" onClick={handleSubmit}>
+              <Send className="w-3.5 h-3.5" /> Publicera
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 /* ═══════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════ */
 const Threads = () => {
   const isMobile = useIsMobile();
+  const [allThreads, setAllThreads] = useState<Thread[]>(initialThreads);
   const [view, setView] = useState<"overview" | "category" | "detail">("overview");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeThread, setActiveThread] = useState<string | null>(null);
@@ -1244,6 +1386,7 @@ const Threads = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [newThreadOpen, setNewThreadOpen] = useState(false);
 
   const toggleLike = (id: string) => {
     setLikedThreads((prev) => {
@@ -1284,9 +1427,54 @@ const Threads = () => {
     setActiveThread(null);
   };
 
+  // Create new thread
+  const handleCreateThread = useCallback((data: { title: string; content: string; category: string; tags: string[] }) => {
+    const newThread: Thread = {
+      id: `user-${Date.now()}`,
+      title: data.title,
+      author: "Gäst",
+      authorInitials: "G",
+      authorRole: "Användare",
+      category: data.category,
+      content: data.content,
+      likes: 0,
+      replies: 0,
+      views: 1,
+      timeAgo: "just nu",
+      tags: data.tags,
+      replyData: [],
+    };
+    setAllThreads(prev => [newThread, ...prev]);
+    setSelectedCategory(data.category);
+    setView("detail");
+    setActiveThread(newThread.id);
+  }, []);
+
+  // Add reply to thread
+  const handleAddReply = useCallback((threadId: string, content: string, quoted?: { author: string; content: string }) => {
+    const newReply: ReplyData = {
+      id: `reply-${Date.now()}`,
+      author: "Gäst",
+      authorInitials: "G",
+      content,
+      likes: 0,
+      timeAgo: "just nu",
+      quotedReply: quoted || undefined,
+    };
+    setAllThreads(prev => prev.map(t => {
+      if (t.id !== threadId) return t;
+      return {
+        ...t,
+        replies: t.replies + 1,
+        replyData: [...(t.replyData || []), newReply],
+      };
+    }));
+    toast.success("Ditt svar har publicerats!");
+  }, []);
+
   // Filtered & sorted threads
   const categoryThreads = selectedCategory
-    ? threads.filter((t) => t.category === selectedCategory)
+    ? allThreads.filter((t) => t.category === selectedCategory)
     : [];
 
   const sortedCategoryThreads = useMemo(() => {
@@ -1320,7 +1508,7 @@ const Threads = () => {
     currentPage * THREADS_PER_PAGE
   );
 
-  const activeThreadData = activeThread ? threads.find((t) => t.id === activeThread) : null;
+  const activeThreadData = activeThread ? allThreads.find((t) => t.id === activeThread) : null;
   const selectedCatData = selectedCategory ? categories[selectedCategory] : null;
 
   return (
@@ -1350,6 +1538,8 @@ const Threads = () => {
                     onBackToOverview={handleBackToOverview}
                     view={view}
                     onClose={() => setMobileMenuOpen(false)}
+                    allThreads={allThreads}
+                    onNewThread={() => setNewThreadOpen(true)}
                   />
                 </SheetContent>
               </Sheet>
@@ -1395,6 +1585,8 @@ const Threads = () => {
             onSelectCategory={handleSelectCategory}
             onBackToOverview={handleBackToOverview}
             view={view}
+            allThreads={allThreads}
+            onNewThread={() => setNewThreadOpen(true)}
           />
         )}
 
@@ -1425,6 +1617,7 @@ const Threads = () => {
                       onBack={handleBackToCategory}
                       likedThreads={likedThreads}
                       toggleLike={toggleLike}
+                      onAddReply={handleAddReply}
                     />
                   ) : view === "category" && selectedCatData ? (
                     <motion.div key="category" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -1468,7 +1661,7 @@ const Threads = () => {
                             );
                           })}
                         </div>
-                        <Button size="sm" className="ml-auto gap-2 text-xs h-8 px-4">
+                        <Button size="sm" className="ml-auto gap-2 text-xs h-8 px-4" onClick={() => setNewThreadOpen(true)}>
                           <Plus className="w-3.5 h-3.5" /> Ny tråd
                         </Button>
                       </div>
@@ -1500,7 +1693,7 @@ const Threads = () => {
                         <div className="text-center py-16 bg-card border border-border rounded-xl">
                           <MessageSquare className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
                           <p className="text-muted-foreground text-sm">Inga trådar i denna kategori ännu</p>
-                          <Button size="sm" className="mt-4 gap-2 text-xs">
+                          <Button size="sm" className="mt-4 gap-2 text-xs" onClick={() => setNewThreadOpen(true)}>
                             <Plus className="w-3.5 h-3.5" /> Starta den första diskussionen
                           </Button>
                         </div>
@@ -1512,6 +1705,7 @@ const Threads = () => {
                       onSelectCategory={handleSelectCategory}
                       searchQuery={searchQuery}
                       setSearchQuery={setSearchQuery}
+                      allThreads={allThreads}
                     />
                   )}
                 </AnimatePresence>
@@ -1526,6 +1720,13 @@ const Threads = () => {
           </div>
         </div>
       </div>
+
+      <NewThreadDialog
+        open={newThreadOpen}
+        onOpenChange={setNewThreadOpen}
+        onSubmit={handleCreateThread}
+        defaultCategory={selectedCategory}
+      />
     </div>
   );
 };
