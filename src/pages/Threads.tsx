@@ -129,7 +129,7 @@ const initialThreads: Thread[] = [
     author: "OskarP",
     authorInitials: "OP",
     authorRole: "Student",
-    category: "cv",
+    category: "cv_jobbsokning",
     content: "Jag har hört blandade åsikter. Vissa säger att det visar personlighet, andra säger att det tar plats från viktigare saker.",
     likes: 78,
     replies: 56,
