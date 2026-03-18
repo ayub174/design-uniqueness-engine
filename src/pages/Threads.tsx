@@ -652,94 +652,94 @@ const ReplyItem = ({
   const effectiveDepth = Math.min(depth, maxDepth);
 
   return (
-    <div className={`${effectiveDepth > 0 ? "pl-4 sm:pl-6" : ""}`}>
-      {/* Thread line for nested replies */}
-      <div className={`relative ${effectiveDepth > 0 ? "border-l-2 border-border/40 pl-4" : ""}`}>
+    <div className={`${effectiveDepth > 0 ? "pl-3 sm:pl-5" : ""}`}>
+      <div className={`relative ${effectiveDepth > 0 ? "border-l-2 border-border/30 pl-3" : ""}`}>
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
-          className={`bg-card border rounded-xl p-4 ${
-            reply.isOP ? "border-primary/20 bg-primary/[0.02]" : "border-border"
+          className={`bg-card border rounded-xl overflow-hidden ${
+            reply.isOP ? "border-primary/20" : "border-border"
           }`}
         >
-          {/* Author header */}
-          <div className="flex items-start gap-3 mb-2">
-            <Avatar className="w-7 h-7 shrink-0">
-              <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">
+          {/* Author strip */}
+          <div className={`flex items-center gap-2 px-3 py-1.5 border-b ${
+            reply.isOP ? "bg-primary/[0.04] border-primary/10" : "bg-muted/30 border-border/30"
+          }`}>
+            <Avatar className="w-5 h-5 ring-1 ring-border">
+              <AvatarFallback className="text-[8px] font-bold bg-primary/10 text-primary">
                 {reply.authorInitials}
               </AvatarFallback>
             </Avatar>
-            <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
-              <span className="text-sm font-semibold text-foreground">{reply.author}</span>
-              <AuthorBadge type={reply.authorBadge} />
-              {reply.isOP && (
-                <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">OP</span>
-              )}
-              {depth > 0 && (
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground/60">
-                  <CornerDownRight className="w-2.5 h-2.5" /> svar
-                </span>
-              )}
-              <span className="text-xs text-muted-foreground">{reply.timeAgo} sedan</span>
-              {reply.children && reply.children.length > 0 && (
-                <button
-                  onClick={() => setCollapsed(!collapsed)}
-                  className="ml-auto text-[10px] text-muted-foreground hover:text-foreground transition-colors font-medium"
-                >
-                  {collapsed ? `+ ${reply.children.length} svar` : "Dölj svar"}
-                </button>
-              )}
-            </div>
+            <span className="text-xs font-medium text-foreground">{reply.author}</span>
+            <AuthorBadge type={reply.authorBadge} />
+            {reply.isOP && (
+              <span className="text-[9px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">OP</span>
+            )}
+            {depth > 0 && (
+              <span className="flex items-center gap-1 text-[10px] text-muted-foreground/50">
+                <CornerDownRight className="w-2.5 h-2.5" />
+              </span>
+            )}
+            <span className="text-[11px] text-muted-foreground/60 ml-auto">{reply.timeAgo} sedan</span>
+            {reply.children && reply.children.length > 0 && (
+              <button
+                onClick={() => setCollapsed(!collapsed)}
+                className="text-[10px] text-muted-foreground hover:text-foreground transition-colors font-medium"
+              >
+                {collapsed ? `+ ${reply.children.length} svar` : "Dölj"}
+              </button>
+            )}
           </div>
 
-          {/* Quoted content */}
-          {reply.quotedReply && (
-            <div className="ml-10 mb-3 border-l-3 border-primary/30 bg-muted/40 rounded-r-lg px-3 py-2.5">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Quote className="w-3 h-3 text-primary/50" />
-                <span className="text-[10px] font-semibold text-muted-foreground">
-                  {reply.quotedReply.author} skrev:
-                </span>
+          <div className="px-3 py-2.5 sm:px-4 sm:py-3">
+            {/* Quoted content */}
+            {reply.quotedReply && (
+              <div className="mb-2.5 border-l-2 border-primary/25 bg-muted/30 rounded-r-lg px-2.5 py-2">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <Quote className="w-2.5 h-2.5 text-primary/40" />
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    {reply.quotedReply.author}:
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground/70 italic leading-relaxed line-clamp-2">
+                  {reply.quotedReply.content}
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground/80 italic leading-relaxed line-clamp-3">
-                {reply.quotedReply.content}
-              </p>
+            )}
+
+            {/* Reply content */}
+            <p className="text-[13px] text-foreground/80 leading-relaxed whitespace-pre-line mb-2">
+              {reply.content}
+            </p>
+
+            {/* Actions */}
+            <div className="flex items-center gap-0.5 text-[11px] text-muted-foreground">
+              <button
+                onClick={() => toggleReplyLike(reply.id)}
+                className={`flex items-center gap-1 px-2 py-0.5 rounded-full transition-all font-medium ${
+                  isReplyLiked ? "text-primary bg-primary/10" : "hover:bg-muted"
+                }`}
+              >
+                <ThumbsUp className={`w-3 h-3 ${isReplyLiked ? "fill-primary" : ""}`} />
+                {replyLikeCount}
+              </button>
+              <button
+                onClick={() => onQuoteReply(reply)}
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-muted transition-colors font-medium"
+              >
+                <Reply className="w-3 h-3" /> Svara
+              </button>
+              <button
+                onClick={() => onQuoteReply(reply)}
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-muted transition-colors font-medium"
+              >
+                <Quote className="w-3 h-3" /> Citera
+              </button>
             </div>
-          )}
-
-          {/* Reply content */}
-          <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line mb-3 pl-10">
-            {reply.content}
-          </p>
-
-          {/* Actions */}
-          <div className="flex items-center gap-0.5 text-xs text-muted-foreground pl-10">
-            <button
-              onClick={() => toggleReplyLike(reply.id)}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-all font-medium ${
-                isReplyLiked ? "text-primary bg-primary/10" : "hover:bg-muted"
-              }`}
-            >
-              <ThumbsUp className={`w-3 h-3 ${isReplyLiked ? "fill-primary" : ""}`} />
-              {replyLikeCount}
-            </button>
-            <button
-              onClick={() => onQuoteReply(reply)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-muted transition-colors font-medium"
-            >
-              <Reply className="w-3 h-3" /> Svara
-            </button>
-            <button
-              onClick={() => onQuoteReply(reply)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-muted transition-colors font-medium"
-            >
-              <Quote className="w-3 h-3" /> Citera
-            </button>
           </div>
         </motion.div>
 
-        {/* Nested children */}
         {!collapsed && reply.children && reply.children.length > 0 && (
           <div className="mt-2 space-y-2">
             {reply.children.map((child) => (
