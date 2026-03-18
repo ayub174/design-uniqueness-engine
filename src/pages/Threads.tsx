@@ -1661,7 +1661,7 @@ const Threads = () => {
                             );
                           })}
                         </div>
-                        <Button size="sm" className="ml-auto gap-2 text-xs h-8 px-4">
+                        <Button size="sm" className="ml-auto gap-2 text-xs h-8 px-4" onClick={() => setNewThreadOpen(true)}>
                           <Plus className="w-3.5 h-3.5" /> Ny tråd
                         </Button>
                       </div>
