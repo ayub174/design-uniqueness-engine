@@ -26,6 +26,9 @@ interface ReplyData {
   likes: number;
   timeAgo: string;
   isOP?: boolean;
+  parentId?: string;
+  quotedReply?: { author: string; content: string };
+  children?: ReplyData[];
 }
 
 interface Thread {
