@@ -455,7 +455,7 @@ const CategoryOverview = ({
         })}
       </div>
 
-      {filteredGrouped.length === 0 && (
+      {filteredCats.length === 0 && (
         <div className="text-center py-16">
           <p className="text-muted-foreground text-sm">Inga kategorier matchade din sökning</p>
         </div>
