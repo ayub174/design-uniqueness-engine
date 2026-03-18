@@ -95,7 +95,7 @@ const initialThreads: Thread[] = [
     author: "TechAnton",
     authorInitials: "TA",
     authorRole: "Student — KTH",
-    category: "salary",
+    category: "lon_forhandling",
     content: "Pluggar sista terminen på civilingenjör datateknik på KTH. Har börjat söka jobb och undrar vad som är rimligt att förvänta sig lönemässigt.",
     likes: 189,
     replies: 93,
