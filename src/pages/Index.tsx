@@ -177,24 +177,24 @@ const Index = () => {
 
               {/* Search mode toggle */}
               <motion.div variants={fadeUp} custom={3} className="mt-10">
-                <div className="flex items-center gap-1 mb-3 bg-card border border-border p-1 rounded-full w-fit">
+                <div className="flex items-center gap-1 mb-4 bg-card/80 backdrop-blur-sm border border-border p-1 rounded-full w-fit shadow-sm">
                   <button
                     onClick={() => setSearchMode("standard")}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                    className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all duration-200 ${
                       searchMode === "standard"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.4)]"
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/60"
                     }`}
                   >
-                    <Search className="h-3.5 w-3.5" />
+                    <SlidersHorizontal className="h-3.5 w-3.5" />
                     Vanlig sök
                   </button>
                   <button
                     onClick={() => setSearchMode("natural")}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                    className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all duration-200 ${
                       searchMode === "natural"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.4)]"
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/60"
                     }`}
                   >
                     <Sparkles className="h-3.5 w-3.5" />
