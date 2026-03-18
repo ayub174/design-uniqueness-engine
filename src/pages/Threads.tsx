@@ -812,11 +812,13 @@ const ThreadDetail = ({
   onBack,
   likedThreads,
   toggleLike,
+  onAddReply,
 }: {
   thread: Thread;
   onBack: () => void;
   likedThreads: Set<string>;
   toggleLike: (id: string) => void;
+  onAddReply: (threadId: string, content: string, quoted?: { author: string; content: string }) => void;
 }) => {
   const [replyLikes, setReplyLikes] = useState<Set<string>>(new Set());
   const [replyText, setReplyText] = useState("");
