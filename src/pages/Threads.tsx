@@ -362,10 +362,12 @@ const CategoryOverview = ({
   onSelectCategory,
   searchQuery,
   setSearchQuery,
+  allThreads,
 }: {
   onSelectCategory: (id: string) => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  allThreads: Thread[];
 }) => {
   const grouped = Object.entries(categoryGroups).map(([groupId, group]) => ({
     ...group,
