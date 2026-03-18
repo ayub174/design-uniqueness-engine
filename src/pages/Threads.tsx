@@ -1768,12 +1768,6 @@ const Threads = () => {
         </div>
       </div>
 
-      <NewThreadDialog
-        open={newThreadOpen}
-        onOpenChange={setNewThreadOpen}
-        onSubmit={handleCreateThread}
-        defaultCategory={selectedCategory}
-      />
     </div>
   );
 };
