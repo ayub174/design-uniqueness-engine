@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MessageSquare, Eye, Search, ArrowLeft, Bookmark, Reply, Share2,
@@ -7,12 +7,15 @@ import {
   DollarSign, Lightbulb, Heart, ChevronRight, X, Handshake,
   Scale, Globe, Code, Stethoscope, Palette, BarChart3, Rocket,
   BookOpen, UserCheck, Pin, PanelLeftClose, PanelLeftOpen, ChevronDown,
+  Menu, MessageCircleQuestion, EyeIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ReplyData {
   id: string;
@@ -45,7 +48,6 @@ interface Thread {
   replyData?: ReplyData[];
 }
 
-/* ─── Category system ─── */
 interface CategoryDef {
   label: string;
   description: string;
@@ -263,19 +265,19 @@ const threads: Thread[] = [
 ];
 
 /* ─── Helpers ─── */
+const THREADS_PER_PAGE = 15;
+
+const timeToMinutes = (t: string) => {
+  if (t.includes("min")) return parseInt(t);
+  if (t.includes("h")) return parseInt(t) * 60;
+  if (t.includes("d")) return parseInt(t) * 1440;
+  return 9999;
+};
+
 const getCategoryStats = (catId: string) => {
   const catThreads = threads.filter((t) => t.category === catId);
   const totalReplies = catThreads.reduce((sum, t) => sum + t.replies, 0);
-  const latestThread = catThreads.sort((a, b) => {
-    // Simple sort by timeAgo (approximate)
-    const timeVal = (t: string) => {
-      if (t.includes("min")) return parseInt(t);
-      if (t.includes("h")) return parseInt(t) * 60;
-      if (t.includes("d")) return parseInt(t) * 1440;
-      return 9999;
-    };
-    return timeVal(a.timeAgo) - timeVal(b.timeAgo);
-  })[0];
+  const latestThread = [...catThreads].sort((a, b) => timeToMinutes(a.timeAgo) - timeToMinutes(b.timeAgo))[0];
   return { threadCount: catThreads.length, replyCount: totalReplies, latestThread };
 };
 
@@ -300,8 +302,17 @@ const AuthorBadge = ({ type }: { type?: string }) => {
   return null;
 };
 
+/* ─── Sort options ─── */
+const sortOptions = [
+  { id: "popular", label: "Populärt", icon: TrendingUp },
+  { id: "new", label: "Senaste", icon: Clock },
+  { id: "top", label: "Topp", icon: Award },
+  { id: "unanswered", label: "Obesvarade", icon: MessageCircleQuestion },
+  { id: "views", label: "Mest visade", icon: EyeIcon },
+] as const;
+
 /* ═══════════════════════════════════════════════
-   CATEGORY OVERVIEW — Flashback-style landing
+   CATEGORY OVERVIEW
    ═══════════════════════════════════════════════ */
 const CategoryOverview = ({
   onSelectCategory,
@@ -318,7 +329,6 @@ const CategoryOverview = ({
     items: Object.entries(categories).filter(([, cat]) => cat.group === groupId),
   }));
 
-  // Filter categories by search
   const filteredGrouped = searchQuery
     ? grouped.map((g) => ({
         ...g,
@@ -330,13 +340,11 @@ const CategoryOverview = ({
       })).filter((g) => g.items.length > 0)
     : grouped;
 
-  // Overall stats
   const totalThreads = threads.length;
   const totalReplies = threads.reduce((s, t) => s + t.replies, 0);
 
   return (
     <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      {/* Hero header */}
       <div className="mb-6">
         <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-foreground">Forum</h1>
         <p className="text-sm text-muted-foreground mt-1.5">
@@ -362,7 +370,6 @@ const CategoryOverview = ({
         </div>
       </div>
 
-      {/* Search */}
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
@@ -373,7 +380,6 @@ const CategoryOverview = ({
         />
       </div>
 
-      {/* Category groups */}
       <div className="space-y-6">
         {filteredGrouped.map((group, gi) => {
           const GroupIcon = group.icon;
@@ -384,7 +390,6 @@ const CategoryOverview = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: gi * 0.05, duration: 0.25 }}
             >
-              {/* Group header */}
               <div className="flex items-center gap-2 mb-3">
                 <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
                   <GroupIcon className="w-3.5 h-3.5 text-primary" />
@@ -392,7 +397,6 @@ const CategoryOverview = ({
                 <h2 className="font-serif text-base font-semibold text-foreground">{group.label}</h2>
               </div>
 
-              {/* Category rows */}
               <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
                 {group.items.map(([catId, cat]) => {
                   const stats = getCategoryStats(catId);
@@ -405,12 +409,9 @@ const CategoryOverview = ({
                       onClick={() => onSelectCategory(catId)}
                       className="w-full flex items-center gap-4 px-4 py-3.5 hover:bg-muted/50 transition-colors text-left group"
                     >
-                      {/* Icon */}
                       <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-muted shrink-0 group-hover:bg-primary/10 transition-colors">
                         <CatIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                       </div>
-
-                      {/* Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
@@ -425,7 +426,6 @@ const CategoryOverview = ({
                         </p>
                       </div>
 
-                      {/* Latest thread preview */}
                       {latest && (
                         <div className="hidden sm:flex items-center gap-3 shrink-0 max-w-[280px]">
                           <div className="text-right min-w-0">
@@ -464,7 +464,7 @@ const CategoryOverview = ({
 };
 
 /* ═══════════════════════════════════════════════
-   CATEGORY THREAD LIST — threads within a category
+   COMPACT THREAD CARD — high-density, Flashback/Reddit-inspired
    ═══════════════════════════════════════════════ */
 const ThreadCard = ({
   thread,
@@ -483,114 +483,152 @@ const ThreadCard = ({
   toggleSave: (id: string) => void;
   onClick: () => void;
 }) => {
-  const cat = categories[thread.category];
   const isLiked = likedThreads.has(thread.id);
   const likeCount = thread.likes + (isLiked ? 1 : 0);
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.03, duration: 0.25 }}
-      className={`group bg-card rounded-xl border border-border transition-all hover:border-primary/20 hover:shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.08)] ${
+      transition={{ delay: index * 0.02, duration: 0.2 }}
+      className={`group bg-card border border-border rounded-lg transition-all hover:border-primary/20 hover:shadow-[0_1px_8px_-3px_hsl(var(--primary)/0.08)] ${
         thread.replyData ? "cursor-pointer" : ""
       }`}
       onClick={onClick}
     >
-      <div className="p-4 sm:p-5">
-        {/* Author row */}
-        <div className="flex items-start gap-3 mb-3">
-          <Avatar className="w-9 h-9 ring-2 ring-background shadow-sm shrink-0">
-            <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
-              {thread.authorInitials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-semibold text-foreground">{thread.author}</span>
-              <AuthorBadge type={thread.authorBadge} />
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
-              <span>{thread.authorRole}</span>
-              <span className="text-muted-foreground/30">·</span>
-              <span>{thread.timeAgo} sedan</span>
-            </div>
-          </div>
-          <button
-            onClick={(e) => { e.stopPropagation(); toggleSave(thread.id); }}
-            className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-              savedThreads.has(thread.id)
-                ? "text-primary bg-primary/10"
-                : "text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted"
-            }`}
-          >
-            <Bookmark className={`w-4 h-4 ${savedThreads.has(thread.id) ? "fill-primary" : ""}`} />
-          </button>
-        </div>
-
-        {/* Tags */}
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          {thread.industry && (
-            <span className="text-[11px] text-muted-foreground/70 bg-muted/60 px-2 py-0.5 rounded-md">
-              {thread.industry}
-            </span>
-          )}
-          {thread.experienceLevel && (
-            <span className="text-[11px] text-muted-foreground/70 bg-muted/60 px-2 py-0.5 rounded-md">
-              {thread.experienceLevel}
-            </span>
-          )}
-          {thread.isPinned && (
-            <span className="text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-md flex items-center gap-1">
-              <Pin className="w-2.5 h-2.5" /> Fäst
-            </span>
-          )}
-        </div>
-
-        {/* Title */}
-        <h3 className="font-serif text-base sm:text-lg font-semibold text-foreground leading-snug group-hover:text-primary transition-colors mb-1.5">
-          {thread.title}
-        </h3>
-
-        {/* Preview */}
-        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-4">
-          {thread.content}
-        </p>
-
-        {/* Engagement bar */}
-        <div className="flex items-center gap-0.5 text-xs text-muted-foreground pt-3 border-t border-border/60">
+      <div className="px-3 py-2.5 sm:px-4 sm:py-3 flex items-start gap-3">
+        {/* Vote/like column */}
+        <div className="flex flex-col items-center gap-0.5 shrink-0 pt-0.5">
           <button
             onClick={(e) => { e.stopPropagation(); toggleLike(thread.id); }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all font-medium ${
-              isLiked
-                ? "text-primary bg-primary/10"
-                : "hover:bg-muted hover:text-foreground"
+            className={`p-1 rounded transition-colors ${
+              isLiked ? "text-primary" : "text-muted-foreground/50 hover:text-primary"
             }`}
           >
             <Heart className={`w-3.5 h-3.5 ${isLiked ? "fill-primary" : ""}`} />
+          </button>
+          <span className={`text-xs font-semibold tabular-nums ${isLiked ? "text-primary" : "text-muted-foreground"}`}>
             {likeCount}
-          </button>
-          <button
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-muted hover:text-foreground transition-colors font-medium"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <MessageSquare className="w-3.5 h-3.5" />
-            {thread.replies} svar
-          </button>
-          <span className="flex items-center gap-1.5 px-3 py-1.5 text-muted-foreground/60">
-            <Eye className="w-3.5 h-3.5" />
-            {thread.views.toLocaleString("sv-SE")}
           </span>
-          <button
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-muted hover:text-foreground transition-colors font-medium ml-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Share2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Dela</span>
-          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          {/* Title row */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {thread.isPinned && (
+              <Pin className="w-3 h-3 text-primary shrink-0" />
+            )}
+            <h3 className="text-sm font-semibold text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-1">
+              {thread.title}
+            </h3>
+          </div>
+
+          {/* Meta row */}
+          <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground flex-wrap">
+            <span className="font-medium text-foreground/70">{thread.author}</span>
+            <AuthorBadge type={thread.authorBadge} />
+            <span className="text-muted-foreground/30">·</span>
+            <span>{thread.timeAgo} sedan</span>
+            {thread.industry && (
+              <>
+                <span className="text-muted-foreground/30">·</span>
+                <span className="text-muted-foreground/60">{thread.industry}</span>
+              </>
+            )}
+          </div>
+
+          {/* Stats row */}
+          <div className="flex items-center gap-3 mt-1.5 text-[11px] text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <MessageSquare className="w-3 h-3" />
+              {thread.replies}
+            </span>
+            <span className="flex items-center gap-1">
+              <Eye className="w-3 h-3" />
+              {thread.views.toLocaleString("sv-SE")}
+            </span>
+            {thread.tags.slice(0, 2).map((tag) => (
+              <span key={tag} className="text-muted-foreground/50 bg-muted/50 px-1.5 py-0.5 rounded text-[10px]">
+                #{tag}
+              </span>
+            ))}
+            <button
+              onClick={(e) => { e.stopPropagation(); toggleSave(thread.id); }}
+              className={`ml-auto p-1 rounded transition-colors ${
+                savedThreads.has(thread.id)
+                  ? "text-primary"
+                  : "text-muted-foreground/30 hover:text-muted-foreground"
+              }`}
+            >
+              <Bookmark className={`w-3 h-3 ${savedThreads.has(thread.id) ? "fill-primary" : ""}`} />
+            </button>
+          </div>
         </div>
       </div>
     </motion.article>
+  );
+};
+
+/* ─── Pagination ─── */
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) => {
+  if (totalPages <= 1) return null;
+
+  const pages: (number | "...")[] = [];
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    if (currentPage > 3) pages.push("...");
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+      pages.push(i);
+    }
+    if (currentPage < totalPages - 2) pages.push("...");
+    pages.push(totalPages);
+  }
+
+  return (
+    <div className="flex items-center justify-center gap-1 mt-6">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="px-3 py-1.5 text-xs font-medium rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30 disabled:pointer-events-none transition-colors"
+      >
+        Föregående
+      </button>
+      {pages.map((p, i) =>
+        p === "..." ? (
+          <span key={`ellipsis-${i}`} className="px-2 text-xs text-muted-foreground/50">…</span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => onPageChange(p)}
+            className={`w-8 h-8 text-xs font-medium rounded-lg transition-colors ${
+              p === currentPage
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+            }`}
+          >
+            {p}
+          </button>
+        )
+      )}
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="px-3 py-1.5 text-xs font-medium rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30 disabled:pointer-events-none transition-colors"
+      >
+        Nästa
+      </button>
+    </div>
   );
 };
 
@@ -636,7 +674,6 @@ const ThreadDetail = ({
         Tillbaka till {cat?.label || "trådar"}
       </button>
 
-      {/* Main post */}
       <div className="bg-card border border-border rounded-xl p-5 sm:p-6">
         <div className="flex items-start gap-3 mb-4">
           <Avatar className="w-10 h-10 ring-2 ring-background shadow-sm">
@@ -710,7 +747,6 @@ const ThreadDetail = ({
         </div>
       </div>
 
-      {/* Reply composer */}
       <div className="mt-4 bg-card border border-border rounded-xl p-4 sm:p-5">
         <div className="flex items-center gap-3 mb-3">
           <Avatar className="w-7 h-7">
@@ -731,14 +767,11 @@ const ThreadDetail = ({
         </div>
       </div>
 
-      {/* Replies */}
       <div className="mt-6 space-y-3">
         <p className="text-sm font-semibold text-foreground">{thread.replies} svar</p>
-
         {thread.replyData?.map((reply, i) => {
           const isReplyLiked = replyLikes.has(reply.id);
           const replyLikeCount = reply.likes + (isReplyLiked ? 1 : 0);
-
           return (
             <motion.div
               key={reply.id}
@@ -789,21 +822,19 @@ const ThreadDetail = ({
   );
 };
 
-/* ─── Left Sidebar — Category Menu ─── */
-const CategorySidebar = ({
-  collapsed,
-  onToggle,
+/* ─── Sidebar Content (reusable for desktop and mobile Sheet) ─── */
+const SidebarContent = ({
   selectedCategory,
   onSelectCategory,
   onBackToOverview,
   view,
+  onClose,
 }: {
-  collapsed: boolean;
-  onToggle: () => void;
   selectedCategory: string | null;
   onSelectCategory: (id: string) => void;
   onBackToOverview: () => void;
   view: string;
+  onClose?: () => void;
 }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
     new Set(Object.keys(categoryGroups))
@@ -823,130 +854,159 @@ const CategorySidebar = ({
     items: Object.entries(categories).filter(([, cat]) => cat.group === groupId),
   }));
 
+  const handleSelectCategory = (catId: string) => {
+    onSelectCategory(catId);
+    onClose?.();
+  };
+
+  const handleBackToOverview = () => {
+    onBackToOverview();
+    onClose?.();
+  };
+
   return (
-    <motion.aside
-      animate={{ width: collapsed ? 0 : "30%" }}
-      transition={{ duration: 0.25, ease: "easeInOut" }}
-      className="shrink-0 overflow-hidden border-r border-border bg-card/50"
-      style={{ minWidth: collapsed ? 0 : "240px", maxWidth: collapsed ? 0 : "360px" }}
-    >
-      <div className="h-full flex flex-col" style={{ minWidth: "240px" }}>
-        {/* Sidebar header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
-              <MessageSquare className="w-3.5 h-3.5 text-primary" />
-            </div>
-            <h2 className="font-serif text-sm font-semibold text-foreground">Forum</h2>
-          </div>
-          <button
-            onClick={onToggle}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-            title="Fäll ihop menyn"
-          >
-            <PanelLeftClose className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Stats bar */}
-        <div className="px-4 py-3 border-b border-border/60">
-          <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Users className="w-3 h-3 text-primary" /> 12,4k
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> 347 online
-            </span>
-          </div>
-        </div>
-
-        {/* Scrollable category list */}
-        <div className="flex-1 overflow-y-auto py-2">
-          {/* "All categories" button */}
-          <button
-            onClick={onBackToOverview}
-            className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors ${
-              view === "overview"
-                ? "text-primary bg-primary/8 font-medium"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            }`}
-          >
-            <MessageSquare className="w-4 h-4 shrink-0" />
-            <span>Alla kategorier</span>
-          </button>
-
-          <div className="my-2 mx-4 h-px bg-border/60" />
-
-          {/* Category groups */}
-          {grouped.map((group) => {
-            const GroupIcon = group.icon;
-            const isExpanded = expandedGroups.has(group.groupId);
-
-            return (
-              <div key={group.groupId}>
-                <button
-                  onClick={() => toggleGroup(group.groupId)}
-                  className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider hover:text-muted-foreground transition-colors"
-                >
-                  <GroupIcon className="w-3.5 h-3.5 shrink-0" />
-                  <span className="flex-1 text-left">{group.label}</span>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 transition-transform ${isExpanded ? "" : "-rotate-90"}`}
-                  />
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      {group.items.map(([catId, cat]) => {
-                        const CatIcon = cat.icon;
-                        const isActive = selectedCategory === catId && view !== "overview";
-                        const stats = getCategoryStats(catId);
-
-                        return (
-                          <button
-                            key={catId}
-                            onClick={() => onSelectCategory(catId)}
-                            className={`w-full flex items-center gap-2.5 pl-8 pr-4 py-2 text-sm transition-all group ${
-                              isActive
-                                ? "text-primary bg-primary/8 font-medium border-r-2 border-primary"
-                                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                            }`}
-                          >
-                            <CatIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
-                            <span className="flex-1 text-left truncate">{cat.label}</span>
-                            <span className="text-[10px] text-muted-foreground/50 tabular-nums">
-                              {stats.threadCount}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Sidebar footer */}
-        <div className="p-4 border-t border-border">
-          <Button size="sm" className="w-full gap-2 text-xs">
-            <Plus className="w-3.5 h-3.5" /> Starta diskussion
-          </Button>
+    <div className="h-full flex flex-col">
+      {/* Stats bar */}
+      <div className="px-4 py-3 border-b border-border/60">
+        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+          <span className="flex items-center gap-1">
+            <Users className="w-3 h-3 text-primary" /> 12,4k
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> 347 online
+          </span>
         </div>
       </div>
-    </motion.aside>
+
+      {/* Scrollable category list */}
+      <div className="flex-1 overflow-y-auto py-2">
+        <button
+          onClick={handleBackToOverview}
+          className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm transition-all ${
+            view === "overview"
+              ? "text-primary bg-primary/8 font-medium border-r-2 border-primary"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          }`}
+        >
+          <MessageSquare className="w-4 h-4 shrink-0" />
+          <span>Alla kategorier</span>
+        </button>
+
+        <div className="my-1.5 mx-4 h-px bg-border/60" />
+
+        {grouped.map((group) => {
+          const GroupIcon = group.icon;
+          const isExpanded = expandedGroups.has(group.groupId);
+          return (
+            <div key={group.groupId}>
+              <button
+                onClick={() => toggleGroup(group.groupId)}
+                className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider hover:text-muted-foreground transition-colors"
+              >
+                <GroupIcon className="w-3.5 h-3.5 shrink-0" />
+                <span className="flex-1 text-left">{group.label}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? "" : "-rotate-90"}`} />
+              </button>
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    {group.items.map(([catId, cat]) => {
+                      const CatIcon = cat.icon;
+                      const isActive = selectedCategory === catId && view !== "overview";
+                      const stats = getCategoryStats(catId);
+                      return (
+                        <button
+                          key={catId}
+                          onClick={() => handleSelectCategory(catId)}
+                          className={`w-full flex items-center gap-2.5 pl-8 pr-4 py-2 text-sm transition-all group ${
+                            isActive
+                              ? "text-primary bg-primary/8 font-medium border-r-2 border-primary"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                          }`}
+                        >
+                          <CatIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
+                          <span className="flex-1 text-left truncate">{cat.label}</span>
+                          <span className="text-[10px] text-muted-foreground/50 tabular-nums">
+                            {stats.threadCount}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Sidebar footer */}
+      <div className="p-4 border-t border-border">
+        <Button size="sm" className="w-full gap-2 text-xs">
+          <Plus className="w-3.5 h-3.5" /> Starta diskussion
+        </Button>
+      </div>
+    </div>
   );
 };
 
-/* ─── Info Sidebar (right) — shown on non-detail views ─── */
+/* ─── Desktop Sidebar wrapper ─── */
+const CategorySidebar = ({
+  collapsed,
+  onToggle,
+  selectedCategory,
+  onSelectCategory,
+  onBackToOverview,
+  view,
+}: {
+  collapsed: boolean;
+  onToggle: () => void;
+  selectedCategory: string | null;
+  onSelectCategory: (id: string) => void;
+  onBackToOverview: () => void;
+  view: string;
+}) => (
+  <motion.aside
+    animate={{ width: collapsed ? 0 : "30%" }}
+    transition={{ duration: 0.25, ease: "easeInOut" }}
+    className="shrink-0 overflow-hidden border-r border-border bg-card/50 hidden md:block"
+    style={{ minWidth: collapsed ? 0 : "240px", maxWidth: collapsed ? 0 : "360px" }}
+  >
+    <div style={{ minWidth: "240px" }} className="h-full flex flex-col">
+      {/* Sidebar header */}
+      <div className="flex items-center justify-between p-4 border-b border-border">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
+            <MessageSquare className="w-3.5 h-3.5 text-primary" />
+          </div>
+          <h2 className="font-serif text-sm font-semibold text-foreground">Forum</h2>
+        </div>
+        <button
+          onClick={onToggle}
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          title="Fäll ihop menyn"
+        >
+          <PanelLeftClose className="w-4 h-4" />
+        </button>
+      </div>
+
+      <SidebarContent
+        selectedCategory={selectedCategory}
+        onSelectCategory={onSelectCategory}
+        onBackToOverview={onBackToOverview}
+        view={view}
+      />
+    </div>
+  </motion.aside>
+);
+
+/* ─── Info Panel ─── */
 const InfoPanel = () => (
   <div className="space-y-4">
     <div className="bg-card border border-border rounded-xl p-5">
@@ -986,11 +1046,10 @@ const InfoPanel = () => (
 );
 
 /* ═══════════════════════════════════════════════
-   MAIN PAGE — two-column layout
-   Left: collapsible category sidebar (30%)
-   Right: main content (70%)
+   MAIN PAGE
    ═══════════════════════════════════════════════ */
 const Threads = () => {
+  const isMobile = useIsMobile();
   const [view, setView] = useState<"overview" | "category" | "detail">("overview");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeThread, setActiveThread] = useState<string | null>(null);
@@ -999,6 +1058,8 @@ const Threads = () => {
   const [likedThreads, setLikedThreads] = useState<Set<string>>(new Set());
   const [savedThreads, setSavedThreads] = useState<Set<string>>(new Set());
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleLike = (id: string) => {
     setLikedThreads((prev) => {
@@ -1019,6 +1080,7 @@ const Threads = () => {
     setSelectedCategory(catId);
     setView("category");
     setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const handleOpenThread = (threadId: string) => {
@@ -1030,6 +1092,7 @@ const Threads = () => {
     setView("overview");
     setSelectedCategory(null);
     setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const handleBackToCategory = () => {
@@ -1037,18 +1100,41 @@ const Threads = () => {
     setActiveThread(null);
   };
 
-  // Filtered threads for current category
+  // Filtered & sorted threads
   const categoryThreads = selectedCategory
     ? threads.filter((t) => t.category === selectedCategory)
     : [];
 
-  const sortedCategoryThreads = [...categoryThreads].sort((a, b) => {
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    if (sortBy === "popular") return (b.likes + b.replies * 2) - (a.likes + a.replies * 2);
-    if (sortBy === "top") return b.likes - a.likes;
-    return 0;
-  });
+  const sortedCategoryThreads = useMemo(() => {
+    const sorted = [...categoryThreads].sort((a, b) => {
+      // Pinned always first
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+
+      switch (sortBy) {
+        case "popular":
+          return (b.likes + b.replies * 2) - (a.likes + a.replies * 2);
+        case "new":
+          return timeToMinutes(a.timeAgo) - timeToMinutes(b.timeAgo);
+        case "top":
+          return b.likes - a.likes;
+        case "unanswered":
+          return a.replies - b.replies;
+        case "views":
+          return b.views - a.views;
+        default:
+          return 0;
+      }
+    });
+    return sorted;
+  }, [categoryThreads, sortBy]);
+
+  // Pagination
+  const totalPages = Math.ceil(sortedCategoryThreads.length / THREADS_PER_PAGE);
+  const paginatedThreads = sortedCategoryThreads.slice(
+    (currentPage - 1) * THREADS_PER_PAGE,
+    currentPage * THREADS_PER_PAGE
+  );
 
   const activeThreadData = activeThread ? threads.find((t) => t.id === activeThread) : null;
   const selectedCatData = selectedCategory ? categories[selectedCategory] : null;
@@ -1059,6 +1145,32 @@ const Threads = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
           <div className="flex items-center gap-4">
+            {/* Mobile menu trigger */}
+            {isMobile && (
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <button className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors md:hidden">
+                    <Menu className="w-5 h-5" />
+                  </button>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0 w-[280px]">
+                  <div className="flex items-center gap-2 p-4 border-b border-border">
+                    <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
+                      <MessageSquare className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <h2 className="font-serif text-sm font-semibold text-foreground">Forum</h2>
+                  </div>
+                  <SidebarContent
+                    selectedCategory={selectedCategory}
+                    onSelectCategory={handleSelectCategory}
+                    onBackToOverview={handleBackToOverview}
+                    view={view}
+                    onClose={() => setMobileMenuOpen(false)}
+                  />
+                </SheetContent>
+              </Sheet>
+            )}
+
             <Link to="/" className="font-serif text-lg font-semibold text-foreground">
               Chappie<span className="text-primary">.</span>
             </Link>
@@ -1090,20 +1202,22 @@ const Threads = () => {
 
       {/* Two-column layout */}
       <div className="pt-14 flex flex-1 max-w-[1400px] mx-auto w-full">
-        {/* Left sidebar */}
-        <CategorySidebar
-          collapsed={sidebarCollapsed}
-          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-          selectedCategory={selectedCategory}
-          onSelectCategory={handleSelectCategory}
-          onBackToOverview={handleBackToOverview}
-          view={view}
-        />
+        {/* Left sidebar — desktop only */}
+        {!isMobile && (
+          <CategorySidebar
+            collapsed={sidebarCollapsed}
+            onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+            selectedCategory={selectedCategory}
+            onSelectCategory={handleSelectCategory}
+            onBackToOverview={handleBackToOverview}
+            view={view}
+          />
+        )}
 
         {/* Main content area */}
         <div className="flex-1 min-w-0 flex flex-col">
-          {/* Collapsed sidebar toggle */}
-          {sidebarCollapsed && (
+          {/* Collapsed sidebar toggle — desktop only */}
+          {!isMobile && sidebarCollapsed && (
             <div className="border-b border-border px-4 py-2">
               <button
                 onClick={() => setSidebarCollapsed(false)}
@@ -1118,7 +1232,6 @@ const Threads = () => {
 
           <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex gap-6">
-              {/* Content */}
               <div className="flex-1 min-w-0">
                 <AnimatePresence mode="wait">
                   {view === "detail" && activeThreadData ? (
@@ -1150,19 +1263,15 @@ const Threads = () => {
                         <span>{categoryThreads.reduce((s, t) => s + t.replies, 0)} svar</span>
                       </div>
 
-                      {/* Sort controls */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="flex items-center bg-card border border-border rounded-xl p-1 gap-0.5">
-                          {[
-                            { id: "popular", label: "Populärt", icon: TrendingUp },
-                            { id: "new", label: "Nytt", icon: Clock },
-                            { id: "top", label: "Topp", icon: Award },
-                          ].map((s) => {
+                      {/* Sort controls — 5 options */}
+                      <div className="flex items-center gap-2 mb-4 flex-wrap">
+                        <div className="flex items-center bg-card border border-border rounded-xl p-1 gap-0.5 flex-wrap">
+                          {sortOptions.map((s) => {
                             const Icon = s.icon;
                             return (
                               <button
                                 key={s.id}
-                                onClick={() => setSortBy(s.id)}
+                                onClick={() => { setSortBy(s.id); setCurrentPage(1); }}
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                                   sortBy === s.id
                                     ? "bg-primary text-primary-foreground shadow-sm"
@@ -1170,7 +1279,7 @@ const Threads = () => {
                                 }`}
                               >
                                 <Icon className="w-3.5 h-3.5" />
-                                {s.label}
+                                <span className="hidden sm:inline">{s.label}</span>
                               </button>
                             );
                           })}
@@ -1180,9 +1289,9 @@ const Threads = () => {
                         </Button>
                       </div>
 
-                      {/* Thread list */}
-                      <div className="space-y-3">
-                        {sortedCategoryThreads.map((thread, i) => (
+                      {/* Thread list — compact */}
+                      <div className="space-y-1.5">
+                        {paginatedThreads.map((thread, i) => (
                           <ThreadCard
                             key={thread.id}
                             thread={thread}
@@ -1195,6 +1304,13 @@ const Threads = () => {
                           />
                         ))}
                       </div>
+
+                      {/* Pagination */}
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                      />
 
                       {sortedCategoryThreads.length === 0 && (
                         <div className="text-center py-16 bg-card border border-border rounded-xl">
@@ -1217,7 +1333,6 @@ const Threads = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Right info panel — hidden on detail view and small screens */}
               {view !== "detail" && (
                 <div className="hidden xl:block w-64 shrink-0">
                   <InfoPanel />
