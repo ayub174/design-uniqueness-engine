@@ -252,13 +252,13 @@ const Index = () => {
                   {[
                     { icon: MapPin, label: "Ort" },
                     { icon: Building2, label: "Yrke" },
-                    { icon: SlidersHorizontal, label: "Filter" },
+                    { icon: Filter, label: "Filter" },
                     { icon: ArrowUpDown, label: "Nyast först" },
                     { icon: Bell, label: "Bevaka" },
                   ].map((filter) => (
                     <button
                       key={filter.label}
-                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full border border-border bg-card text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full border border-border bg-card/60 backdrop-blur-sm text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.3)] active:scale-[0.97] transition-all duration-200"
                     >
                       <filter.icon className="h-3.5 w-3.5" />
                       {filter.label}
