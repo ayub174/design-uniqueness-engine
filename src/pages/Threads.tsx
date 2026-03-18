@@ -1614,7 +1614,7 @@ const Threads = () => {
         {/* Main content area */}
         <div className="flex-1 min-w-0 flex flex-col">
           {/* Collapsed sidebar toggle — desktop only */}
-          {!isMobile && sidebarCollapsed && (
+          {!isMobile && sidebarCollapsed && view !== "detail" && (
             <div className="border-b border-border px-4 py-2">
               <button
                 onClick={() => setSidebarCollapsed(false)}
