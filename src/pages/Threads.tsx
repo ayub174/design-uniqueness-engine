@@ -1094,7 +1094,7 @@ const CategorySidebar = ({
     className="shrink-0 overflow-hidden border-r border-border bg-card/50 hidden md:block"
     style={{ minWidth: collapsed ? 0 : "200px", maxWidth: collapsed ? 0 : "288px" }}
   >
-    <div style={{ minWidth: "240px" }} className="h-full flex flex-col">
+    <div style={{ minWidth: "200px" }} className="h-full flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
