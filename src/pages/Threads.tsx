@@ -1526,6 +1526,8 @@ const Threads = () => {
                     onBackToOverview={handleBackToOverview}
                     view={view}
                     onClose={() => setMobileMenuOpen(false)}
+                    allThreads={allThreads}
+                    onNewThread={() => setNewThreadOpen(true)}
                   />
                 </SheetContent>
               </Sheet>
