@@ -112,7 +112,7 @@ const initialThreads: Thread[] = [
     authorInitials: "LM",
     authorRole: "Projektledare @ Volvo",
     authorBadge: "top",
-    category: "interview",
+    category: "cv_jobbsokning",
     content: "Jag har äntligen fått jobbet jag drömt om! Ville dela med mig av mina bästa intervjutips som verkligen gjorde skillnad.",
     likes: 312,
     replies: 45,
