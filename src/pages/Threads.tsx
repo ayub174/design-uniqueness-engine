@@ -1018,12 +1018,16 @@ const SidebarContent = ({
   onBackToOverview,
   view,
   onClose,
+  allThreads,
+  onNewThread,
 }: {
   selectedCategory: string | null;
   onSelectCategory: (id: string) => void;
   onBackToOverview: () => void;
   view: string;
   onClose?: () => void;
+  allThreads: Thread[];
+  onNewThread?: () => void;
 }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
     new Set(Object.keys(categoryGroups))
