@@ -896,12 +896,12 @@ const ThreadDetail = ({
       </div>
 
       {/* Reply input */}
-      <div className="mt-4 bg-card border border-border rounded-xl p-4 sm:p-5">
-        <div className="flex items-center gap-3 mb-3">
-          <Avatar className="w-7 h-7">
-            <AvatarFallback className="text-[10px] font-bold bg-muted text-muted-foreground">G</AvatarFallback>
+      <div className="mt-3 bg-card border border-border rounded-xl p-3 sm:p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Avatar className="w-6 h-6">
+            <AvatarFallback className="text-[9px] font-bold bg-muted text-muted-foreground">G</AvatarFallback>
           </Avatar>
-          <span className="text-xs text-muted-foreground">Svara som <span className="font-medium text-foreground">Gäst</span></span>
+          <span className="text-[11px] text-muted-foreground">Svara som <span className="font-medium text-foreground">Gäst</span></span>
         </div>
 
         {/* Quote preview */}
@@ -911,15 +911,15 @@ const ThreadDetail = ({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden mb-3"
+              className="overflow-hidden mb-2"
             >
-              <div className="border-l-3 border-primary/40 bg-muted/50 rounded-r-lg px-3 py-2.5 flex items-start gap-2">
-                <Quote className="w-3.5 h-3.5 text-primary/50 shrink-0 mt-0.5" />
+              <div className="border-l-3 border-primary/40 bg-muted/50 rounded-r-lg px-2.5 py-2 flex items-start gap-2">
+                <Quote className="w-3 h-3 text-primary/50 shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
                   <span className="text-[10px] font-semibold text-muted-foreground block mb-0.5">
                     Citerar {quotedReply.author}:
                   </span>
-                  <p className="text-xs text-muted-foreground/80 italic line-clamp-2">
+                  <p className="text-[11px] text-muted-foreground/80 italic line-clamp-2">
                     {quotedReply.content}
                   </p>
                 </div>
@@ -939,12 +939,12 @@ const ThreadDetail = ({
           placeholder={quotedReply ? `Svara på ${quotedReply.author}s inlägg...` : "Dela din erfarenhet eller ge råd..."}
           value={replyText}
           onChange={(e) => setReplyText(e.target.value)}
-          className="min-h-[80px] bg-background border-border resize-none mb-3 text-sm rounded-lg"
+          className="min-h-[60px] bg-background border-border resize-none mb-2 text-[13px] rounded-lg"
         />
         <div className="flex justify-end">
           <Button
             size="sm"
-            className="gap-2 px-5"
+            className="gap-1.5 px-4 text-xs h-8"
             disabled={!replyText.trim()}
             onClick={() => {
               if (!replyText.trim()) return;
@@ -953,14 +953,14 @@ const ThreadDetail = ({
               setQuotedReply(null);
             }}
           >
-            <Send className="w-3.5 h-3.5" /> {quotedReply ? "Svara med citat" : "Svara"}
+            <Send className="w-3 h-3" /> {quotedReply ? "Svara med citat" : "Svara"}
           </Button>
         </div>
       </div>
 
       {/* Replies — nested */}
-      <div className="mt-6 space-y-3">
-        <p className="text-sm font-semibold text-foreground">{totalReplyCount} svar</p>
+      <div className="mt-4 space-y-2">
+        <p className="text-xs font-semibold text-foreground">{totalReplyCount} svar</p>
         {thread.replyData?.map((reply) => (
           <ReplyItem
             key={reply.id}
