@@ -1157,6 +1157,8 @@ const CategorySidebar = ({
   onSelectCategory,
   onBackToOverview,
   view,
+  allThreads,
+  onNewThread,
 }: {
   collapsed: boolean;
   onToggle: () => void;
@@ -1164,6 +1166,8 @@ const CategorySidebar = ({
   onSelectCategory: (id: string) => void;
   onBackToOverview: () => void;
   view: string;
+  allThreads: Thread[];
+  onNewThread: () => void;
 }) => (
   <motion.aside
     animate={{ width: collapsed ? 0 : "30%" }}
@@ -1172,7 +1176,6 @@ const CategorySidebar = ({
     style={{ minWidth: collapsed ? 0 : "240px", maxWidth: collapsed ? 0 : "360px" }}
   >
     <div style={{ minWidth: "240px" }} className="h-full flex flex-col">
-      {/* Sidebar header */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
@@ -1194,6 +1197,8 @@ const CategorySidebar = ({
         onSelectCategory={onSelectCategory}
         onBackToOverview={onBackToOverview}
         view={view}
+        allThreads={allThreads}
+        onNewThread={onNewThread}
       />
     </div>
   </motion.aside>
