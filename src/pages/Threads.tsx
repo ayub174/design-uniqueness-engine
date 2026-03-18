@@ -1633,7 +1633,7 @@ const Threads = () => {
             onBackToOverview={handleBackToOverview}
             view={view}
             allThreads={allThreads}
-            onNewThread={() => setNewThreadOpen(true)}
+            onNewThread={() => setView("create")}
           />
         )}
 
