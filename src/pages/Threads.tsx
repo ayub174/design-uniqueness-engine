@@ -4,9 +4,9 @@ import {
   MessageSquare, Eye, Search, ArrowLeft, Bookmark, Reply, Share2,
   Send, Shield, Zap, Crown, ThumbsUp, Plus, TrendingUp,
   Users, Clock, Award, Briefcase, GraduationCap, Building2,
-  DollarSign, Lightbulb, Heart, ChevronDown, X, Handshake,
+  DollarSign, Lightbulb, Heart, ChevronRight, X, Handshake,
   Scale, Globe, Code, Stethoscope, Palette, BarChart3, Rocket,
-  BookOpen, UserCheck, Filter,
+  BookOpen, UserCheck, Pin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 
-interface Reply {
+interface ReplyData {
   id: string;
   author: string;
   authorInitials: string;
@@ -42,12 +42,13 @@ interface Thread {
   tags: string[];
   industry?: string;
   experienceLevel?: string;
-  replyData?: Reply[];
+  replyData?: ReplyData[];
 }
 
 /* ─── Category system ─── */
 interface CategoryDef {
   label: string;
+  description: string;
   icon: typeof Briefcase;
   group: string;
 }
@@ -61,106 +62,26 @@ const categoryGroups: Record<string, { label: string; icon: typeof Briefcase }> 
 };
 
 const categories: Record<string, CategoryDef> = {
-  career: { label: "Karriär", icon: Briefcase, group: "karriar" },
-  career_switch: { label: "Karriärväxling", icon: Rocket, group: "karriar" },
-  education: { label: "Utbildning", icon: BookOpen, group: "karriar" },
-  mentorship: { label: "Mentorskap", icon: UserCheck, group: "karriar" },
-  salary: { label: "Lön", icon: DollarSign, group: "lon" },
-  benefits: { label: "Förmåner", icon: Handshake, group: "lon" },
-  negotiation: { label: "Förhandling", icon: Scale, group: "lon" },
-  interview: { label: "Intervju", icon: Lightbulb, group: "jobbsok" },
-  cv: { label: "CV & Profil", icon: GraduationCap, group: "jobbsok" },
-  networking: { label: "Nätverk", icon: Users, group: "jobbsok" },
-  workplace: { label: "Arbetsmiljö", icon: Building2, group: "arbetsliv" },
-  leadership: { label: "Ledarskap", icon: Crown, group: "arbetsliv" },
-  remote: { label: "Remote & Hybrid", icon: Globe, group: "arbetsliv" },
-  tech: { label: "Tech & IT", icon: Code, group: "bransch" },
-  healthcare: { label: "Vård & Hälsa", icon: Stethoscope, group: "bransch" },
-  creative: { label: "Kreativt", icon: Palette, group: "bransch" },
-  finance: { label: "Ekonomi", icon: BarChart3, group: "bransch" },
+  career: { label: "Karriär", description: "Karriärvägar, befordringar och professionell utveckling", icon: Briefcase, group: "karriar" },
+  career_switch: { label: "Karriärväxling", description: "Byta bransch, omskolning och nya vägar", icon: Rocket, group: "karriar" },
+  education: { label: "Utbildning", description: "Kurser, certifikat och vidareutbildning", icon: BookOpen, group: "karriar" },
+  mentorship: { label: "Mentorskap", description: "Hitta mentorer och dela kunskap", icon: UserCheck, group: "karriar" },
+  salary: { label: "Lön", description: "Lönestatistik, jämförelser och förväntningar", icon: DollarSign, group: "lon" },
+  benefits: { label: "Förmåner", description: "Personalförmåner, pension och försäkringar", icon: Handshake, group: "lon" },
+  negotiation: { label: "Förhandling", description: "Löneförhandling och strategier", icon: Scale, group: "lon" },
+  interview: { label: "Intervju", description: "Intervjutips, förberedelser och erfarenheter", icon: Lightbulb, group: "jobbsok" },
+  cv: { label: "CV & Profil", description: "CV-granskning, LinkedIn och personligt varumärke", icon: GraduationCap, group: "jobbsok" },
+  networking: { label: "Nätverk", description: "Professionellt nätverkande och kontakter", icon: Users, group: "jobbsok" },
+  workplace: { label: "Arbetsmiljö", description: "Arbetsplatskultur, konflikter och trivsel", icon: Building2, group: "arbetsliv" },
+  leadership: { label: "Ledarskap", description: "Chefsskap, teamledning och management", icon: Crown, group: "arbetsliv" },
+  remote: { label: "Remote & Hybrid", description: "Distansarbete, hybridlösningar och hemmakontor", icon: Globe, group: "arbetsliv" },
+  tech: { label: "Tech & IT", description: "Teknikbranschen, programmering och digitalisering", icon: Code, group: "bransch" },
+  healthcare: { label: "Vård & Hälsa", description: "Sjukvård, omsorg och hälsobranschen", icon: Stethoscope, group: "bransch" },
+  creative: { label: "Kreativt", description: "Design, media, kommunikation och kultur", icon: Palette, group: "bransch" },
+  finance: { label: "Ekonomi", description: "Bank, finans, revision och ekonomijobb", icon: BarChart3, group: "bransch" },
 };
 
-// Top-level pills shown by default
-const popularCategories = ["career", "salary", "interview", "cv", "workplace"];
-
-/* ─── Category Panel ─── */
-const CategoryPanel = ({
-  isOpen,
-  onClose,
-  selectedCategory,
-  onSelect,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  selectedCategory: string;
-  onSelect: (id: string) => void;
-}) => {
-  if (!isOpen) return null;
-
-  const grouped = Object.entries(categoryGroups).map(([groupId, group]) => ({
-    ...group,
-    groupId,
-    items: Object.entries(categories).filter(([, cat]) => cat.group === groupId),
-  }));
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
-      exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.2 }}
-      className="overflow-hidden"
-    >
-      <div className="bg-card border border-border rounded-xl p-5 mb-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-serif text-sm font-semibold text-foreground">Alla kategorier</h3>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {grouped.map((group) => {
-            const GroupIcon = group.icon;
-            return (
-              <div key={group.groupId}>
-                <div className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                  <GroupIcon className="w-3 h-3" />
-                  {group.label}
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {group.items.map(([id, cat]) => {
-                    const CatIcon = cat.icon;
-                    return (
-                      <button
-                        key={id}
-                        onClick={() => { onSelect(id); onClose(); }}
-                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                          selectedCategory === id
-                            ? "bg-primary/10 text-primary border border-primary/30"
-                            : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent"
-                        }`}
-                      >
-                        <CatIcon className="w-3 h-3" />
-                        {cat.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <button
-          onClick={() => { onSelect("all"); onClose(); }}
-          className="mt-4 text-xs text-primary hover:text-primary/80 font-medium transition-colors"
-        >
-          ← Visa alla diskussioner
-        </button>
-      </div>
-    </motion.div>
-  );
-};
-
+/* ─── Thread data ─── */
 const threads: Thread[] = [
   {
     id: "1",
@@ -341,6 +262,23 @@ const threads: Thread[] = [
   },
 ];
 
+/* ─── Helpers ─── */
+const getCategoryStats = (catId: string) => {
+  const catThreads = threads.filter((t) => t.category === catId);
+  const totalReplies = catThreads.reduce((sum, t) => sum + t.replies, 0);
+  const latestThread = catThreads.sort((a, b) => {
+    // Simple sort by timeAgo (approximate)
+    const timeVal = (t: string) => {
+      if (t.includes("min")) return parseInt(t);
+      if (t.includes("h")) return parseInt(t) * 60;
+      if (t.includes("d")) return parseInt(t) * 1440;
+      return 9999;
+    };
+    return timeVal(a.timeAgo) - timeVal(b.timeAgo);
+  })[0];
+  return { threadCount: catThreads.length, replyCount: totalReplies, latestThread };
+};
+
 /* ─── Badge ─── */
 const AuthorBadge = ({ type }: { type?: string }) => {
   if (!type) return null;
@@ -362,7 +300,172 @@ const AuthorBadge = ({ type }: { type?: string }) => {
   return null;
 };
 
-/* ─── Thread Card ─── */
+/* ═══════════════════════════════════════════════
+   CATEGORY OVERVIEW — Flashback-style landing
+   ═══════════════════════════════════════════════ */
+const CategoryOverview = ({
+  onSelectCategory,
+  searchQuery,
+  setSearchQuery,
+}: {
+  onSelectCategory: (id: string) => void;
+  searchQuery: string;
+  setSearchQuery: (q: string) => void;
+}) => {
+  const grouped = Object.entries(categoryGroups).map(([groupId, group]) => ({
+    ...group,
+    groupId,
+    items: Object.entries(categories).filter(([, cat]) => cat.group === groupId),
+  }));
+
+  // Filter categories by search
+  const filteredGrouped = searchQuery
+    ? grouped.map((g) => ({
+        ...g,
+        items: g.items.filter(
+          ([, cat]) =>
+            cat.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            cat.description.toLowerCase().includes(searchQuery.toLowerCase())
+        ),
+      })).filter((g) => g.items.length > 0)
+    : grouped;
+
+  // Overall stats
+  const totalThreads = threads.length;
+  const totalReplies = threads.reduce((s, t) => s + t.replies, 0);
+
+  return (
+    <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      {/* Hero header */}
+      <div className="mb-6">
+        <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-foreground">Forum</h1>
+        <p className="text-sm text-muted-foreground mt-1.5">
+          Utforska kategorier, hitta rätt diskussion och delta i samtalen
+        </p>
+        <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <MessageSquare className="w-3.5 h-3.5 text-primary" />
+            {totalThreads} trådar
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Reply className="w-3.5 h-3.5 text-primary" />
+            {totalReplies} svar
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5 text-primary" />
+            12,4k medlemmar
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            347 online
+          </span>
+        </div>
+      </div>
+
+      {/* Search */}
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="Sök kategorier och diskussioner..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10 h-10 bg-card border-border text-sm rounded-xl"
+        />
+      </div>
+
+      {/* Category groups */}
+      <div className="space-y-6">
+        {filteredGrouped.map((group, gi) => {
+          const GroupIcon = group.icon;
+          return (
+            <motion.div
+              key={group.groupId}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: gi * 0.05, duration: 0.25 }}
+            >
+              {/* Group header */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
+                  <GroupIcon className="w-3.5 h-3.5 text-primary" />
+                </div>
+                <h2 className="font-serif text-base font-semibold text-foreground">{group.label}</h2>
+              </div>
+
+              {/* Category rows */}
+              <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
+                {group.items.map(([catId, cat]) => {
+                  const stats = getCategoryStats(catId);
+                  const CatIcon = cat.icon;
+                  const latest = stats.latestThread;
+
+                  return (
+                    <button
+                      key={catId}
+                      onClick={() => onSelectCategory(catId)}
+                      className="w-full flex items-center gap-4 px-4 py-3.5 hover:bg-muted/50 transition-colors text-left group"
+                    >
+                      {/* Icon */}
+                      <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-muted shrink-0 group-hover:bg-primary/10 transition-colors">
+                        <CatIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {cat.label}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground/60">
+                            {stats.threadCount} trådar · {stats.replyCount} svar
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                          {cat.description}
+                        </p>
+                      </div>
+
+                      {/* Latest thread preview */}
+                      {latest && (
+                        <div className="hidden sm:flex items-center gap-3 shrink-0 max-w-[280px]">
+                          <div className="text-right min-w-0">
+                            <p className="text-xs text-foreground font-medium line-clamp-1">
+                              {latest.title}
+                            </p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">
+                              av {latest.author} · {latest.timeAgo} sedan
+                            </p>
+                          </div>
+                          <Avatar className="w-7 h-7 shrink-0">
+                            <AvatarFallback className="text-[9px] font-bold bg-primary/10 text-primary">
+                              {latest.authorInitials}
+                            </AvatarFallback>
+                          </Avatar>
+                        </div>
+                      )}
+
+                      <ChevronRight className="w-4 h-4 text-muted-foreground/40 shrink-0 group-hover:text-primary/60 transition-colors" />
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {filteredGrouped.length === 0 && (
+        <div className="text-center py-16">
+          <p className="text-muted-foreground text-sm">Inga kategorier matchade din sökning</p>
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
+/* ═══════════════════════════════════════════════
+   CATEGORY THREAD LIST — threads within a category
+   ═══════════════════════════════════════════════ */
 const ThreadCard = ({
   thread,
   index,
@@ -381,7 +484,6 @@ const ThreadCard = ({
   onClick: () => void;
 }) => {
   const cat = categories[thread.category];
-  const CatIcon = cat?.icon || Briefcase;
   const isLiked = likedThreads.has(thread.id);
   const likeCount = thread.likes + (isLiked ? 1 : 0);
 
@@ -426,12 +528,8 @@ const ThreadCard = ({
           </button>
         </div>
 
-        {/* Category + tags */}
+        {/* Tags */}
         <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
-            <CatIcon className="w-3 h-3" />
-            {cat?.label}
-          </span>
           {thread.industry && (
             <span className="text-[11px] text-muted-foreground/70 bg-muted/60 px-2 py-0.5 rounded-md">
               {thread.industry}
@@ -443,8 +541,8 @@ const ThreadCard = ({
             </span>
           )}
           {thread.isPinned && (
-            <span className="text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
-              📌 Fäst
+            <span className="text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-md flex items-center gap-1">
+              <Pin className="w-2.5 h-2.5" /> Fäst
             </span>
           )}
         </div>
@@ -535,12 +633,11 @@ const ThreadDetail = ({
         className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-5 group"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        Tillbaka
+        Tillbaka till {cat?.label || "trådar"}
       </button>
 
       {/* Main post */}
       <div className="bg-card border border-border rounded-xl p-5 sm:p-6">
-        {/* Author */}
         <div className="flex items-start gap-3 mb-4">
           <Avatar className="w-10 h-10 ring-2 ring-background shadow-sm">
             <AvatarFallback className="text-sm font-bold bg-primary/10 text-primary">
@@ -560,7 +657,6 @@ const ThreadDetail = ({
           </div>
         </div>
 
-        {/* Meta */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
             <CatIcon className="w-3 h-3" /> {cat?.label}
@@ -589,7 +685,6 @@ const ThreadDetail = ({
           ))}
         </div>
 
-        {/* Engagement */}
         <div className="flex items-center gap-0.5 pt-4 border-t border-border/60 text-xs text-muted-foreground">
           <button
             onClick={() => toggleLike(thread.id)}
@@ -697,7 +792,6 @@ const ThreadDetail = ({
 /* ─── Sidebar ─── */
 const CommunitySidebar = () => (
   <div className="hidden lg:block w-72 shrink-0 space-y-4">
-    {/* Community info */}
     <div className="bg-card border border-border rounded-xl overflow-hidden">
       <div className="h-2 bg-primary" />
       <div className="p-5">
@@ -717,7 +811,6 @@ const CommunitySidebar = () => (
       </div>
     </div>
 
-    {/* Popular topics */}
     <div className="bg-card border border-border rounded-xl p-5">
       <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">
         Populära ämnen
@@ -740,60 +833,34 @@ const CommunitySidebar = () => (
       </div>
     </div>
 
-    {/* Guidelines */}
     <div className="bg-card border border-border rounded-xl p-5">
       <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">
         Community-riktlinjer
       </h4>
       <ol className="space-y-2 text-xs text-muted-foreground">
-        <li className="flex gap-2">
-          <span className="text-primary font-bold">1.</span>
-          Var professionell och respektfull
-        </li>
-        <li className="flex gap-2">
-          <span className="text-primary font-bold">2.</span>
-          Dela konkreta erfarenheter
-        </li>
-        <li className="flex gap-2">
-          <span className="text-primary font-bold">3.</span>
-          Respektera andras anonymitet
-        </li>
-        <li className="flex gap-2">
-          <span className="text-primary font-bold">4.</span>
-          Ingen spam eller rekrytering
-        </li>
+        <li className="flex gap-2"><span className="text-primary font-bold">1.</span>Var professionell och respektfull</li>
+        <li className="flex gap-2"><span className="text-primary font-bold">2.</span>Dela konkreta erfarenheter</li>
+        <li className="flex gap-2"><span className="text-primary font-bold">3.</span>Respektera andras anonymitet</li>
+        <li className="flex gap-2"><span className="text-primary font-bold">4.</span>Ingen spam eller rekrytering</li>
       </ol>
     </div>
   </div>
 );
 
-/* ─── Main Page ─── */
+/* ═══════════════════════════════════════════════
+   MAIN PAGE — three-level navigation:
+   1. Category overview (landing)
+   2. Category thread list
+   3. Thread detail
+   ═══════════════════════════════════════════════ */
 const Threads = () => {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [view, setView] = useState<"overview" | "category" | "detail">("overview");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [activeThread, setActiveThread] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("popular");
   const [searchQuery, setSearchQuery] = useState("");
   const [likedThreads, setLikedThreads] = useState<Set<string>>(new Set());
   const [savedThreads, setSavedThreads] = useState<Set<string>>(new Set());
-  const [activeThread, setActiveThread] = useState<string | null>(null);
-  const [showCategoryPanel, setShowCategoryPanel] = useState(false);
-
-  // Check if the selected category is not in the popular pills
-  const isNonPopularSelected = selectedCategory !== "all" && !popularCategories.includes(selectedCategory);
-  const selectedCatData = categories[selectedCategory];
-
-  const filteredThreads = threads.filter((t) => {
-    const matchCat = selectedCategory === "all" || t.category === selectedCategory;
-    const matchSearch = !searchQuery || t.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
-  });
-
-  const sortedThreads = [...filteredThreads].sort((a, b) => {
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    if (sortBy === "popular") return (b.likes + b.replies * 2) - (a.likes + a.replies * 2);
-    if (sortBy === "top") return b.likes - a.likes;
-    return 0;
-  });
 
   const toggleLike = (id: string) => {
     setLikedThreads((prev) => {
@@ -810,7 +877,43 @@ const Threads = () => {
     });
   };
 
+  const handleSelectCategory = (catId: string) => {
+    setSelectedCategory(catId);
+    setView("category");
+    setSearchQuery("");
+  };
+
+  const handleOpenThread = (threadId: string) => {
+    setActiveThread(threadId);
+    setView("detail");
+  };
+
+  const handleBackToOverview = () => {
+    setView("overview");
+    setSelectedCategory(null);
+    setSearchQuery("");
+  };
+
+  const handleBackToCategory = () => {
+    setView("category");
+    setActiveThread(null);
+  };
+
+  // Filtered threads for current category
+  const categoryThreads = selectedCategory
+    ? threads.filter((t) => t.category === selectedCategory)
+    : [];
+
+  const sortedCategoryThreads = [...categoryThreads].sort((a, b) => {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+    if (sortBy === "popular") return (b.likes + b.replies * 2) - (a.likes + a.replies * 2);
+    if (sortBy === "top") return b.likes - a.likes;
+    return 0;
+  });
+
   const activeThreadData = activeThread ? threads.find((t) => t.id === activeThread) : null;
+  const selectedCatData = selectedCategory ? categories[selectedCategory] : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -822,16 +925,23 @@ const Threads = () => {
               Chappie<span className="text-primary">.</span>
             </Link>
             <div className="hidden sm:flex h-5 w-px bg-border" />
-            <span className="hidden sm:block text-sm font-medium text-muted-foreground">Community</span>
-          </div>
-          <div className="relative hidden md:block w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Sök diskussioner..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-9 bg-muted/50 border-transparent text-sm rounded-xl focus-visible:border-border"
-            />
+            <button
+              onClick={handleBackToOverview}
+              className="hidden sm:block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Forum
+            </button>
+            {view !== "overview" && selectedCatData && (
+              <>
+                <ChevronRight className="hidden sm:block w-3.5 h-3.5 text-muted-foreground/40" />
+                <button
+                  onClick={() => { setView("category"); setActiveThread(null); }}
+                  className="hidden sm:block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {selectedCatData.label}
+                </button>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="text-xs h-9">Logga in</Button>
@@ -842,30 +952,48 @@ const Threads = () => {
 
       <div className="pt-14 max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex gap-6 py-6">
-          {/* Main feed */}
+          {/* Main content */}
           <div className="flex-1 min-w-0">
             <AnimatePresence mode="wait">
-              {activeThreadData ? (
+              {view === "detail" && activeThreadData ? (
                 <ThreadDetail
                   key="detail"
                   thread={activeThreadData}
-                  onBack={() => setActiveThread(null)}
+                  onBack={handleBackToCategory}
                   likedThreads={likedThreads}
                   toggleLike={toggleLike}
                 />
-              ) : (
-                <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  {/* Header */}
-                  <div className="mb-5">
-                    <h1 className="font-serif text-2xl font-semibold text-foreground">Diskussioner</h1>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Karriärfrågor, erfarenheter och råd från communityn
-                    </p>
+              ) : view === "category" && selectedCatData ? (
+                <motion.div key="category" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  {/* Category header */}
+                  <button
+                    onClick={handleBackToOverview}
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4 group"
+                  >
+                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                    Alla kategorier
+                  </button>
+
+                  <div className="flex items-center gap-3 mb-1">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10">
+                      {React.createElement(selectedCatData.icon, { className: "w-5 h-5 text-primary" })}
+                    </div>
+                    <div>
+                      <h1 className="font-serif text-xl sm:text-2xl font-semibold text-foreground">
+                        {selectedCatData.label}
+                      </h1>
+                      <p className="text-xs text-muted-foreground mt-0.5">{selectedCatData.description}</p>
+                    </div>
                   </div>
 
-                  {/* Filters */}
-                  <div className="flex items-center gap-2 mb-4 flex-wrap">
-                    {/* Sort */}
+                  <div className="flex items-center gap-3 mt-4 mb-5 text-xs text-muted-foreground">
+                    <span>{categoryThreads.length} trådar</span>
+                    <span className="text-muted-foreground/30">·</span>
+                    <span>{categoryThreads.reduce((s, t) => s + t.replies, 0)} svar</span>
+                  </div>
+
+                  {/* Sort controls */}
+                  <div className="flex items-center gap-2 mb-4">
                     <div className="flex items-center bg-card border border-border rounded-xl p-1 gap-0.5">
                       {[
                         { id: "popular", label: "Populärt", icon: TrendingUp },
@@ -889,77 +1017,14 @@ const Threads = () => {
                         );
                       })}
                     </div>
-
-                    {/* Categories - Popular pills */}
-                    <div className="flex items-center gap-1 flex-wrap">
-                      <button
-                        onClick={() => setSelectedCategory("all")}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-                          selectedCategory === "all"
-                            ? "border-primary/30 bg-primary/5 text-primary"
-                            : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted"
-                        }`}
-                      >
-                        Alla
-                      </button>
-                      {popularCategories.map((id) => {
-                        const cat = categories[id];
-                        if (!cat) return null;
-                        const CatIcon = cat.icon;
-                        return (
-                          <button
-                            key={id}
-                            onClick={() => setSelectedCategory(id)}
-                            className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-                              selectedCategory === id
-                                ? "border-primary/30 bg-primary/5 text-primary"
-                                : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted"
-                            }`}
-                          >
-                            <CatIcon className="w-3 h-3" />
-                            {cat.label}
-                          </button>
-                        );
-                      })}
-                      {/* Show active non-popular category as a removable pill */}
-                      {isNonPopularSelected && selectedCatData && (
-                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium border border-primary/30 bg-primary/5 text-primary">
-                          {React.createElement(selectedCatData.icon, { className: "w-3 h-3" })}
-                          {selectedCatData.label}
-                          <button onClick={() => setSelectedCategory("all")} className="ml-0.5 hover:text-primary/70">
-                            <X className="w-3 h-3" />
-                          </button>
-                        </span>
-                      )}
-                      {/* "Alla kategorier" toggle */}
-                      <button
-                        onClick={() => setShowCategoryPanel(!showCategoryPanel)}
-                        className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-                          showCategoryPanel
-                            ? "border-primary/30 bg-primary/5 text-primary"
-                            : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
-                        }`}
-                      >
-                        <Filter className="w-3 h-3" />
-                        Fler
-                        <ChevronDown className={`w-3 h-3 transition-transform ${showCategoryPanel ? "rotate-180" : ""}`} />
-                      </button>
-                    </div>
+                    <Button size="sm" className="ml-auto gap-2 text-xs h-8 px-4">
+                      <Plus className="w-3.5 h-3.5" /> Ny tråd
+                    </Button>
                   </div>
-
-                  {/* Category Panel */}
-                  <AnimatePresence>
-                    <CategoryPanel
-                      isOpen={showCategoryPanel}
-                      onClose={() => setShowCategoryPanel(false)}
-                      selectedCategory={selectedCategory}
-                      onSelect={setSelectedCategory}
-                    />
-                  </AnimatePresence>
 
                   {/* Thread list */}
                   <div className="space-y-3">
-                    {sortedThreads.map((thread, i) => (
+                    {sortedCategoryThreads.map((thread, i) => (
                       <ThreadCard
                         key={thread.id}
                         thread={thread}
@@ -968,29 +1033,34 @@ const Threads = () => {
                         savedThreads={savedThreads}
                         toggleLike={toggleLike}
                         toggleSave={toggleSave}
-                        onClick={() => thread.replyData ? setActiveThread(thread.id) : undefined}
+                        onClick={() => handleOpenThread(thread.id)}
                       />
                     ))}
                   </div>
 
-                  {sortedThreads.length === 0 && (
-                    <div className="text-center py-16">
-                      <p className="text-muted-foreground text-sm">Inga diskussioner hittades</p>
+                  {sortedCategoryThreads.length === 0 && (
+                    <div className="text-center py-16 bg-card border border-border rounded-xl">
+                      <MessageSquare className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+                      <p className="text-muted-foreground text-sm">Inga trådar i denna kategori ännu</p>
+                      <Button size="sm" className="mt-4 gap-2 text-xs">
+                        <Plus className="w-3.5 h-3.5" /> Starta den första diskussionen
+                      </Button>
                     </div>
                   )}
-
-                  <div className="mt-8 text-center pb-8">
-                    <Button variant="outline" size="sm" className="text-muted-foreground text-xs px-6">
-                      Visa fler diskussioner
-                    </Button>
-                  </div>
                 </motion.div>
+              ) : (
+                <CategoryOverview
+                  key="overview"
+                  onSelectCategory={handleSelectCategory}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                />
               )}
             </AnimatePresence>
           </div>
 
-          {/* Sidebar */}
-          {!activeThread && <CommunitySidebar />}
+          {/* Sidebar — show on overview and category views */}
+          {view !== "detail" && <CommunitySidebar />}
         </div>
       </div>
     </div>
