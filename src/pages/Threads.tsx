@@ -1424,7 +1424,7 @@ const CreateThreadView = ({
 const Threads = () => {
   const isMobile = useIsMobile();
   const [allThreads, setAllThreads] = useState<Thread[]>(initialThreads);
-  const [view, setView] = useState<"overview" | "category" | "detail">("overview");
+  const [view, setView] = useState<"overview" | "category" | "detail" | "create">("overview");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeThread, setActiveThread] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("popular");
@@ -1434,7 +1434,6 @@ const Threads = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [newThreadOpen, setNewThreadOpen] = useState(false);
 
   const toggleLike = (id: string) => {
     setLikedThreads((prev) => {
