@@ -62,31 +62,33 @@ interface CategoryDef {
 }
 
 const categoryGroups: Record<string, { label: string; icon: typeof Briefcase }> = {
-  karriar: { label: "Karriär & Utveckling", icon: Rocket },
-  lon: { label: "Lön & Förmåner", icon: DollarSign },
-  jobbsok: { label: "Jobbsökning", icon: Search },
+  karriar_utbildning: { label: "Karriär & Utbildning", icon: Rocket },
+  cv_jobbsokning: { label: "CV & Jobbsökning", icon: GraduationCap },
+  lon_forhandling: { label: "Lön & Förhandling", icon: DollarSign },
   arbetsliv: { label: "Arbetsliv", icon: Building2 },
-  bransch: { label: "Bransch", icon: Globe },
+  bransch_erfarenheter: { label: "Bransch & Erfarenheter", icon: Globe },
+  allmant: { label: "Allmänt", icon: MessageSquare },
 };
 
 const categories: Record<string, CategoryDef> = {
-  career: { label: "Karriär", description: "Karriärvägar, befordringar och professionell utveckling", icon: Briefcase, group: "karriar" },
-  career_switch: { label: "Karriärväxling", description: "Byta bransch, omskolning och nya vägar", icon: Rocket, group: "karriar" },
-  education: { label: "Utbildning", description: "Kurser, certifikat och vidareutbildning", icon: BookOpen, group: "karriar" },
-  mentorship: { label: "Mentorskap", description: "Hitta mentorer och dela kunskap", icon: UserCheck, group: "karriar" },
-  salary: { label: "Lön", description: "Lönestatistik, jämförelser och förväntningar", icon: DollarSign, group: "lon" },
-  benefits: { label: "Förmåner", description: "Personalförmåner, pension och försäkringar", icon: Handshake, group: "lon" },
-  negotiation: { label: "Förhandling", description: "Löneförhandling och strategier", icon: Scale, group: "lon" },
-  interview: { label: "Intervju", description: "Intervjutips, förberedelser och erfarenheter", icon: Lightbulb, group: "jobbsok" },
-  cv: { label: "CV & Profil", description: "CV-granskning, LinkedIn och personligt varumärke", icon: GraduationCap, group: "jobbsok" },
-  networking: { label: "Nätverk", description: "Professionellt nätverkande och kontakter", icon: Users, group: "jobbsok" },
+  career: { label: "Karriär", description: "Karriärvägar, befordringar och professionell utveckling", icon: Briefcase, group: "karriar_utbildning" },
+  career_switch: { label: "Karriärväxling", description: "Byta bransch, omskolning och nya vägar", icon: Rocket, group: "karriar_utbildning" },
+  education: { label: "Utbildning", description: "Kurser, certifikat och vidareutbildning", icon: BookOpen, group: "karriar_utbildning" },
+  mentorship: { label: "Mentorskap", description: "Hitta mentorer och dela kunskap", icon: UserCheck, group: "karriar_utbildning" },
+  cv: { label: "CV & Profil", description: "CV-granskning, LinkedIn och personligt varumärke", icon: GraduationCap, group: "cv_jobbsokning" },
+  interview: { label: "Intervju", description: "Intervjutips, förberedelser och erfarenheter", icon: Lightbulb, group: "cv_jobbsokning" },
+  networking: { label: "Nätverk", description: "Professionellt nätverkande och kontakter", icon: Users, group: "cv_jobbsokning" },
+  salary: { label: "Lön", description: "Lönestatistik, jämförelser och förväntningar", icon: DollarSign, group: "lon_forhandling" },
+  benefits: { label: "Förmåner", description: "Personalförmåner, pension och försäkringar", icon: Handshake, group: "lon_forhandling" },
+  negotiation: { label: "Förhandling", description: "Löneförhandling och strategier", icon: Scale, group: "lon_forhandling" },
   workplace: { label: "Arbetsmiljö", description: "Arbetsplatskultur, konflikter och trivsel", icon: Building2, group: "arbetsliv" },
   leadership: { label: "Ledarskap", description: "Chefsskap, teamledning och management", icon: Crown, group: "arbetsliv" },
   remote: { label: "Remote & Hybrid", description: "Distansarbete, hybridlösningar och hemmakontor", icon: Globe, group: "arbetsliv" },
-  tech: { label: "Tech & IT", description: "Teknikbranschen, programmering och digitalisering", icon: Code, group: "bransch" },
-  healthcare: { label: "Vård & Hälsa", description: "Sjukvård, omsorg och hälsobranschen", icon: Stethoscope, group: "bransch" },
-  creative: { label: "Kreativt", description: "Design, media, kommunikation och kultur", icon: Palette, group: "bransch" },
-  finance: { label: "Ekonomi", description: "Bank, finans, revision och ekonomijobb", icon: BarChart3, group: "bransch" },
+  tech: { label: "Tech & IT", description: "Teknikbranschen, programmering och digitalisering", icon: Code, group: "bransch_erfarenheter" },
+  healthcare: { label: "Vård & Hälsa", description: "Sjukvård, omsorg och hälsobranschen", icon: Stethoscope, group: "bransch_erfarenheter" },
+  creative: { label: "Kreativt", description: "Design, media, kommunikation och kultur", icon: Palette, group: "bransch_erfarenheter" },
+  finance: { label: "Ekonomi", description: "Bank, finans, revision och ekonomijobb", icon: BarChart3, group: "bransch_erfarenheter" },
+  general: { label: "Allmänt", description: "Allt annat som inte passar i övriga kategorier", icon: MessageSquare, group: "allmant" },
 };
 
 /* ─── Thread data ─── */
