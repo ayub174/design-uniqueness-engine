@@ -1598,7 +1598,7 @@ const Threads = () => {
       {/* Two-column layout */}
       <div className="pt-14 flex flex-1 max-w-[1400px] mx-auto w-full">
         {/* Left sidebar — desktop only */}
-        {!isMobile && (
+        {!isMobile && view !== "detail" && (
           <CategorySidebar
             collapsed={sidebarCollapsed}
             onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
