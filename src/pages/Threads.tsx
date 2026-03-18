@@ -996,24 +996,6 @@ const SidebarContent = ({
   allThreads: Thread[];
   onNewThread?: () => void;
 }) => {
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
-    new Set(Object.keys(categoryGroups))
-  );
-
-  const toggleGroup = (groupId: string) => {
-    setExpandedGroups((prev) => {
-      const next = new Set(prev);
-      next.has(groupId) ? next.delete(groupId) : next.add(groupId);
-      return next;
-    });
-  };
-
-  const grouped = Object.entries(categoryGroups).map(([groupId, group]) => ({
-    ...group,
-    groupId,
-    items: Object.entries(categories).filter(([, cat]) => cat.group === groupId),
-  }));
-
   const handleSelectCategory = (catId: string) => {
     onSelectCategory(catId);
     onClose?.();
@@ -1054,54 +1036,26 @@ const SidebarContent = ({
 
         <div className="my-1.5 mx-4 h-px bg-border/60" />
 
-        {grouped.map((group) => {
-          const GroupIcon = group.icon;
-          const isExpanded = expandedGroups.has(group.groupId);
+        {Object.entries(categories).map(([catId, cat]) => {
+          const CatIcon = cat.icon;
+          const isActive = selectedCategory === catId && view !== "overview";
+          const stats = getCategoryStats(catId, allThreads);
           return (
-            <div key={group.groupId}>
-              <button
-                onClick={() => toggleGroup(group.groupId)}
-                className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider hover:text-muted-foreground transition-colors"
-              >
-                <GroupIcon className="w-3.5 h-3.5 shrink-0" />
-                <span className="flex-1 text-left">{group.label}</span>
-                <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? "" : "-rotate-90"}`} />
-              </button>
-              <AnimatePresence initial={false}>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
-                  >
-                    {group.items.map(([catId, cat]) => {
-                      const CatIcon = cat.icon;
-                      const isActive = selectedCategory === catId && view !== "overview";
-                      const stats = getCategoryStats(catId, allThreads);
-                      return (
-                        <button
-                          key={catId}
-                          onClick={() => handleSelectCategory(catId)}
-                          className={`w-full flex items-center gap-2.5 pl-8 pr-4 py-2 text-sm transition-all group ${
-                            isActive
-                              ? "text-primary bg-primary/8 font-medium border-r-2 border-primary"
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                          }`}
-                        >
-                          <CatIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
-                          <span className="flex-1 text-left truncate">{cat.label}</span>
-                          <span className="text-[10px] text-muted-foreground/50 tabular-nums">
-                            {stats.threadCount}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            <button
+              key={catId}
+              onClick={() => handleSelectCategory(catId)}
+              className={`w-full flex items-center gap-2.5 px-4 py-2 text-sm transition-all group ${
+                isActive
+                  ? "text-primary bg-primary/8 font-medium border-r-2 border-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              }`}
+            >
+              <CatIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
+              <span className="flex-1 text-left truncate">{cat.label}</span>
+              <span className="text-[10px] text-muted-foreground/50 tabular-nums">
+                {stats.threadCount}
+              </span>
+            </button>
           );
         })}
       </div>
