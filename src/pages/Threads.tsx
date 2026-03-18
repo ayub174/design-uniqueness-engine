@@ -1141,7 +1141,7 @@ const SidebarContent = ({
 
       {/* Sidebar footer */}
       <div className="p-4 border-t border-border">
-        <Button size="sm" className="w-full gap-2 text-xs">
+        <Button size="sm" className="w-full gap-2 text-xs" onClick={() => { onNewThread?.(); onClose?.(); }}>
           <Plus className="w-3.5 h-3.5" /> Starta diskussion
         </Button>
       </div>
