@@ -277,7 +277,7 @@ const initialThreads: Thread[] = [
     author: "KodKarin",
     authorInitials: "KK",
     authorRole: "Karriärväxlare",
-    category: "career",
+    category: "karriar_utbildning",
     content: "Vill sadla om till webbutveckling. Någon som gått en bootcamp och kan rekommendera? Tittar på Salt, Technigo och School of Applied Technology.",
     likes: 97,
     replies: 43,
