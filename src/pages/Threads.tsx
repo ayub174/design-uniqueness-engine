@@ -7,7 +7,7 @@ import {
   DollarSign, Lightbulb, Heart, ChevronRight, X, Handshake,
   Scale, Globe, Code, Stethoscope, Palette, BarChart3, Rocket,
   BookOpen, UserCheck, Pin, PanelLeftClose, PanelLeftOpen, ChevronDown,
-  Menu, MessageCircleQuestion, EyeIcon,
+  Menu, MessageCircleQuestion, EyeIcon, Quote, CornerDownRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
