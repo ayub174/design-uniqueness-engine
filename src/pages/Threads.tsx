@@ -349,22 +349,15 @@ const CategoryOverview = ({
   setSearchQuery: (q: string) => void;
   allThreads: Thread[];
 }) => {
-  const grouped = Object.entries(categoryGroups).map(([groupId, group]) => ({
-    ...group,
-    groupId,
-    items: Object.entries(categories).filter(([, cat]) => cat.group === groupId),
-  }));
+  const allCats = Object.entries(categories);
 
-  const filteredGrouped = searchQuery
-    ? grouped.map((g) => ({
-        ...g,
-        items: g.items.filter(
-          ([, cat]) =>
-            cat.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            cat.description.toLowerCase().includes(searchQuery.toLowerCase())
-        ),
-      })).filter((g) => g.items.length > 0)
-    : grouped;
+  const filteredCats = searchQuery
+    ? allCats.filter(
+        ([, cat]) =>
+          cat.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          cat.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : allCats;
 
   const totalThreads = allThreads.length;
   const totalReplies = allThreads.reduce((s, t) => s + t.replies, 0);
@@ -406,76 +399,58 @@ const CategoryOverview = ({
         />
       </div>
 
-      <div className="space-y-6">
-        {filteredGrouped.map((group, gi) => {
-          const GroupIcon = group.icon;
+      <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
+        {filteredCats.map(([catId, cat], i) => {
+          const stats = getCategoryStats(catId, allThreads);
+          const CatIcon = cat.icon;
+          const latest = stats.latestThread;
+
           return (
-            <motion.div
-              key={group.groupId}
-              initial={{ opacity: 0, y: 8 }}
+            <motion.button
+              key={catId}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: gi * 0.05, duration: 0.25 }}
+              transition={{ delay: i * 0.04, duration: 0.2 }}
+              onClick={() => onSelectCategory(catId)}
+              className="w-full flex items-center gap-4 px-4 py-3.5 hover:bg-muted/50 transition-colors text-left group"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
-                  <GroupIcon className="w-3.5 h-3.5 text-primary" />
+              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-muted shrink-0 group-hover:bg-primary/10 transition-colors">
+                <CatIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    {cat.label}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground/60">
+                    {stats.threadCount} trådar · {stats.replyCount} svar
+                  </span>
                 </div>
-                <h2 className="font-serif text-base font-semibold text-foreground">{group.label}</h2>
+                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                  {cat.description}
+                </p>
               </div>
 
-              <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
-                {group.items.map(([catId, cat]) => {
-                  const stats = getCategoryStats(catId, allThreads);
-                  const CatIcon = cat.icon;
-                  const latest = stats.latestThread;
+              {latest && (
+                <div className="hidden sm:flex items-center gap-3 shrink-0 max-w-[280px]">
+                  <div className="text-right min-w-0">
+                    <p className="text-xs text-foreground font-medium line-clamp-1">
+                      {latest.title}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      av {latest.author} · {latest.timeAgo} sedan
+                    </p>
+                  </div>
+                  <Avatar className="w-7 h-7 shrink-0">
+                    <AvatarFallback className="text-[9px] font-bold bg-primary/10 text-primary">
+                      {latest.authorInitials}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              )}
 
-                  return (
-                    <button
-                      key={catId}
-                      onClick={() => onSelectCategory(catId)}
-                      className="w-full flex items-center gap-4 px-4 py-3.5 hover:bg-muted/50 transition-colors text-left group"
-                    >
-                      <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-muted shrink-0 group-hover:bg-primary/10 transition-colors">
-                        <CatIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                            {cat.label}
-                          </span>
-                          <span className="text-[11px] text-muted-foreground/60">
-                            {stats.threadCount} trådar · {stats.replyCount} svar
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                          {cat.description}
-                        </p>
-                      </div>
-
-                      {latest && (
-                        <div className="hidden sm:flex items-center gap-3 shrink-0 max-w-[280px]">
-                          <div className="text-right min-w-0">
-                            <p className="text-xs text-foreground font-medium line-clamp-1">
-                              {latest.title}
-                            </p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">
-                              av {latest.author} · {latest.timeAgo} sedan
-                            </p>
-                          </div>
-                          <Avatar className="w-7 h-7 shrink-0">
-                            <AvatarFallback className="text-[9px] font-bold bg-primary/10 text-primary">
-                              {latest.authorInitials}
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                      )}
-
-                      <ChevronRight className="w-4 h-4 text-muted-foreground/40 shrink-0 group-hover:text-primary/60 transition-colors" />
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground/40 shrink-0 group-hover:text-primary/60 transition-colors" />
+            </motion.button>
           );
         })}
       </div>
