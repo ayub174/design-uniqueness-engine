@@ -1779,7 +1779,7 @@ const Threads = () => {
                 </AnimatePresence>
               </div>
 
-              {view !== "detail" && (
+              {view !== "detail" && view !== "create" && (
                 <div className="hidden xl:block w-64 shrink-0">
                   <InfoPanel />
                 </div>
