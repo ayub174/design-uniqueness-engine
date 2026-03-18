@@ -7,7 +7,7 @@ import {
   DollarSign, Lightbulb, Heart, ChevronRight, X, Handshake,
   Scale, Globe, Code, Stethoscope, Palette, BarChart3, Rocket,
   BookOpen, UserCheck, Pin, PanelLeftClose, PanelLeftOpen, ChevronDown,
-  Menu, MessageCircleQuestion, EyeIcon,
+  Menu, MessageCircleQuestion, EyeIcon, Quote, CornerDownRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,9 @@ interface ReplyData {
   likes: number;
   timeAgo: string;
   isOP?: boolean;
+  parentId?: string;
+  quotedReply?: { author: string; content: string };
+  children?: ReplyData[];
 }
 
 interface Thread {
@@ -176,6 +179,30 @@ const threads: Thread[] = [
         content: "Som psykolog ser jag det här mönstret ofta. Söndagsångest, passiv-aggressiv kommunikation, övervakning — klassiska tecken på en toxisk miljö.\n\nMin tumregel: om du mår fysiskt dåligt av tanken på jobbet, är det dags att börja söka.",
         likes: 234,
         timeAgo: "45 min",
+        children: [
+          {
+            id: "r1-1",
+            author: "AnonymAnvändare",
+            authorInitials: "AA",
+            content: "Tack för det professionella perspektivet! Söndagsångesten är verklig — har du tips på hur man hanterar den kortsiktigt medan man söker nytt?",
+            likes: 45,
+            timeAgo: "30 min",
+            isOP: true,
+            parentId: "r1",
+            quotedReply: { author: "PsykologPer", content: "Min tumregel: om du mår fysiskt dåligt av tanken på jobbet, är det dags att börja söka." },
+          },
+          {
+            id: "r1-2",
+            author: "PsykologPer",
+            authorInitials: "PP",
+            authorBadge: "verified",
+            content: "Absolut! Tre saker som hjälper direkt:\n1. Sätt gränser — sluta kolla jobbmail efter kl 17\n2. Fysisk aktivitet söndag eftermiddag\n3. Skriv ner vad du oroar dig för — det brukar vara mindre skrämmande på papper",
+            likes: 89,
+            timeAgo: "20 min",
+            parentId: "r1-1",
+            quotedReply: { author: "AnonymAnvändare", content: "har du tips på hur man hanterar den kortsiktigt medan man söker nytt?" },
+          },
+        ],
       },
       {
         id: "r2",
@@ -184,6 +211,19 @@ const threads: Thread[] = [
         content: "Jag var i exakt samma sits för 2 år sedan. Stannade alldeles för länge pga lönen. Till slut blev jag sjukskriven i 3 månader.\n\nBytte jobb, gick ner 3k i lön men det var ABSOLUT värt det.",
         likes: 189,
         timeAgo: "2h",
+        children: [
+          {
+            id: "r2-1",
+            author: "KarriärCoachMia",
+            authorInitials: "KC",
+            authorBadge: "verified",
+            content: "Det här är tyvärr väldigt vanligt. Lönen blir en \"golden cage\". Bra att du tog steget! Hur lång tid tog det innan du kände skillnaden?",
+            likes: 34,
+            timeAgo: "1h 30min",
+            parentId: "r2",
+            quotedReply: { author: "VarDärSjälv", content: "Bytte jobb, gick ner 3k i lön men det var ABSOLUT värt det." },
+          },
+        ],
       },
       {
         id: "r3",
@@ -202,6 +242,7 @@ const threads: Thread[] = [
         content: "HR-perspektiv: Var diplomatisk. 'Jag har fått ett erbjudande jag inte kan tacka nej till' räcker gott. Dokumentera allt som händer ifall du behöver det senare.",
         likes: 145,
         timeAgo: "50 min",
+        quotedReply: { author: "AnonymAnvändare", content: "Hur hanterade ni uppsägningen?" },
       },
       {
         id: "r5",
@@ -632,6 +673,134 @@ const Pagination = ({
   );
 };
 
+/* ─── Single Reply Component (recursive for nesting) ─── */
+const ReplyItem = ({
+  reply,
+  depth,
+  replyLikes,
+  toggleReplyLike,
+  onQuoteReply,
+}: {
+  reply: ReplyData;
+  depth: number;
+  replyLikes: Set<string>;
+  toggleReplyLike: (id: string) => void;
+  onQuoteReply: (reply: ReplyData) => void;
+}) => {
+  const [collapsed, setCollapsed] = useState(false);
+  const isReplyLiked = replyLikes.has(reply.id);
+  const replyLikeCount = reply.likes + (isReplyLiked ? 1 : 0);
+  const maxDepth = 4;
+  const effectiveDepth = Math.min(depth, maxDepth);
+
+  return (
+    <div className={`${effectiveDepth > 0 ? "pl-4 sm:pl-6" : ""}`}>
+      {/* Thread line for nested replies */}
+      <div className={`relative ${effectiveDepth > 0 ? "border-l-2 border-border/40 pl-4" : ""}`}>
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className={`bg-card border rounded-xl p-4 ${
+            reply.isOP ? "border-primary/20 bg-primary/[0.02]" : "border-border"
+          }`}
+        >
+          {/* Author header */}
+          <div className="flex items-start gap-3 mb-2">
+            <Avatar className="w-7 h-7 shrink-0">
+              <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">
+                {reply.authorInitials}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+              <span className="text-sm font-semibold text-foreground">{reply.author}</span>
+              <AuthorBadge type={reply.authorBadge} />
+              {reply.isOP && (
+                <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">OP</span>
+              )}
+              {depth > 0 && (
+                <span className="flex items-center gap-1 text-[10px] text-muted-foreground/60">
+                  <CornerDownRight className="w-2.5 h-2.5" /> svar
+                </span>
+              )}
+              <span className="text-xs text-muted-foreground">{reply.timeAgo} sedan</span>
+              {reply.children && reply.children.length > 0 && (
+                <button
+                  onClick={() => setCollapsed(!collapsed)}
+                  className="ml-auto text-[10px] text-muted-foreground hover:text-foreground transition-colors font-medium"
+                >
+                  {collapsed ? `+ ${reply.children.length} svar` : "Dölj svar"}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Quoted content */}
+          {reply.quotedReply && (
+            <div className="ml-10 mb-3 border-l-3 border-primary/30 bg-muted/40 rounded-r-lg px-3 py-2.5">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Quote className="w-3 h-3 text-primary/50" />
+                <span className="text-[10px] font-semibold text-muted-foreground">
+                  {reply.quotedReply.author} skrev:
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground/80 italic leading-relaxed line-clamp-3">
+                {reply.quotedReply.content}
+              </p>
+            </div>
+          )}
+
+          {/* Reply content */}
+          <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line mb-3 pl-10">
+            {reply.content}
+          </p>
+
+          {/* Actions */}
+          <div className="flex items-center gap-0.5 text-xs text-muted-foreground pl-10">
+            <button
+              onClick={() => toggleReplyLike(reply.id)}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-all font-medium ${
+                isReplyLiked ? "text-primary bg-primary/10" : "hover:bg-muted"
+              }`}
+            >
+              <ThumbsUp className={`w-3 h-3 ${isReplyLiked ? "fill-primary" : ""}`} />
+              {replyLikeCount}
+            </button>
+            <button
+              onClick={() => onQuoteReply(reply)}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-muted transition-colors font-medium"
+            >
+              <Reply className="w-3 h-3" /> Svara
+            </button>
+            <button
+              onClick={() => onQuoteReply(reply)}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-muted transition-colors font-medium"
+            >
+              <Quote className="w-3 h-3" /> Citera
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Nested children */}
+        {!collapsed && reply.children && reply.children.length > 0 && (
+          <div className="mt-2 space-y-2">
+            {reply.children.map((child) => (
+              <ReplyItem
+                key={child.id}
+                reply={child}
+                depth={depth + 1}
+                replyLikes={replyLikes}
+                toggleReplyLike={toggleReplyLike}
+                onQuoteReply={onQuoteReply}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 /* ─── Detail View ─── */
 const ThreadDetail = ({
   thread,
@@ -646,6 +815,8 @@ const ThreadDetail = ({
 }) => {
   const [replyLikes, setReplyLikes] = useState<Set<string>>(new Set());
   const [replyText, setReplyText] = useState("");
+  const [quotedReply, setQuotedReply] = useState<{ author: string; content: string } | null>(null);
+  const replyRef = React.useRef<HTMLTextAreaElement>(null);
   const cat = categories[thread.category];
   const CatIcon = cat?.icon || Briefcase;
   const isLiked = likedThreads.has(thread.id);
@@ -658,6 +829,23 @@ const ThreadDetail = ({
       return next;
     });
   };
+
+  const handleQuoteReply = (reply: ReplyData) => {
+    const snippet = reply.content.length > 150
+      ? reply.content.substring(0, 150) + "..."
+      : reply.content;
+    setQuotedReply({ author: reply.author, content: snippet });
+    replyRef.current?.focus();
+    replyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  const clearQuote = () => setQuotedReply(null);
+
+  // Count all replies including nested
+  const countAllReplies = (replies: ReplyData[]): number => {
+    return replies.reduce((sum, r) => sum + 1 + (r.children ? countAllReplies(r.children) : 0), 0);
+  };
+  const totalReplyCount = thread.replyData ? countAllReplies(thread.replyData) : thread.replies;
 
   return (
     <motion.div
@@ -733,7 +921,7 @@ const ThreadDetail = ({
             {likeCount}
           </button>
           <span className="flex items-center gap-1.5 px-3 py-1.5 font-medium">
-            <MessageSquare className="w-4 h-4" /> {thread.replies} svar
+            <MessageSquare className="w-4 h-4" /> {totalReplyCount} svar
           </span>
           <span className="flex items-center gap-1.5 px-3 py-1.5 text-muted-foreground/60">
             <Eye className="w-4 h-4" /> {thread.views.toLocaleString("sv-SE")}
@@ -747,6 +935,7 @@ const ThreadDetail = ({
         </div>
       </div>
 
+      {/* Reply input */}
       <div className="mt-4 bg-card border border-border rounded-xl p-4 sm:p-5">
         <div className="flex items-center gap-3 mb-3">
           <Avatar className="w-7 h-7">
@@ -754,69 +943,64 @@ const ThreadDetail = ({
           </Avatar>
           <span className="text-xs text-muted-foreground">Svara som <span className="font-medium text-foreground">Gäst</span></span>
         </div>
+
+        {/* Quote preview */}
+        <AnimatePresence>
+          {quotedReply && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden mb-3"
+            >
+              <div className="border-l-3 border-primary/40 bg-muted/50 rounded-r-lg px-3 py-2.5 flex items-start gap-2">
+                <Quote className="w-3.5 h-3.5 text-primary/50 shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-semibold text-muted-foreground block mb-0.5">
+                    Citerar {quotedReply.author}:
+                  </span>
+                  <p className="text-xs text-muted-foreground/80 italic line-clamp-2">
+                    {quotedReply.content}
+                  </p>
+                </div>
+                <button
+                  onClick={clearQuote}
+                  className="p-0.5 rounded hover:bg-muted-foreground/10 text-muted-foreground/50 hover:text-muted-foreground transition-colors shrink-0"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <Textarea
-          placeholder="Dela din erfarenhet eller ge råd..."
+          ref={replyRef}
+          placeholder={quotedReply ? `Svara på ${quotedReply.author}s inlägg...` : "Dela din erfarenhet eller ge råd..."}
           value={replyText}
           onChange={(e) => setReplyText(e.target.value)}
           className="min-h-[80px] bg-background border-border resize-none mb-3 text-sm rounded-lg"
         />
         <div className="flex justify-end">
           <Button size="sm" className="gap-2 px-5">
-            <Send className="w-3.5 h-3.5" /> Svara
+            <Send className="w-3.5 h-3.5" /> {quotedReply ? "Svara med citat" : "Svara"}
           </Button>
         </div>
       </div>
 
+      {/* Replies — nested */}
       <div className="mt-6 space-y-3">
-        <p className="text-sm font-semibold text-foreground">{thread.replies} svar</p>
-        {thread.replyData?.map((reply, i) => {
-          const isReplyLiked = replyLikes.has(reply.id);
-          const replyLikeCount = reply.likes + (isReplyLiked ? 1 : 0);
-          return (
-            <motion.div
-              key={reply.id}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04, duration: 0.2 }}
-              className={`bg-card border rounded-xl p-4 ${
-                reply.isOP ? "border-primary/20 bg-primary/[0.02]" : "border-border"
-              }`}
-            >
-              <div className="flex items-start gap-3 mb-2">
-                <Avatar className="w-7 h-7 shrink-0">
-                  <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">
-                    {reply.authorInitials}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-semibold text-foreground">{reply.author}</span>
-                  <AuthorBadge type={reply.authorBadge} />
-                  {reply.isOP && (
-                    <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">OP</span>
-                  )}
-                  <span className="text-xs text-muted-foreground">{reply.timeAgo} sedan</span>
-                </div>
-              </div>
-              <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line mb-3 pl-10">
-                {reply.content}
-              </p>
-              <div className="flex items-center gap-0.5 text-xs text-muted-foreground pl-10">
-                <button
-                  onClick={() => toggleReplyLike(reply.id)}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-all font-medium ${
-                    isReplyLiked ? "text-primary bg-primary/10" : "hover:bg-muted"
-                  }`}
-                >
-                  <ThumbsUp className={`w-3 h-3 ${isReplyLiked ? "fill-primary" : ""}`} />
-                  {replyLikeCount}
-                </button>
-                <button className="flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-muted transition-colors font-medium">
-                  <Reply className="w-3 h-3" /> Svara
-                </button>
-              </div>
-            </motion.div>
-          );
-        })}
+        <p className="text-sm font-semibold text-foreground">{totalReplyCount} svar</p>
+        {thread.replyData?.map((reply) => (
+          <ReplyItem
+            key={reply.id}
+            reply={reply}
+            depth={0}
+            replyLikes={replyLikes}
+            toggleReplyLike={toggleReplyLike}
+            onQuoteReply={handleQuoteReply}
+          />
+        ))}
       </div>
     </motion.div>
   );
