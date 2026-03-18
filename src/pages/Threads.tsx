@@ -6,7 +6,7 @@ import {
   Users, Clock, Award, Briefcase, GraduationCap, Building2,
   DollarSign, Lightbulb, Heart, ChevronRight, X, Handshake,
   Scale, Globe, Code, Stethoscope, Palette, BarChart3, Rocket,
-  BookOpen, UserCheck, Pin,
+  BookOpen, UserCheck, Pin, PanelLeftClose, PanelLeftOpen, ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
