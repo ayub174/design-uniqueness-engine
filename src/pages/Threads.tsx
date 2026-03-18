@@ -445,7 +445,7 @@ const CategoryOverview = ({
 
               <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
                 {group.items.map(([catId, cat]) => {
-                  const stats = getCategoryStats(catId);
+                  const stats = getCategoryStats(catId, allThreads);
                   const CatIcon = cat.icon;
                   const latest = stats.latestThread;
 
