@@ -1112,7 +1112,7 @@ const SidebarContent = ({
                     {group.items.map(([catId, cat]) => {
                       const CatIcon = cat.icon;
                       const isActive = selectedCategory === catId && view !== "overview";
-                      const stats = getCategoryStats(catId);
+                      const stats = getCategoryStats(catId, allThreads);
                       return (
                         <button
                           key={catId}
