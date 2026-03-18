@@ -1243,11 +1243,127 @@ const InfoPanel = () => (
   </div>
 );
 
+/* ─── New Thread Dialog ─── */
+const NewThreadDialog = ({
+  open,
+  onOpenChange,
+  onSubmit,
+  defaultCategory,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (thread: { title: string; content: string; category: string; tags: string[] }) => void;
+  defaultCategory: string | null;
+}) => {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [category, setCategory] = useState(defaultCategory || "");
+  const [tagsInput, setTagsInput] = useState("");
+
+  const handleSubmit = () => {
+    if (!title.trim() || !content.trim() || !category) {
+      toast.error("Fyll i alla obligatoriska fält");
+      return;
+    }
+    if (title.trim().length < 5) {
+      toast.error("Titeln måste vara minst 5 tecken");
+      return;
+    }
+    if (content.trim().length < 10) {
+      toast.error("Innehållet måste vara minst 10 tecken");
+      return;
+    }
+    const tags = tagsInput.split(",").map(t => t.trim()).filter(Boolean).slice(0, 5);
+    onSubmit({ title: title.trim(), content: content.trim(), category, tags });
+    setTitle("");
+    setContent("");
+    setTagsInput("");
+    onOpenChange(false);
+    toast.success("Tråden har skapats!");
+  };
+
+  // Reset category when dialog opens with a new default
+  React.useEffect(() => {
+    if (open && defaultCategory) setCategory(defaultCategory);
+  }, [open, defaultCategory]);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-lg">Starta ny diskussion</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4 mt-2">
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">Kategori *</label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Välj kategori..." />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(categories).map(([catId, cat]) => (
+                  <SelectItem key={catId} value={catId}>
+                    {cat.label} — {cat.description}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">Titel *</label>
+            <Input
+              placeholder="En tydlig och beskrivande titel..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={200}
+              className="text-sm"
+            />
+            <p className="text-[10px] text-muted-foreground mt-1">{title.length}/200</p>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">Innehåll *</label>
+            <Textarea
+              placeholder="Beskriv din fråga, erfarenhet eller tanke i detalj..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              maxLength={5000}
+              className="min-h-[140px] text-sm resize-none"
+            />
+            <p className="text-[10px] text-muted-foreground mt-1">{content.length}/5000</p>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 block">Taggar (valfritt)</label>
+            <Input
+              placeholder="karriär, tips, diskussion (kommaseparerade)"
+              value={tagsInput}
+              onChange={(e) => setTagsInput(e.target.value)}
+              maxLength={100}
+              className="text-sm"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Avbryt</Button>
+            <Button size="sm" className="gap-2" onClick={handleSubmit}>
+              <Send className="w-3.5 h-3.5" /> Publicera
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 /* ═══════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════ */
 const Threads = () => {
   const isMobile = useIsMobile();
+  const [allThreads, setAllThreads] = useState<Thread[]>(initialThreads);
   const [view, setView] = useState<"overview" | "category" | "detail">("overview");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeThread, setActiveThread] = useState<string | null>(null);
@@ -1258,6 +1374,7 @@ const Threads = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [newThreadOpen, setNewThreadOpen] = useState(false);
 
   const toggleLike = (id: string) => {
     setLikedThreads((prev) => {
