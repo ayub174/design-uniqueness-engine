@@ -58,37 +58,15 @@ interface CategoryDef {
   label: string;
   description: string;
   icon: typeof Briefcase;
-  group: string;
 }
 
-const categoryGroups: Record<string, { label: string; icon: typeof Briefcase }> = {
-  karriar_utbildning: { label: "Karriär & Utbildning", icon: Rocket },
-  cv_jobbsokning: { label: "CV & Jobbsökning", icon: GraduationCap },
-  lon_forhandling: { label: "Lön & Förhandling", icon: DollarSign },
-  arbetsliv: { label: "Arbetsliv", icon: Building2 },
-  bransch_erfarenheter: { label: "Bransch & Erfarenheter", icon: Globe },
-  allmant: { label: "Allmänt", icon: MessageSquare },
-};
-
 const categories: Record<string, CategoryDef> = {
-  career: { label: "Karriär", description: "Karriärvägar, befordringar och professionell utveckling", icon: Briefcase, group: "karriar_utbildning" },
-  career_switch: { label: "Karriärväxling", description: "Byta bransch, omskolning och nya vägar", icon: Rocket, group: "karriar_utbildning" },
-  education: { label: "Utbildning", description: "Kurser, certifikat och vidareutbildning", icon: BookOpen, group: "karriar_utbildning" },
-  mentorship: { label: "Mentorskap", description: "Hitta mentorer och dela kunskap", icon: UserCheck, group: "karriar_utbildning" },
-  cv: { label: "CV & Profil", description: "CV-granskning, LinkedIn och personligt varumärke", icon: GraduationCap, group: "cv_jobbsokning" },
-  interview: { label: "Intervju", description: "Intervjutips, förberedelser och erfarenheter", icon: Lightbulb, group: "cv_jobbsokning" },
-  networking: { label: "Nätverk", description: "Professionellt nätverkande och kontakter", icon: Users, group: "cv_jobbsokning" },
-  salary: { label: "Lön", description: "Lönestatistik, jämförelser och förväntningar", icon: DollarSign, group: "lon_forhandling" },
-  benefits: { label: "Förmåner", description: "Personalförmåner, pension och försäkringar", icon: Handshake, group: "lon_forhandling" },
-  negotiation: { label: "Förhandling", description: "Löneförhandling och strategier", icon: Scale, group: "lon_forhandling" },
-  workplace: { label: "Arbetsmiljö", description: "Arbetsplatskultur, konflikter och trivsel", icon: Building2, group: "arbetsliv" },
-  leadership: { label: "Ledarskap", description: "Chefsskap, teamledning och management", icon: Crown, group: "arbetsliv" },
-  remote: { label: "Remote & Hybrid", description: "Distansarbete, hybridlösningar och hemmakontor", icon: Globe, group: "arbetsliv" },
-  tech: { label: "Tech & IT", description: "Teknikbranschen, programmering och digitalisering", icon: Code, group: "bransch_erfarenheter" },
-  healthcare: { label: "Vård & Hälsa", description: "Sjukvård, omsorg och hälsobranschen", icon: Stethoscope, group: "bransch_erfarenheter" },
-  creative: { label: "Kreativt", description: "Design, media, kommunikation och kultur", icon: Palette, group: "bransch_erfarenheter" },
-  finance: { label: "Ekonomi", description: "Bank, finans, revision och ekonomijobb", icon: BarChart3, group: "bransch_erfarenheter" },
-  general: { label: "Allmänt", description: "Allt annat som inte passar i övriga kategorier", icon: MessageSquare, group: "allmant" },
+  karriar_utbildning: { label: "Karriär & Utbildning", description: "Karriär, karriärväxling, utbildning och mentorskap", icon: Rocket },
+  cv_jobbsokning: { label: "CV & Jobbsökning", description: "CV & profil, intervju och nätverk", icon: GraduationCap },
+  lon_forhandling: { label: "Lön & Förhandling", description: "Lön, förmåner och förhandling", icon: DollarSign },
+  arbetsliv: { label: "Arbetsliv", description: "Arbetsmiljö, ledarskap, remote & hybrid", icon: Building2 },
+  bransch_erfarenheter: { label: "Bransch & Erfarenheter", description: "Tech, vård, kreativt, ekonomi — allt i en", icon: Globe },
+  allmant: { label: "Allmänt", description: "Allt annat", icon: MessageSquare },
 };
 
 /* ─── Thread data ─── */
@@ -100,7 +78,7 @@ const initialThreads: Thread[] = [
     authorInitials: "EK",
     authorRole: "UX Designer @ Spotify",
     authorBadge: "verified",
-    category: "career",
+    category: "karriar_utbildning",
     content: "Efter 8 år som mellanstadielärare kände jag att jag behövde en förändring. Började med onlinekurser på kvällar och helger, byggde en portfolio parallellt med jobbet och fick till slut min första UX-roll. AMA!",
     likes: 234,
     replies: 67,
@@ -117,7 +95,7 @@ const initialThreads: Thread[] = [
     author: "TechAnton",
     authorInitials: "TA",
     authorRole: "Student — KTH",
-    category: "salary",
+    category: "lon_forhandling",
     content: "Pluggar sista terminen på civilingenjör datateknik på KTH. Har börjat söka jobb och undrar vad som är rimligt att förvänta sig lönemässigt.",
     likes: 189,
     replies: 93,
@@ -134,7 +112,7 @@ const initialThreads: Thread[] = [
     authorInitials: "LM",
     authorRole: "Projektledare @ Volvo",
     authorBadge: "top",
-    category: "interview",
+    category: "cv_jobbsokning",
     content: "Jag har äntligen fått jobbet jag drömt om! Ville dela med mig av mina bästa intervjutips som verkligen gjorde skillnad.",
     likes: 312,
     replies: 45,
@@ -151,7 +129,7 @@ const initialThreads: Thread[] = [
     author: "OskarP",
     authorInitials: "OP",
     authorRole: "Student",
-    category: "cv",
+    category: "cv_jobbsokning",
     content: "Jag har hört blandade åsikter. Vissa säger att det visar personlighet, andra säger att det tar plats från viktigare saker.",
     likes: 78,
     replies: 56,
@@ -166,7 +144,7 @@ const initialThreads: Thread[] = [
     author: "AnonymAnvändare",
     authorInitials: "AA",
     authorRole: "Anonym",
-    category: "workplace",
+    category: "arbetsliv",
     content: "Har jobbat på samma ställe i 3 år. Chefen micromanagar, kollegor baktalas och det är noll uppskattning. Men lönen är bra och jag gillar mina arbetsuppgifter. Hur vet man när det är dags?\n\nJag tjänar bra — runt 45k — och arbetsuppgifterna i sig är roliga. Men stämningen är helt åt helvete. Chefen kollar exakt när vi kommer och går, skickar passiv-aggressiva mail cc:ade till hela teamet.\n\nHar någon annan varit i en liknande sits?",
     likes: 456,
     replies: 128,
@@ -266,7 +244,7 @@ const initialThreads: Thread[] = [
     authorInitials: "FF",
     authorRole: "Frilansare",
     authorBadge: "top",
-    category: "workplace",
+    category: "arbetsliv",
     content: "Har jobbat remote i 2 år nu och funderar på att gå tillbaka till kontor. Saknar den sociala biten men älskar friheten.",
     likes: 145,
     replies: 82,
@@ -283,7 +261,7 @@ const initialThreads: Thread[] = [
     authorInitials: "NN",
     authorRole: "Systemutvecklare @ H&M",
     authorBadge: "verified",
-    category: "salary",
+    category: "lon_forhandling",
     content: "Många är rädda för att förhandla lön. Jag delar min exakta strategi som gav mig 8000kr mer i månadslön.",
     likes: 521,
     replies: 74,
@@ -299,7 +277,7 @@ const initialThreads: Thread[] = [
     author: "KodKarin",
     authorInitials: "KK",
     authorRole: "Karriärväxlare",
-    category: "career",
+    category: "karriar_utbildning",
     content: "Vill sadla om till webbutveckling. Någon som gått en bootcamp och kan rekommendera? Tittar på Salt, Technigo och School of Applied Technology.",
     likes: 97,
     replies: 43,
@@ -371,22 +349,15 @@ const CategoryOverview = ({
   setSearchQuery: (q: string) => void;
   allThreads: Thread[];
 }) => {
-  const grouped = Object.entries(categoryGroups).map(([groupId, group]) => ({
-    ...group,
-    groupId,
-    items: Object.entries(categories).filter(([, cat]) => cat.group === groupId),
-  }));
+  const allCats = Object.entries(categories);
 
-  const filteredGrouped = searchQuery
-    ? grouped.map((g) => ({
-        ...g,
-        items: g.items.filter(
-          ([, cat]) =>
-            cat.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            cat.description.toLowerCase().includes(searchQuery.toLowerCase())
-        ),
-      })).filter((g) => g.items.length > 0)
-    : grouped;
+  const filteredCats = searchQuery
+    ? allCats.filter(
+        ([, cat]) =>
+          cat.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          cat.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : allCats;
 
   const totalThreads = allThreads.length;
   const totalReplies = allThreads.reduce((s, t) => s + t.replies, 0);
@@ -428,81 +399,63 @@ const CategoryOverview = ({
         />
       </div>
 
-      <div className="space-y-6">
-        {filteredGrouped.map((group, gi) => {
-          const GroupIcon = group.icon;
+      <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
+        {filteredCats.map(([catId, cat], i) => {
+          const stats = getCategoryStats(catId, allThreads);
+          const CatIcon = cat.icon;
+          const latest = stats.latestThread;
+
           return (
-            <motion.div
-              key={group.groupId}
-              initial={{ opacity: 0, y: 8 }}
+            <motion.button
+              key={catId}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: gi * 0.05, duration: 0.25 }}
+              transition={{ delay: i * 0.04, duration: 0.2 }}
+              onClick={() => onSelectCategory(catId)}
+              className="w-full flex items-center gap-4 px-4 py-3.5 hover:bg-muted/50 transition-colors text-left group"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
-                  <GroupIcon className="w-3.5 h-3.5 text-primary" />
+              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-muted shrink-0 group-hover:bg-primary/10 transition-colors">
+                <CatIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    {cat.label}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground/60">
+                    {stats.threadCount} trådar · {stats.replyCount} svar
+                  </span>
                 </div>
-                <h2 className="font-serif text-base font-semibold text-foreground">{group.label}</h2>
+                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                  {cat.description}
+                </p>
               </div>
 
-              <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
-                {group.items.map(([catId, cat]) => {
-                  const stats = getCategoryStats(catId, allThreads);
-                  const CatIcon = cat.icon;
-                  const latest = stats.latestThread;
+              {latest && (
+                <div className="hidden sm:flex items-center gap-3 shrink-0 max-w-[280px]">
+                  <div className="text-right min-w-0">
+                    <p className="text-xs text-foreground font-medium line-clamp-1">
+                      {latest.title}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      av {latest.author} · {latest.timeAgo} sedan
+                    </p>
+                  </div>
+                  <Avatar className="w-7 h-7 shrink-0">
+                    <AvatarFallback className="text-[9px] font-bold bg-primary/10 text-primary">
+                      {latest.authorInitials}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              )}
 
-                  return (
-                    <button
-                      key={catId}
-                      onClick={() => onSelectCategory(catId)}
-                      className="w-full flex items-center gap-4 px-4 py-3.5 hover:bg-muted/50 transition-colors text-left group"
-                    >
-                      <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-muted shrink-0 group-hover:bg-primary/10 transition-colors">
-                        <CatIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                            {cat.label}
-                          </span>
-                          <span className="text-[11px] text-muted-foreground/60">
-                            {stats.threadCount} trådar · {stats.replyCount} svar
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                          {cat.description}
-                        </p>
-                      </div>
-
-                      {latest && (
-                        <div className="hidden sm:flex items-center gap-3 shrink-0 max-w-[280px]">
-                          <div className="text-right min-w-0">
-                            <p className="text-xs text-foreground font-medium line-clamp-1">
-                              {latest.title}
-                            </p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">
-                              av {latest.author} · {latest.timeAgo} sedan
-                            </p>
-                          </div>
-                          <Avatar className="w-7 h-7 shrink-0">
-                            <AvatarFallback className="text-[9px] font-bold bg-primary/10 text-primary">
-                              {latest.authorInitials}
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                      )}
-
-                      <ChevronRight className="w-4 h-4 text-muted-foreground/40 shrink-0 group-hover:text-primary/60 transition-colors" />
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground/40 shrink-0 group-hover:text-primary/60 transition-colors" />
+            </motion.button>
           );
         })}
       </div>
 
-      {filteredGrouped.length === 0 && (
+      {filteredCats.length === 0 && (
         <div className="text-center py-16">
           <p className="text-muted-foreground text-sm">Inga kategorier matchade din sökning</p>
         </div>
@@ -1043,24 +996,6 @@ const SidebarContent = ({
   allThreads: Thread[];
   onNewThread?: () => void;
 }) => {
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
-    new Set(Object.keys(categoryGroups))
-  );
-
-  const toggleGroup = (groupId: string) => {
-    setExpandedGroups((prev) => {
-      const next = new Set(prev);
-      next.has(groupId) ? next.delete(groupId) : next.add(groupId);
-      return next;
-    });
-  };
-
-  const grouped = Object.entries(categoryGroups).map(([groupId, group]) => ({
-    ...group,
-    groupId,
-    items: Object.entries(categories).filter(([, cat]) => cat.group === groupId),
-  }));
-
   const handleSelectCategory = (catId: string) => {
     onSelectCategory(catId);
     onClose?.();
@@ -1101,54 +1036,26 @@ const SidebarContent = ({
 
         <div className="my-1.5 mx-4 h-px bg-border/60" />
 
-        {grouped.map((group) => {
-          const GroupIcon = group.icon;
-          const isExpanded = expandedGroups.has(group.groupId);
+        {Object.entries(categories).map(([catId, cat]) => {
+          const CatIcon = cat.icon;
+          const isActive = selectedCategory === catId && view !== "overview";
+          const stats = getCategoryStats(catId, allThreads);
           return (
-            <div key={group.groupId}>
-              <button
-                onClick={() => toggleGroup(group.groupId)}
-                className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider hover:text-muted-foreground transition-colors"
-              >
-                <GroupIcon className="w-3.5 h-3.5 shrink-0" />
-                <span className="flex-1 text-left">{group.label}</span>
-                <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? "" : "-rotate-90"}`} />
-              </button>
-              <AnimatePresence initial={false}>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
-                  >
-                    {group.items.map(([catId, cat]) => {
-                      const CatIcon = cat.icon;
-                      const isActive = selectedCategory === catId && view !== "overview";
-                      const stats = getCategoryStats(catId, allThreads);
-                      return (
-                        <button
-                          key={catId}
-                          onClick={() => handleSelectCategory(catId)}
-                          className={`w-full flex items-center gap-2.5 pl-8 pr-4 py-2 text-sm transition-all group ${
-                            isActive
-                              ? "text-primary bg-primary/8 font-medium border-r-2 border-primary"
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                          }`}
-                        >
-                          <CatIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
-                          <span className="flex-1 text-left truncate">{cat.label}</span>
-                          <span className="text-[10px] text-muted-foreground/50 tabular-nums">
-                            {stats.threadCount}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            <button
+              key={catId}
+              onClick={() => handleSelectCategory(catId)}
+              className={`w-full flex items-center gap-2.5 px-4 py-2 text-sm transition-all group ${
+                isActive
+                  ? "text-primary bg-primary/8 font-medium border-r-2 border-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              }`}
+            >
+              <CatIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
+              <span className="flex-1 text-left truncate">{cat.label}</span>
+              <span className="text-[10px] text-muted-foreground/50 tabular-nums">
+                {stats.threadCount}
+              </span>
+            </button>
           );
         })}
       </div>
