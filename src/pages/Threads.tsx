@@ -1657,7 +1657,20 @@ const Threads = () => {
             <div className="flex gap-6">
               <div className="flex-1 min-w-0">
                 <AnimatePresence mode="wait">
-                  {view === "detail" && activeThreadData ? (
+                  {view === "create" ? (
+                    <CreateThreadView
+                      key="create"
+                      onSubmit={handleCreateThread}
+                      onCancel={() => {
+                        if (selectedCategory) {
+                          setView("category");
+                        } else {
+                          setView("overview");
+                        }
+                      }}
+                      defaultCategory={selectedCategory}
+                    />
+                  ) : view === "detail" && activeThreadData ? (
                     <ThreadDetail
                       key="detail"
                       thread={activeThreadData}
