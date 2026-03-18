@@ -144,7 +144,7 @@ const initialThreads: Thread[] = [
     author: "AnonymAnvändare",
     authorInitials: "AA",
     authorRole: "Anonym",
-    category: "workplace",
+    category: "arbetsliv",
     content: "Har jobbat på samma ställe i 3 år. Chefen micromanagar, kollegor baktalas och det är noll uppskattning. Men lönen är bra och jag gillar mina arbetsuppgifter. Hur vet man när det är dags?\n\nJag tjänar bra — runt 45k — och arbetsuppgifterna i sig är roliga. Men stämningen är helt åt helvete. Chefen kollar exakt när vi kommer och går, skickar passiv-aggressiva mail cc:ade till hela teamet.\n\nHar någon annan varit i en liknande sits?",
     likes: 456,
     replies: 128,
