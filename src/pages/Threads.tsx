@@ -1126,39 +1126,7 @@ const CategorySidebar = ({
 /* ─── Info Panel ─── */
 const InfoPanel = () => (
   <div className="space-y-4">
-    <div className="bg-card border border-border rounded-xl p-5">
-      <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">
-        Populära ämnen
-      </h4>
-      <div className="space-y-2">
-        {[
-          { tag: "löneförhandling", count: "2,1k inlägg" },
-          { tag: "karriärväxling", count: "1,8k inlägg" },
-          { tag: "remote", count: "1,2k inlägg" },
-          { tag: "intervjutips", count: "980 inlägg" },
-          { tag: "bootcamp", count: "640 inlägg" },
-        ].map((t) => (
-          <button key={t.tag} className="w-full flex items-center justify-between text-xs py-1.5 group">
-            <span className="text-muted-foreground group-hover:text-foreground transition-colors font-medium">
-              #{t.tag}
-            </span>
-            <span className="text-muted-foreground/50">{t.count}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-
-    <div className="bg-card border border-border rounded-xl p-5">
-      <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">
-        Community-riktlinjer
-      </h4>
-      <ol className="space-y-2 text-xs text-muted-foreground">
-        <li className="flex gap-2"><span className="text-primary font-bold">1.</span>Var professionell och respektfull</li>
-        <li className="flex gap-2"><span className="text-primary font-bold">2.</span>Dela konkreta erfarenheter</li>
-        <li className="flex gap-2"><span className="text-primary font-bold">3.</span>Respektera andras anonymitet</li>
-        <li className="flex gap-2"><span className="text-primary font-bold">4.</span>Ingen spam eller rekrytering</li>
-      </ol>
-    </div>
+    {/* Reserverad plats för annonser */}
   </div>
 );
 
