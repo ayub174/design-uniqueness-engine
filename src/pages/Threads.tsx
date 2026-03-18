@@ -318,8 +318,8 @@ const timeToMinutes = (t: string) => {
   return 9999;
 };
 
-const getCategoryStats = (catId: string) => {
-  const catThreads = threads.filter((t) => t.category === catId);
+const getCategoryStats = (catId: string, threadList: Thread[]) => {
+  const catThreads = threadList.filter((t) => t.category === catId);
   const totalReplies = catThreads.reduce((sum, t) => sum + t.replies, 0);
   const latestThread = [...catThreads].sort((a, b) => timeToMinutes(a.timeAgo) - timeToMinutes(b.timeAgo))[0];
   return { threadCount: catThreads.length, replyCount: totalReplies, latestThread };
