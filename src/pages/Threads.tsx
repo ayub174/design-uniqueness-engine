@@ -261,7 +261,7 @@ const initialThreads: Thread[] = [
     authorInitials: "NN",
     authorRole: "Systemutvecklare @ H&M",
     authorBadge: "verified",
-    category: "salary",
+    category: "lon_forhandling",
     content: "Många är rädda för att förhandla lön. Jag delar min exakta strategi som gav mig 8000kr mer i månadslön.",
     likes: 521,
     replies: 74,
