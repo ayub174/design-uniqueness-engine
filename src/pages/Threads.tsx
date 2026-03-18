@@ -179,6 +179,30 @@ const threads: Thread[] = [
         content: "Som psykolog ser jag det här mönstret ofta. Söndagsångest, passiv-aggressiv kommunikation, övervakning — klassiska tecken på en toxisk miljö.\n\nMin tumregel: om du mår fysiskt dåligt av tanken på jobbet, är det dags att börja söka.",
         likes: 234,
         timeAgo: "45 min",
+        children: [
+          {
+            id: "r1-1",
+            author: "AnonymAnvändare",
+            authorInitials: "AA",
+            content: "Tack för det professionella perspektivet! Söndagsångesten är verklig — har du tips på hur man hanterar den kortsiktigt medan man söker nytt?",
+            likes: 45,
+            timeAgo: "30 min",
+            isOP: true,
+            parentId: "r1",
+            quotedReply: { author: "PsykologPer", content: "Min tumregel: om du mår fysiskt dåligt av tanken på jobbet, är det dags att börja söka." },
+          },
+          {
+            id: "r1-2",
+            author: "PsykologPer",
+            authorInitials: "PP",
+            authorBadge: "verified",
+            content: "Absolut! Tre saker som hjälper direkt:\n1. Sätt gränser — sluta kolla jobbmail efter kl 17\n2. Fysisk aktivitet söndag eftermiddag\n3. Skriv ner vad du oroar dig för — det brukar vara mindre skrämmande på papper",
+            likes: 89,
+            timeAgo: "20 min",
+            parentId: "r1-1",
+            quotedReply: { author: "AnonymAnvändare", content: "har du tips på hur man hanterar den kortsiktigt medan man söker nytt?" },
+          },
+        ],
       },
       {
         id: "r2",
@@ -187,6 +211,19 @@ const threads: Thread[] = [
         content: "Jag var i exakt samma sits för 2 år sedan. Stannade alldeles för länge pga lönen. Till slut blev jag sjukskriven i 3 månader.\n\nBytte jobb, gick ner 3k i lön men det var ABSOLUT värt det.",
         likes: 189,
         timeAgo: "2h",
+        children: [
+          {
+            id: "r2-1",
+            author: "KarriärCoachMia",
+            authorInitials: "KC",
+            authorBadge: "verified",
+            content: "Det här är tyvärr väldigt vanligt. Lönen blir en \"golden cage\". Bra att du tog steget! Hur lång tid tog det innan du kände skillnaden?",
+            likes: 34,
+            timeAgo: "1h 30min",
+            parentId: "r2",
+            quotedReply: { author: "VarDärSjälv", content: "Bytte jobb, gick ner 3k i lön men det var ABSOLUT värt det." },
+          },
+        ],
       },
       {
         id: "r3",
@@ -205,6 +242,7 @@ const threads: Thread[] = [
         content: "HR-perspektiv: Var diplomatisk. 'Jag har fått ett erbjudande jag inte kan tacka nej till' räcker gott. Dokumentera allt som händer ifall du behöver det senare.",
         likes: 145,
         timeAgo: "50 min",
+        quotedReply: { author: "AnonymAnvändare", content: "Hur hanterade ni uppsägningen?" },
       },
       {
         id: "r5",
