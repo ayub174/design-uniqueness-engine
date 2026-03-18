@@ -78,7 +78,7 @@ const initialThreads: Thread[] = [
     authorInitials: "EK",
     authorRole: "UX Designer @ Spotify",
     authorBadge: "verified",
-    category: "career",
+    category: "karriar_utbildning",
     content: "Efter 8 år som mellanstadielärare kände jag att jag behövde en förändring. Började med onlinekurser på kvällar och helger, byggde en portfolio parallellt med jobbet och fick till slut min första UX-roll. AMA!",
     likes: 234,
     replies: 67,
