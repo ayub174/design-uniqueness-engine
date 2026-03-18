@@ -1496,7 +1496,7 @@ const Threads = () => {
     currentPage * THREADS_PER_PAGE
   );
 
-  const activeThreadData = activeThread ? threads.find((t) => t.id === activeThread) : null;
+  const activeThreadData = activeThread ? allThreads.find((t) => t.id === activeThread) : null;
   const selectedCatData = selectedCategory ? categories[selectedCategory] : null;
 
   return (
