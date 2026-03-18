@@ -1573,6 +1573,8 @@ const Threads = () => {
             onSelectCategory={handleSelectCategory}
             onBackToOverview={handleBackToOverview}
             view={view}
+            allThreads={allThreads}
+            onNewThread={() => setNewThreadOpen(true)}
           />
         )}
 
