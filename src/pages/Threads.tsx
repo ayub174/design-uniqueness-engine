@@ -1586,7 +1586,7 @@ const Threads = () => {
                     view={view}
                     onClose={() => setMobileMenuOpen(false)}
                     allThreads={allThreads}
-                    onNewThread={() => setNewThreadOpen(true)}
+                    onNewThread={() => { setMobileMenuOpen(false); setView("create"); }}
                   />
                 </SheetContent>
               </Sheet>
