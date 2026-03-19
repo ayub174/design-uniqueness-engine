@@ -526,7 +526,7 @@ const CategoryOverview = ({
                       <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
                         {thread.title}
                       </h3>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">av {thread.author}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">av <UserHoverCard username={thread.author} className="text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard></p>
                     </div>
                   </div>
 
