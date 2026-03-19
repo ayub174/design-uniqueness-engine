@@ -1097,6 +1097,8 @@ const ReplyItem = ({
                 replyLikes={replyLikes}
                 toggleReplyLike={toggleReplyLike}
                 onQuoteReply={onQuoteReply}
+                onEditReply={onEditReply}
+                onDeleteReply={onDeleteReply}
               />
             ))}
           </div>
