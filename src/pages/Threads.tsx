@@ -72,7 +72,7 @@ const categories: Record<string, CategoryDef> = {
 };
 
 /* ─── Thread data ─── */
-const initialThreads: Thread[] = [
+const baseThreads: Thread[] = [
   {
     id: "1",
     title: "Bytte från lärare till UX-designer — så här gick jag tillväga",
