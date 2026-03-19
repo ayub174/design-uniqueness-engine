@@ -1727,19 +1727,13 @@ const CreateThreadView = ({
 
       {/* Content */}
       <div className="mb-6">
-        <Textarea
-          placeholder="Beskriv din fråga, erfarenhet eller tanke..."
+        <RichTextEditor
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={setContent}
+          placeholder="Beskriv din fråga, erfarenhet eller tanke..."
+          minHeight="220px"
           maxLength={5000}
-          className="w-full min-h-[220px] bg-background text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/30 border-border resize-none rounded-lg"
         />
-        <div className="flex items-center justify-between mt-1.5">
-          {content.length > 0 && content.length < 10 && (
-            <p className="text-xs text-destructive">Minst 10 tecken</p>
-          )}
-          <p className="text-xs text-muted-foreground ml-auto">{content.length}/5000</p>
-        </div>
       </div>
 
       {/* Actions */}
