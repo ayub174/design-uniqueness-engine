@@ -1134,7 +1134,7 @@ const ThreadDetail = ({
                 </AvatarFallback>
               </Avatar>
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-sm font-semibold text-foreground">{thread.author}</span>
+                <UserHoverCard username={thread.author} className="text-sm font-semibold text-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard>
                 <AuthorBadge type={thread.authorBadge} />
                 <span className="text-xs text-muted-foreground">· {thread.authorRole}</span>
               </div>
