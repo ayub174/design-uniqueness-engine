@@ -1566,11 +1566,11 @@ const SidebarContentBlock = ({
   return (
     <div className="h-full flex flex-col">
       {/* Stats */}
-      <div className="px-4 py-3 border-b border-border">
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1"><Users className="w-3 h-3 text-primary" /> 12 400</span>
+      <div className="px-4 py-4 border-b border-border">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-primary" /> 12 400</span>
           <span className="text-border">|</span>
-          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> 347 online</span>
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-primary animate-pulse" /> 347 online</span>
         </div>
       </div>
 
@@ -1578,15 +1578,15 @@ const SidebarContentBlock = ({
       <div className="flex-1 overflow-y-auto py-2">
         <button
           onClick={handleBackToOverview}
-          className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm transition-all rounded-lg mx-1 ${
+          className={`w-full flex items-center gap-3 px-4 py-3 text-base transition-all rounded-lg mx-1 ${
             view === "overview"
               ? "text-primary font-semibold bg-primary/5"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
           }`}
           style={{ width: "calc(100% - 8px)" }}
         >
-          <MessageSquare className="w-4 h-4 shrink-0" />
-          <span className="text-xs font-medium">Alla kategorier</span>
+          <MessageSquare className="w-5 h-5 shrink-0" />
+          <span className="text-sm font-medium">Alla kategorier</span>
         </button>
 
         <div className="h-px bg-border mx-4 my-2" />
@@ -1599,16 +1599,16 @@ const SidebarContentBlock = ({
             <button
               key={catId}
               onClick={() => handleSelectCategory(catId)}
-              className={`w-full flex items-center gap-2.5 px-4 py-2 text-sm transition-all rounded-lg mx-1 group ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-base transition-all rounded-lg mx-1 group ${
                 isActive
                   ? "text-primary font-semibold bg-primary/5"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
               style={{ width: "calc(100% - 8px)" }}
             >
-              <CatIcon className={`w-4 h-4 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
-              <span className="flex-1 text-left truncate text-xs font-medium">{cat.label}</span>
-              <span className="text-xs text-muted-foreground/40 tabular-nums">{stats.threadCount}</span>
+              <CatIcon className={`w-5 h-5 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
+              <span className="flex-1 text-left truncate text-sm font-medium">{cat.label}</span>
+              <span className="text-sm text-muted-foreground/40 tabular-nums">{stats.threadCount}</span>
             </button>
           );
         })}
@@ -1617,11 +1617,11 @@ const SidebarContentBlock = ({
       {/* Footer */}
       <div className="p-4 border-t border-border">
         <Button
-          size="sm"
-          className="w-full gap-2 h-9"
+          size="default"
+          className="w-full gap-2 h-11 text-sm"
           onClick={() => { onNewThread?.(); onClose?.(); }}
         >
-          <Plus className="w-4 h-4" /> Ny tråd
+          <Plus className="w-5 h-5" /> Ny tråd
         </Button>
       </div>
     </div>
