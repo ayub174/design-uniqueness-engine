@@ -1023,6 +1023,17 @@ const ReplyItem = ({
       </div>
     </div>
   );
+
+  // Wrap depth-0 replies in a card like the original post
+  if (effectiveDepth === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        {innerContent}
+      </div>
+    );
+  }
+
+  return innerContent;
 };
 
 /* ─── Detail View — Reddit post + Discourse reply layout ─── */
