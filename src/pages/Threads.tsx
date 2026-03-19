@@ -730,7 +730,7 @@ const PaginationNav = ({
   );
 };
 
-/* ─── Reply Item ─── */
+/* ─── Reply Item — Reddit/Discourse hybrid ─── */
 const ReplyItem = ({
   reply, depth, replyLikes, toggleReplyLike, onQuoteReply,
 }: {
@@ -740,89 +740,164 @@ const ReplyItem = ({
   const [collapsed, setCollapsed] = useState(false);
   const isReplyLiked = replyLikes.has(reply.id);
   const replyLikeCount = reply.likes + (isReplyLiked ? 1 : 0);
-  const maxDepth = 4;
+  const maxDepth = 5;
   const effectiveDepth = Math.min(depth, maxDepth);
 
+  // Thread line colors per depth for visual distinction
+  const threadColors = [
+    "border-primary/25",
+    "border-blue-400/25",
+    "border-amber-400/25",
+    "border-violet-400/25",
+    "border-rose-400/25",
+    "border-emerald-400/25",
+  ];
+  const threadColor = threadColors[effectiveDepth % threadColors.length];
+
+  if (collapsed) {
+    return (
+      <div className={`${effectiveDepth > 0 ? "ml-4 sm:ml-5" : ""}`}>
+        <div className={`${effectiveDepth > 0 ? `border-l-2 ${threadColor} pl-3 sm:pl-4` : ""}`}>
+          <button
+            onClick={() => setCollapsed(false)}
+            className="flex items-center gap-2 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors group"
+          >
+            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-foreground transition-colors" />
+            <Avatar className="w-5 h-5">
+              <AvatarFallback className="text-[8px] font-semibold bg-muted text-muted-foreground">
+                {reply.authorInitials}
+              </AvatarFallback>
+            </Avatar>
+            <span className="font-medium">{reply.author}</span>
+            <span className="text-muted-foreground/50">·</span>
+            <span>{replyLikeCount} poäng</span>
+            <span className="text-muted-foreground/50">·</span>
+            <span>{reply.timeAgo}</span>
+            {reply.children && reply.children.length > 0 && (
+              <span className="text-primary/70">({reply.children.length} svar till)</span>
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`${effectiveDepth > 0 ? "pl-4 sm:pl-6" : ""}`}>
-      <div className={`relative ${effectiveDepth > 0 ? "border-l-2 border-border pl-4" : ""}`}>
+    <div className={`${effectiveDepth > 0 ? "ml-4 sm:ml-5" : ""}`}>
+      <div className={`relative ${effectiveDepth > 0 ? `border-l-2 ${threadColor} pl-3 sm:pl-4` : ""}`}>
+        {/* Clickable thread line area for collapsing */}
+        {effectiveDepth > 0 && (
+          <button
+            onClick={() => setCollapsed(true)}
+            className="absolute left-[-1px] top-0 bottom-0 w-3 cursor-pointer group z-10"
+            title="Fäll ihop tråd"
+          >
+            <div className="absolute left-0 top-0 bottom-0 w-0.5 group-hover:bg-primary/50 transition-colors rounded-full" />
+          </button>
+        )}
+
         <motion.div
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.15 }}
-          className={`py-4 ${reply.isOP ? "bg-primary/[0.02] -mx-2 px-2 rounded-lg" : ""}`}
+          className="pt-3 pb-1"
         >
-          {/* Author */}
-          <div className="flex items-center gap-2 mb-2">
-            <Avatar className="w-7 h-7">
-              <AvatarFallback className={`text-[10px] font-semibold ${
-                reply.isOP ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+          {/* Header row — avatar + meta */}
+          <div className="flex items-center gap-2 mb-1.5">
+            <Avatar className="w-7 h-7 shrink-0">
+              <AvatarFallback className={`text-[10px] font-bold ${
+                reply.isOP
+                  ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                  : "bg-muted text-muted-foreground"
               }`}>
                 {reply.authorInitials}
               </AvatarFallback>
             </Avatar>
-            <span className="text-sm font-medium text-foreground">{reply.author}</span>
-            <AuthorBadge type={reply.authorBadge} />
-            {reply.isOP && (
-              <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                OP
+
+            <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+              <span className={`text-[13px] font-semibold ${reply.isOP ? "text-primary" : "text-foreground"}`}>
+                {reply.author}
               </span>
-            )}
-            <span className="text-[11px] text-muted-foreground ml-auto">{reply.timeAgo} sedan</span>
-            {reply.children && reply.children.length > 0 && (
+              <AuthorBadge type={reply.authorBadge} />
+              {reply.isOP && (
+                <span className="text-[9px] font-bold text-primary-foreground bg-primary px-1.5 py-px rounded text-center leading-tight">
+                  OP
+                </span>
+              )}
+              <span className="text-[11px] text-muted-foreground/50">·</span>
+              <span className="text-[11px] text-muted-foreground">{reply.timeAgo} sedan</span>
+            </div>
+
+            {/* Collapse button for depth 0 */}
+            {effectiveDepth === 0 && reply.children && reply.children.length > 0 && (
               <button
-                onClick={() => setCollapsed(!collapsed)}
-                className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => setCollapsed(true)}
+                className="ml-auto text-[11px] text-muted-foreground/50 hover:text-muted-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-muted"
+                title="Fäll ihop"
               >
-                {collapsed ? `+ ${reply.children.length} svar` : "− Dölj"}
+                <ChevronDown className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* Quoted */}
+          {/* Quoted — Discourse-style expandable quote */}
           {reply.quotedReply && (
-            <div className="mb-3 bg-muted/50 rounded-lg px-3 py-2.5 border-l-3 border-primary/30">
-              <p className="text-[10px] font-medium text-muted-foreground mb-0.5">
-                Svar till {reply.quotedReply.author}
-              </p>
-              <p className="text-xs text-muted-foreground/70 italic line-clamp-2">
-                "{reply.quotedReply.content}"
+            <div className="mb-2 ml-9 rounded-md bg-muted/40 border border-border/50 overflow-hidden">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-muted/60 border-b border-border/50">
+                <CornerDownRight className="w-3 h-3 text-muted-foreground/50" />
+                <span className="text-[10px] font-semibold text-muted-foreground">
+                  {reply.quotedReply.author} skrev:
+                </span>
+              </div>
+              <p className="px-3 py-2 text-xs text-muted-foreground/70 leading-relaxed line-clamp-3 italic">
+                {reply.quotedReply.content}
               </p>
             </div>
           )}
 
           {/* Content */}
-          <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line">
-            {reply.content}
-          </p>
+          <div className="ml-9">
+            <p className="text-[13.5px] text-foreground/90 leading-[1.65] whitespace-pre-line">
+              {reply.content}
+            </p>
 
-          {/* Actions */}
-          <div className="flex items-center gap-1 mt-2.5">
-            <button
-              onClick={() => toggleReplyLike(reply.id)}
-              className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg transition-colors ${
-                isReplyLiked ? "text-primary bg-primary/10" : "text-muted-foreground hover:bg-muted"
-              }`}
-            >
-              <ThumbsUp className={`w-3.5 h-3.5 ${isReplyLiked ? "fill-primary" : ""}`} />
-              {replyLikeCount}
-            </button>
-            <button
-              onClick={() => onQuoteReply(reply)}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:bg-muted px-2 py-1 rounded-lg transition-colors"
-            >
-              <Reply className="w-3.5 h-3.5" /> Svara
-            </button>
-            <button
-              onClick={() => onQuoteReply(reply)}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:bg-muted px-2 py-1 rounded-lg transition-colors"
-            >
-              <Quote className="w-3.5 h-3.5" /> Citera
-            </button>
+            {/* Action bar — Reddit-style inline */}
+            <div className="flex items-center gap-0.5 mt-1.5 -ml-1.5">
+              <button
+                onClick={() => toggleReplyLike(reply.id)}
+                className={`flex items-center gap-1 text-[12px] font-medium px-2 py-1 rounded-md transition-colors ${
+                  isReplyLiked
+                    ? "text-primary"
+                    : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/60"
+                }`}
+              >
+                <ThumbsUp className={`w-3.5 h-3.5 ${isReplyLiked ? "fill-primary" : ""}`} />
+                <span className="tabular-nums">{replyLikeCount}</span>
+              </button>
+              <button
+                onClick={() => onQuoteReply(reply)}
+                className="flex items-center gap-1 text-[12px] font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+              >
+                <Reply className="w-3.5 h-3.5" />
+                Svara
+              </button>
+              <button
+                onClick={() => onQuoteReply(reply)}
+                className="flex items-center gap-1 text-[12px] font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+              >
+                <Quote className="w-3.5 h-3.5" />
+                Citera
+              </button>
+              <button className="flex items-center gap-1 text-[12px] font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors">
+                <Share2 className="w-3.5 h-3.5" />
+                Dela
+              </button>
+            </div>
           </div>
         </motion.div>
 
-        {!collapsed && reply.children && reply.children.length > 0 && (
+        {/* Child replies */}
+        {reply.children && reply.children.length > 0 && (
           <div>
             {reply.children.map((child) => (
               <ReplyItem
@@ -841,7 +916,7 @@ const ReplyItem = ({
   );
 };
 
-/* ─── Detail View ─── */
+/* ─── Detail View — Reddit post + Discourse reply layout ─── */
 const ThreadDetail = ({
   thread, onBack, likedThreads, toggleLike, onAddReply,
 }: {
@@ -852,6 +927,7 @@ const ThreadDetail = ({
   const [replyLikes, setReplyLikes] = useState<Set<string>>(new Set());
   const [replyText, setReplyText] = useState("");
   const [quotedReply, setQuotedReply] = useState<{ author: string; content: string } | null>(null);
+  const [sortReplies, setSortReplies] = useState<"top" | "new" | "old">("top");
   const replyRef = React.useRef<HTMLTextAreaElement>(null);
   const cat = categories[thread.category];
   const CatIcon = cat?.icon || Briefcase;
@@ -879,6 +955,18 @@ const ThreadDetail = ({
     replies.reduce((sum, r) => sum + 1 + (r.children ? countAllReplies(r.children) : 0), 0);
   const totalReplyCount = thread.replyData ? countAllReplies(thread.replyData) : thread.replies;
 
+  // Sort top-level replies
+  const sortedReplies = useMemo(() => {
+    if (!thread.replyData) return [];
+    const sorted = [...thread.replyData];
+    switch (sortReplies) {
+      case "top": return sorted.sort((a, b) => b.likes - a.likes);
+      case "new": return sorted.sort((a, b) => timeToMinutes(a.timeAgo) - timeToMinutes(b.timeAgo));
+      case "old": return sorted.sort((a, b) => timeToMinutes(b.timeAgo) - timeToMinutes(a.timeAgo));
+      default: return sorted;
+    }
+  }, [thread.replyData, sortReplies]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -890,149 +978,203 @@ const ThreadDetail = ({
       {/* Back */}
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-5 group"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         Tillbaka
       </button>
 
-      {/* Article */}
-      <article>
-        {/* Category + time */}
-        <div className="flex items-center gap-3 mb-4">
-          <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${cat?.color || "bg-muted text-muted-foreground"}`}>
-            <CatIcon className="w-3.5 h-3.5" /> {cat?.label}
+      {/* ─── Original Post Card — Reddit-style with vote sidebar ─── */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden mb-6">
+        {/* Category bar */}
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 border-b border-border">
+          <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full ${cat?.color || "bg-muted text-muted-foreground"}`}>
+            <CatIcon className="w-3 h-3" /> {cat?.label}
           </span>
-          <span className="text-xs text-muted-foreground">{thread.timeAgo} sedan</span>
+          {thread.tags.map((tag) => (
+            <span key={tag} className="text-[10px] font-medium text-muted-foreground bg-background px-2 py-0.5 rounded-full border border-border">
+              {tag}
+            </span>
+          ))}
+          <span className="text-[11px] text-muted-foreground ml-auto">{thread.timeAgo} sedan</span>
         </div>
 
-        {/* Title */}
-        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-foreground leading-tight mb-4">
-          {thread.title}
-        </h1>
+        <div className="flex">
+          {/* Vote sidebar — Reddit-style */}
+          <div className="hidden sm:flex flex-col items-center gap-1 py-4 px-3 bg-muted/20 border-r border-border">
+            <button
+              onClick={() => toggleLike(thread.id)}
+              className={`p-1.5 rounded-md transition-all ${
+                isLiked
+                  ? "text-primary bg-primary/10 scale-110"
+                  : "text-muted-foreground/40 hover:text-primary hover:bg-primary/5"
+              }`}
+            >
+              <Heart className={`w-5 h-5 ${isLiked ? "fill-primary" : ""}`} />
+            </button>
+            <span className={`text-sm font-bold tabular-nums ${isLiked ? "text-primary" : "text-muted-foreground"}`}>
+              {likeCount}
+            </span>
+          </div>
 
-        {/* Author */}
-        <div className="flex items-center gap-3 mb-6 pb-6 border-b border-border">
-          <Avatar className="w-10 h-10">
-            <AvatarFallback className="text-sm font-semibold bg-primary/10 text-primary">
-              {thread.authorInitials}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm text-foreground">{thread.author}</span>
-              <AuthorBadge type={thread.authorBadge} />
+          {/* Post content */}
+          <div className="flex-1 p-5">
+            {/* Title */}
+            <h1 className="font-serif text-xl sm:text-2xl font-bold text-foreground leading-snug mb-3">
+              {thread.title}
+            </h1>
+
+            {/* Author row */}
+            <div className="flex items-center gap-2.5 mb-4">
+              <Avatar className="w-8 h-8">
+                <AvatarFallback className="text-xs font-bold bg-primary/15 text-primary ring-1 ring-primary/20">
+                  {thread.authorInitials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-sm font-semibold text-foreground">{thread.author}</span>
+                <AuthorBadge type={thread.authorBadge} />
+                <span className="text-xs text-muted-foreground">· {thread.authorRole}</span>
+              </div>
             </div>
-            <span className="text-xs text-muted-foreground">{thread.authorRole}</span>
-          </div>
-        </div>
 
-        {/* Tags */}
-        {thread.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-5">
-            {thread.tags.map((tag) => (
-              <span key={tag} className="text-[11px] font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
-                {tag}
+            {/* Body */}
+            <div className="text-[14.5px] text-foreground/90 leading-[1.75] whitespace-pre-line">
+              {thread.content}
+            </div>
+
+            {/* Action bar */}
+            <div className="flex items-center gap-0.5 mt-5 pt-3 border-t border-border -mx-1">
+              {/* Mobile vote (hidden on sm+) */}
+              <button
+                onClick={() => toggleLike(thread.id)}
+                className={`sm:hidden flex items-center gap-1.5 text-[13px] font-medium px-2.5 py-1.5 rounded-md transition-colors ${
+                  isLiked ? "text-primary bg-primary/10" : "text-muted-foreground/50 hover:bg-muted"
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${isLiked ? "fill-primary" : ""}`} />
+                {likeCount}
+              </button>
+              <button
+                onClick={() => replyRef.current?.focus()}
+                className="flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground/60 hover:text-foreground hover:bg-muted/60 px-2.5 py-1.5 rounded-md transition-colors"
+              >
+                <MessageSquare className="w-4 h-4" />
+                {totalReplyCount} svar
+              </button>
+              <span className="flex items-center gap-1.5 text-[13px] text-muted-foreground/40 px-2.5 py-1.5">
+                <Eye className="w-4 h-4" />
+                {thread.views.toLocaleString("sv-SE")}
               </span>
-            ))}
-          </div>
-        )}
-
-        {/* Body */}
-        <div className="text-sm sm:text-[15px] text-foreground/85 leading-[1.8] whitespace-pre-line mb-6">
-          {thread.content}
-        </div>
-
-        {/* Action bar */}
-        <div className="flex items-center gap-2 py-3 border-t border-b border-border">
-          <button
-            onClick={() => toggleLike(thread.id)}
-            className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg transition-colors ${
-              isLiked ? "text-primary bg-primary/10" : "text-muted-foreground hover:bg-muted"
-            }`}
-          >
-            <Heart className={`w-4 h-4 ${isLiked ? "fill-primary" : ""}`} />
-            {likeCount}
-          </button>
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground px-3 py-1.5">
-            <MessageSquare className="w-4 h-4" /> {totalReplyCount}
-          </span>
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground px-3 py-1.5">
-            <Eye className="w-4 h-4" /> {thread.views.toLocaleString("sv-SE")}
-          </span>
-          <div className="ml-auto flex items-center gap-1">
-            <button className="p-2 rounded-lg text-muted-foreground hover:bg-muted transition-colors">
-              <Bookmark className="w-4 h-4" />
-            </button>
-            <button className="p-2 rounded-lg text-muted-foreground hover:bg-muted transition-colors">
-              <Share2 className="w-4 h-4" />
-            </button>
+              <div className="ml-auto flex items-center gap-0.5">
+                <button className="p-1.5 rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-muted/60 transition-colors">
+                  <Bookmark className="w-4 h-4" />
+                </button>
+                <button className="p-1.5 rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-muted/60 transition-colors">
+                  <Share2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </article>
+      </div>
 
-      {/* Reply header */}
-      <div className="mt-8 mb-4">
-        <h2 className="font-semibold text-base text-foreground flex items-center gap-2">
+      {/* ─── Reply composer ─── */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden mb-6">
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 border-b border-border">
+          <Avatar className="w-6 h-6">
+            <AvatarFallback className="text-[9px] font-semibold bg-muted text-muted-foreground">G</AvatarFallback>
+          </Avatar>
+          <span className="text-xs font-medium text-muted-foreground">
+            {quotedReply ? `Svarar på ${quotedReply.author}s inlägg` : "Skriv ett svar"}
+          </span>
+        </div>
+
+        <div className="p-4">
+          <AnimatePresence>
+            {quotedReply && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden mb-3"
+              >
+                <div className="rounded-md bg-muted/40 border border-border/50 overflow-hidden">
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-muted/60 border-b border-border/50">
+                    <div className="flex items-center gap-1.5">
+                      <CornerDownRight className="w-3 h-3 text-muted-foreground/50" />
+                      <span className="text-[10px] font-semibold text-muted-foreground">
+                        {quotedReply.author} skrev:
+                      </span>
+                    </div>
+                    <button onClick={clearQuote} className="p-0.5 text-muted-foreground/50 hover:text-muted-foreground">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <p className="px-3 py-2 text-xs text-muted-foreground/70 italic line-clamp-2">
+                    {quotedReply.content}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <Textarea
+            ref={replyRef}
+            placeholder="Vad tycker du? Dela dina tankar..."
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            className="min-h-[80px] bg-background border-border resize-none text-sm rounded-lg leading-relaxed focus:min-h-[120px] transition-all"
+          />
+          <div className="flex items-center justify-between mt-3">
+            <p className="text-[10px] text-muted-foreground/40">Markdown stöds</p>
+            <Button
+              size="sm"
+              className="gap-2 px-5 h-9"
+              disabled={!replyText.trim()}
+              onClick={() => {
+                if (!replyText.trim()) return;
+                onAddReply(thread.id, replyText.trim(), quotedReply || undefined);
+                setReplyText("");
+                setQuotedReply(null);
+              }}
+            >
+              <Send className="w-3.5 h-3.5" /> Publicera
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Reply section header with sort ─── */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-semibold text-sm text-foreground flex items-center gap-2">
           <MessageSquare className="w-4 h-4 text-primary" />
           {totalReplyCount} svar
         </h2>
-      </div>
-
-      {/* Reply input */}
-      <div className="rounded-xl border border-border bg-card p-4 mb-6">
-        <AnimatePresence>
-          {quotedReply && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden mb-3"
+        <div className="flex items-center bg-muted rounded-lg p-0.5 gap-0.5">
+          {([ 
+            { id: "top" as const, label: "Bäst", icon: Award },
+            { id: "new" as const, label: "Nyast", icon: Clock },
+            { id: "old" as const, label: "Äldst", icon: Clock },
+          ]).map((s) => (
+            <button
+              key={s.id}
+              onClick={() => setSortReplies(s.id)}
+              className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-md transition-all ${
+                sortReplies === s.id
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
-              <div className="bg-muted/50 rounded-lg px-3 py-2.5 border-l-3 border-primary/30 flex items-start gap-2">
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-medium text-muted-foreground mb-0.5">
-                    Svar till {quotedReply.author}
-                  </p>
-                  <p className="text-xs text-muted-foreground/70 italic line-clamp-2">
-                    "{quotedReply.content}"
-                  </p>
-                </div>
-                <button onClick={clearQuote} className="p-0.5 text-muted-foreground/50 hover:text-muted-foreground shrink-0">
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <Textarea
-          ref={replyRef}
-          placeholder={quotedReply ? `Svara på ${quotedReply.author}s inlägg...` : "Dela din erfarenhet, ge råd eller ställ en fråga..."}
-          value={replyText}
-          onChange={(e) => setReplyText(e.target.value)}
-          className="min-h-[80px] bg-background border-border resize-none text-sm rounded-lg leading-relaxed"
-        />
-        <div className="flex justify-end mt-3">
-          <Button
-            size="sm"
-            className="gap-2 px-5 h-9"
-            disabled={!replyText.trim()}
-            onClick={() => {
-              if (!replyText.trim()) return;
-              onAddReply(thread.id, replyText.trim(), quotedReply || undefined);
-              setReplyText("");
-              setQuotedReply(null);
-            }}
-          >
-            <Send className="w-3.5 h-3.5" /> {quotedReply ? "Publicera svar" : "Publicera"}
-          </Button>
+              {s.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Replies */}
-      <div className="space-y-0">
-        {thread.replyData?.map((reply) => (
+      {/* ─── Replies tree ─── */}
+      <div>
+        {sortedReplies.map((reply) => (
           <ReplyItem
             key={reply.id}
             reply={reply}
@@ -1043,6 +1185,13 @@ const ThreadDetail = ({
           />
         ))}
       </div>
+
+      {totalReplyCount === 0 && (
+        <div className="text-center py-12 rounded-xl border border-border bg-card">
+          <MessageSquare className="w-8 h-8 text-muted-foreground/20 mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">Inga svar ännu — bli den första!</p>
+        </div>
+      )}
     </motion.div>
   );
 };
