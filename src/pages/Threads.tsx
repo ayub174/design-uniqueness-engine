@@ -1883,7 +1883,7 @@ const Threads = () => {
 
             <nav className="hidden sm:flex items-center gap-1 ml-2">
               {[
-                { label: "Forum", onClick: handleBackToOverview, active: view === "overview" },
+                { label: "Trådar", onClick: handleBackToOverview, active: view === "overview" },
               ].map((item) => (
                 <button
                   key={item.label}
