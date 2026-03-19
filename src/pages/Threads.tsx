@@ -386,17 +386,17 @@ const getCategoryStats = (catId: string, threadList: Thread[]) => {
 const AuthorBadge = ({ type }: { type?: string }) => {
   if (!type) return null;
   if (type === "verified") return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+    <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
       <Shield className="w-3 h-3" /> Verifierad
     </span>
   );
   if (type === "mod") return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+    <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
       <Crown className="w-3 h-3" /> Mod
     </span>
   );
   if (type === "top") return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400 px-2 py-0.5 rounded-full">
+    <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400 px-2 py-0.5 rounded-full">
       <Zap className="w-3 h-3" /> Top
     </span>
   );
@@ -478,7 +478,7 @@ const CategoryOverview = ({
         </div>
 
         {/* Table header */}
-        <div className="hidden sm:grid grid-cols-[1fr_120px_140px_80px_60px] gap-2 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+        <div className="hidden sm:grid grid-cols-[1fr_120px_140px_80px_60px] gap-2 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
           <span>Rubrik</span>
           <span>Kategori</span>
           <span>Senaste svar</span>
@@ -526,7 +526,7 @@ const CategoryOverview = ({
                       <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
                         {thread.title}
                       </h3>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">av <UserHoverCard username={thread.author} className="text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard></p>
+                      <p className="text-xs text-muted-foreground mt-0.5">av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard></p>
                     </div>
                   </div>
 
@@ -541,7 +541,7 @@ const CategoryOverview = ({
                         <CornerDownRight className="w-3 h-3 shrink-0 text-muted-foreground/50" />
                         <div className="min-w-0">
                           <span className="block truncate"><UserHoverCard username={lastReply.author} className="text-xs text-muted-foreground hover:text-primary transition-colors">{lastReply.author}</UserHoverCard></span>
-                          <span className="text-[10px] text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
+                          <span className="text-xs text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
                         </div>
                       </div>
                     ) : (
@@ -576,7 +576,7 @@ const CategoryOverview = ({
         </div>
 
         {/* Table header */}
-        <div className="hidden sm:grid grid-cols-[1fr_120px_140px_80px_60px] gap-2 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+        <div className="hidden sm:grid grid-cols-[1fr_120px_140px_80px_60px] gap-2 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
           <span>Rubrik</span>
           <span>Kategori</span>
           <span>Senaste svar</span>
@@ -629,8 +629,8 @@ const CategoryOverview = ({
                       <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
                         {thread.title}
                       </h3>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        av <UserHoverCard username={thread.author} className="text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard>
                       </p>
                     </div>
 
@@ -647,7 +647,7 @@ const CategoryOverview = ({
                           <CornerDownRight className="w-3 h-3 shrink-0 text-muted-foreground/50" />
                           <div className="min-w-0">
                             <span className="block truncate"><UserHoverCard username={lastReply.author} className="text-xs text-muted-foreground hover:text-primary transition-colors">{lastReply.author}</UserHoverCard></span>
-                            <span className="text-[10px] text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
+                            <span className="text-xs text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
                           </div>
                         </div>
                       ) : (
@@ -722,12 +722,12 @@ const ThreadCard = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             {thread.isPinned && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                 <Pin className="w-3 h-3" /> Fäst
               </span>
             )}
             {thread.tags.map((tag) => (
-              <span key={tag} className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+              <span key={tag} className="text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                 {tag}
               </span>
             ))}
@@ -737,21 +737,21 @@ const ThreadCard = ({
             {thread.title}
           </h3>
 
-          <div className="flex items-center gap-2 text-[11px] text-muted-foreground flex-wrap">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
             <div className="flex items-center gap-1.5">
               <Avatar className="w-4 h-4">
-                <AvatarFallback className="text-[7px] font-semibold bg-primary/10 text-primary">
+                <AvatarFallback className="text-[9px] font-semibold bg-primary/10 text-primary">
                   {thread.authorInitials}
                 </AvatarFallback>
               </Avatar>
-              <UserHoverCard username={thread.author} className="font-medium text-[11px] text-foreground/70 hover:text-primary transition-colors">{thread.author}</UserHoverCard>
+              <UserHoverCard username={thread.author} className="font-medium text-xs text-foreground/70 hover:text-primary transition-colors">{thread.author}</UserHoverCard>
             </div>
             <AuthorBadge type={thread.authorBadge} />
             <span className="text-muted-foreground/40">·</span>
             <span>{thread.timeAgo} sedan</span>
           </div>
 
-          <div className="flex items-center gap-4 mt-2.5 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-4 mt-2.5 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <MessageSquare className="w-3.5 h-3.5" /> {thread.replies}
             </span>
@@ -866,7 +866,7 @@ const ReplyItem = ({
           >
             <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-foreground transition-colors" />
             <Avatar className="w-5 h-5">
-              <AvatarFallback className="text-[8px] font-semibold bg-muted text-muted-foreground">
+              <AvatarFallback className="text-[9px] font-semibold bg-muted text-muted-foreground">
                 {reply.authorInitials}
               </AvatarFallback>
             </Avatar>
@@ -907,7 +907,7 @@ const ReplyItem = ({
           {/* Header row — avatar + meta */}
           <div className="flex items-center gap-2 mb-1.5">
             <Avatar className="w-7 h-7 shrink-0">
-              <AvatarFallback className={`text-[10px] font-bold ${
+              <AvatarFallback className={`text-xs font-bold ${
                 reply.isOP
                   ? "bg-primary/15 text-primary ring-1 ring-primary/30"
                   : "bg-muted text-muted-foreground"
@@ -917,24 +917,24 @@ const ReplyItem = ({
             </Avatar>
 
             <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-              <UserHoverCard username={reply.author} className={`text-[13px] font-semibold ${reply.isOP ? "text-primary" : "text-foreground"} hover:underline transition-colors`}>
+              <UserHoverCard username={reply.author} className={`text-sm font-semibold ${reply.isOP ? "text-primary" : "text-foreground"} hover:underline transition-colors`}>
                 {reply.author}
               </UserHoverCard>
               <AuthorBadge type={reply.authorBadge} />
               {reply.isOP && (
-                <span className="text-[9px] font-bold text-primary-foreground bg-primary px-1.5 py-px rounded text-center leading-tight">
+                <span className="text-[10px] font-bold text-primary-foreground bg-primary px-1.5 py-px rounded text-center leading-tight">
                   OP
                 </span>
               )}
-              <span className="text-[11px] text-muted-foreground/50">·</span>
-              <span className="text-[11px] text-muted-foreground">{reply.timeAgo} sedan</span>
+              <span className="text-xs text-muted-foreground/50">·</span>
+              <span className="text-xs text-muted-foreground">{reply.timeAgo} sedan</span>
             </div>
 
             {/* Collapse button for depth 0 */}
             {effectiveDepth === 0 && reply.children && reply.children.length > 0 && (
               <button
                 onClick={() => setCollapsed(true)}
-                className="ml-auto text-[11px] text-muted-foreground/50 hover:text-muted-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-muted"
+                className="ml-auto text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-muted"
                 title="Fäll ihop"
               >
                 <ChevronDown className="w-3.5 h-3.5" />
@@ -947,7 +947,7 @@ const ReplyItem = ({
             <div className="mb-2 ml-9 rounded-md bg-muted/40 border border-border/50 overflow-hidden">
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-muted/60 border-b border-border/50">
                 <CornerDownRight className="w-3 h-3 text-muted-foreground/50" />
-                <span className="text-[10px] font-semibold text-muted-foreground">
+                <span className="text-xs font-semibold text-muted-foreground">
                   {reply.quotedReply.author} skrev:
                 </span>
               </div>
@@ -959,7 +959,7 @@ const ReplyItem = ({
 
           {/* Content */}
           <div className="ml-9">
-            <p className="text-[13.5px] text-foreground/90 leading-[1.65] whitespace-pre-line">
+            <p className="text-[15px] text-foreground/90 leading-[1.65] whitespace-pre-line">
               {reply.content}
             </p>
 
@@ -967,7 +967,7 @@ const ReplyItem = ({
             <div className="flex items-center gap-0.5 mt-1.5 -ml-1.5">
               <button
                 onClick={() => toggleReplyLike(reply.id)}
-                className={`flex items-center gap-1 text-[12px] font-medium px-2 py-1 rounded-md transition-colors ${
+                className={`flex items-center gap-1 text-sm font-medium px-2 py-1 rounded-md transition-colors ${
                   isReplyLiked
                     ? "text-primary"
                     : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/60"
@@ -978,19 +978,19 @@ const ReplyItem = ({
               </button>
               <button
                 onClick={() => onQuoteReply(reply)}
-                className="flex items-center gap-1 text-[12px] font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+                className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
               >
                 <Reply className="w-3.5 h-3.5" />
                 Svara
               </button>
               <button
                 onClick={() => onQuoteReply(reply)}
-                className="flex items-center gap-1 text-[12px] font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+                className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
               >
                 <Quote className="w-3.5 h-3.5" />
                 Citera
               </button>
-              <button className="flex items-center gap-1 text-[12px] font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors">
+              <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors">
                 <Share2 className="w-3.5 h-3.5" />
                 Dela
               </button>
@@ -1090,15 +1090,15 @@ const ThreadDetail = ({
       <div className="rounded-xl border border-border bg-card overflow-hidden mb-6">
         {/* Category bar */}
         <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 border-b border-border">
-          <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full ${cat?.color || "bg-muted text-muted-foreground"}`}>
+          <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full ${cat?.color || "bg-muted text-muted-foreground"}`}>
             <CatIcon className="w-3 h-3" /> {cat?.label}
           </span>
           {thread.tags.map((tag) => (
-            <span key={tag} className="text-[10px] font-medium text-muted-foreground bg-background px-2 py-0.5 rounded-full border border-border">
+            <span key={tag} className="text-xs font-medium text-muted-foreground bg-background px-2 py-0.5 rounded-full border border-border">
               {tag}
             </span>
           ))}
-          <span className="text-[11px] text-muted-foreground ml-auto">{thread.timeAgo} sedan</span>
+          <span className="text-xs text-muted-foreground ml-auto">{thread.timeAgo} sedan</span>
         </div>
 
         <div className="flex">
@@ -1141,7 +1141,7 @@ const ThreadDetail = ({
             </div>
 
             {/* Body */}
-            <div className="text-[14.5px] text-foreground/90 leading-[1.75] whitespace-pre-line">
+            <div className="text-[16px] text-foreground/90 leading-[1.75] whitespace-pre-line">
               {thread.content}
             </div>
 
@@ -1150,7 +1150,7 @@ const ThreadDetail = ({
               {/* Mobile vote (hidden on sm+) */}
               <button
                 onClick={() => toggleLike(thread.id)}
-                className={`sm:hidden flex items-center gap-1.5 text-[13px] font-medium px-2.5 py-1.5 rounded-md transition-colors ${
+                className={`sm:hidden flex items-center gap-1.5 text-sm font-medium px-2.5 py-1.5 rounded-md transition-colors ${
                   isLiked ? "text-primary bg-primary/10" : "text-muted-foreground/50 hover:bg-muted"
                 }`}
               >
@@ -1159,12 +1159,12 @@ const ThreadDetail = ({
               </button>
               <button
                 onClick={() => replyRef.current?.focus()}
-                className="flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground/60 hover:text-foreground hover:bg-muted/60 px-2.5 py-1.5 rounded-md transition-colors"
+                className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground/60 hover:text-foreground hover:bg-muted/60 px-2.5 py-1.5 rounded-md transition-colors"
               >
                 <MessageSquare className="w-4 h-4" />
                 {totalReplyCount} svar
               </button>
-              <span className="flex items-center gap-1.5 text-[13px] text-muted-foreground/40 px-2.5 py-1.5">
+              <span className="flex items-center gap-1.5 text-sm text-muted-foreground/40 px-2.5 py-1.5">
                 <Eye className="w-4 h-4" />
                 {thread.views.toLocaleString("sv-SE")}
               </span>
@@ -1185,7 +1185,7 @@ const ThreadDetail = ({
       <div className="rounded-xl border border-border bg-card overflow-hidden mb-6">
         <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 border-b border-border">
           <Avatar className="w-6 h-6">
-            <AvatarFallback className="text-[9px] font-semibold bg-muted text-muted-foreground">G</AvatarFallback>
+            <AvatarFallback className="text-[10px] font-semibold bg-muted text-muted-foreground">G</AvatarFallback>
           </Avatar>
           <span className="text-xs font-medium text-muted-foreground">
             {quotedReply ? `Svarar på ${quotedReply.author}s inlägg` : "Skriv ett svar"}
@@ -1205,7 +1205,7 @@ const ThreadDetail = ({
                   <div className="flex items-center justify-between px-3 py-1.5 bg-muted/60 border-b border-border/50">
                     <div className="flex items-center gap-1.5">
                       <CornerDownRight className="w-3 h-3 text-muted-foreground/50" />
-                      <span className="text-[10px] font-semibold text-muted-foreground">
+                      <span className="text-xs font-semibold text-muted-foreground">
                         {quotedReply.author} skrev:
                       </span>
                     </div>
@@ -1229,7 +1229,7 @@ const ThreadDetail = ({
             className="min-h-[80px] bg-background border-border resize-none text-sm rounded-lg leading-relaxed focus:min-h-[120px] transition-all"
           />
           <div className="flex items-center justify-between mt-3">
-            <p className="text-[10px] text-muted-foreground/40">Markdown stöds</p>
+            <p className="text-xs text-muted-foreground/40">Markdown stöds</p>
             <Button
               size="sm"
               className="gap-2 px-5 h-9"
@@ -1262,7 +1262,7 @@ const ThreadDetail = ({
             <button
               key={s.id}
               onClick={() => setSortReplies(s.id)}
-              className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-md transition-all ${
+              className={`flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
                 sortReplies === s.id
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -1313,7 +1313,7 @@ const SidebarContentBlock = ({
     <div className="h-full flex flex-col">
       {/* Stats */}
       <div className="px-4 py-3 border-b border-border">
-        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1"><Users className="w-3 h-3 text-primary" /> 12 400</span>
           <span className="text-border">|</span>
           <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> 347 online</span>
@@ -1354,7 +1354,7 @@ const SidebarContentBlock = ({
             >
               <CatIcon className={`w-4 h-4 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
               <span className="flex-1 text-left truncate text-xs font-medium">{cat.label}</span>
-              <span className="text-[10px] text-muted-foreground/40 tabular-nums">{stats.threadCount}</span>
+              <span className="text-xs text-muted-foreground/40 tabular-nums">{stats.threadCount}</span>
             </button>
           );
         })}
@@ -1524,9 +1524,9 @@ const CreateThreadView = ({
         />
         <div className="flex items-center justify-between mt-1.5">
           {title.length > 0 && title.length < 5 && (
-            <p className="text-[11px] text-destructive">Minst 5 tecken</p>
+            <p className="text-xs text-destructive">Minst 5 tecken</p>
           )}
-          <p className="text-[11px] text-muted-foreground ml-auto">{title.length}/300</p>
+          <p className="text-xs text-muted-foreground ml-auto">{title.length}/300</p>
         </div>
       </div>
 
@@ -1534,7 +1534,7 @@ const CreateThreadView = ({
       <div className="mb-5">
         <div className="flex items-center gap-2 flex-wrap">
           {tags.map((tag) => (
-            <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary/10 text-primary text-[11px] font-medium rounded-full">
+            <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
               {tag}
               <button onClick={() => removeTag(tag)} className="hover:text-destructive ml-0.5"><X className="w-3 h-3" /></button>
             </span>
@@ -1565,15 +1565,15 @@ const CreateThreadView = ({
         />
         <div className="flex items-center justify-between mt-1.5">
           {content.length > 0 && content.length < 10 && (
-            <p className="text-[11px] text-destructive">Minst 10 tecken</p>
+            <p className="text-xs text-destructive">Minst 10 tecken</p>
           )}
-          <p className="text-[11px] text-muted-foreground ml-auto">{content.length}/5000</p>
+          <p className="text-xs text-muted-foreground ml-auto">{content.length}/5000</p>
         </div>
       </div>
 
       {/* Actions */}
       <div className="flex items-center justify-between pt-5 border-t border-border">
-        <p className="text-[10px] text-muted-foreground/50 max-w-xs">
+        <p className="text-xs text-muted-foreground/50 max-w-xs">
           Genom att publicera godkänner du Chappies communityregler.
         </p>
         <div className="flex gap-3">
@@ -1830,7 +1830,7 @@ const Threads = () => {
                   </div>
 
                   {/* Thread list — structured table */}
-                  <div className="hidden sm:grid grid-cols-[1fr_120px_140px_80px_60px] gap-2 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+                  <div className="hidden sm:grid grid-cols-[1fr_120px_140px_80px_60px] gap-2 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
                     <span>Rubrik</span>
                     <span>Kategori</span>
                     <span>Senaste svar</span>
@@ -1875,7 +1875,7 @@ const Threads = () => {
                               <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
                                 {thread.title}
                               </h3>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">av <UserHoverCard username={thread.author} className="text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard></p>
+                              <p className="text-xs text-muted-foreground mt-0.5">av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard></p>
                             </div>
 
                             <div className="flex items-center gap-1.5">
@@ -1889,7 +1889,7 @@ const Threads = () => {
                                   <CornerDownRight className="w-3 h-3 shrink-0 text-muted-foreground/50" />
                                   <div className="min-w-0">
                                     <span className="block truncate"><UserHoverCard username={lastReply.author} className="text-xs text-muted-foreground hover:text-primary transition-colors">{lastReply.author}</UserHoverCard></span>
-                                    <span className="text-[10px] text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
+                                    <span className="text-xs text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
                                   </div>
                                 </div>
                               ) : (
