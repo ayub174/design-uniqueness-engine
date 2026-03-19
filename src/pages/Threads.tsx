@@ -1074,7 +1074,7 @@ const ThreadDetail = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="max-w-3xl"
+      className="max-w-4xl"
     >
       {/* Back */}
       <button
