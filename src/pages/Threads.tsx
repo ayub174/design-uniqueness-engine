@@ -1346,16 +1346,17 @@ const ThreadDetail = ({
       </div>
 
       {/* ─── Replies tree ─── */}
-      <div>
-        {sortedReplies.map((reply) => (
-          <ReplyItem
-            key={reply.id}
-            reply={reply}
-            depth={0}
-            replyLikes={replyLikes}
-            toggleReplyLike={toggleReplyLike}
-            onQuoteReply={handleQuoteReply}
-          />
+      <div ref={repliesStartRef}>
+        {sortedReplies.map((reply, i) => (
+          <div key={reply.id} data-reply-index={i}>
+            <ReplyItem
+              reply={reply}
+              depth={0}
+              replyLikes={replyLikes}
+              toggleReplyLike={toggleReplyLike}
+              onQuoteReply={handleQuoteReply}
+            />
+          </div>
         ))}
       </div>
 
@@ -1363,6 +1364,45 @@ const ThreadDetail = ({
         <div className="text-center py-12 rounded-xl border border-border bg-card">
           <MessageSquare className="w-8 h-8 text-muted-foreground/20 mx-auto mb-3" />
           <p className="text-sm text-muted-foreground">Inga svar ännu — bli den första!</p>
+        </div>
+      )}
+
+      {/* ─── Discourse-style Timeline Scrubber ─── */}
+      {totalReplyCount > 0 && (
+        <div className="hidden lg:block fixed right-8 top-1/2 -translate-y-1/2 z-40" style={{ width: "80px" }}>
+          <div className="bg-card border border-border rounded-xl shadow-lg p-3 flex flex-col items-center gap-1">
+            {/* Current position */}
+            <span className="text-xs font-bold text-foreground tabular-nums">
+              {scrubberState.current} / {scrubberState.total}
+            </span>
+            <span className="text-[10px] text-muted-foreground">
+              {sortedReplies[scrubberState.current - 1]?.timeAgo || ""}
+            </span>
+
+            {/* Track */}
+            <div
+              ref={scrubberTrackRef}
+              className="relative w-1.5 rounded-full bg-border cursor-pointer my-2"
+              style={{ height: "140px" }}
+              onClick={handleScrubberClick}
+              onMouseDown={(e) => { e.preventDefault(); setIsDragging(true); handleScrubberDrag(e.clientY); }}
+            >
+              {/* Progress fill */}
+              <div
+                className="absolute top-0 left-0 w-full bg-primary rounded-full transition-all duration-100"
+                style={{ height: `${scrubberState.progress * 100}%` }}
+              />
+              {/* Thumb */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-2 border-primary-foreground shadow-md cursor-grab active:cursor-grabbing transition-all duration-100"
+                style={{ top: `calc(${scrubberState.progress * 100}% - 8px)` }}
+              />
+            </div>
+
+            <span className="text-[10px] text-muted-foreground">
+              {sortedReplies[sortedReplies.length - 1]?.timeAgo || ""}
+            </span>
+          </div>
         </div>
       )}
     </motion.div>
