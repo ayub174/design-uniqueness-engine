@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
+import UserHoverCard from "@/components/UserHoverCard";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -507,7 +508,7 @@ const CategoryOverview = ({
                         {thread.title}
                       </h3>
                       <p className="text-xs text-muted-foreground mt-1">
-                        av {thread.author} · {cat?.label}
+                        av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard> · {cat?.label}
                       </p>
                     </div>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
@@ -525,7 +526,7 @@ const CategoryOverview = ({
                       <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
                         {thread.title}
                       </h3>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">av {thread.author}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">av <UserHoverCard username={thread.author} className="text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard></p>
                     </div>
                   </div>
 
@@ -539,7 +540,7 @@ const CategoryOverview = ({
                       <div className="flex items-center gap-1">
                         <CornerDownRight className="w-3 h-3 shrink-0 text-muted-foreground/50" />
                         <div className="min-w-0">
-                          <span className="block truncate">{lastReply.author}</span>
+                          <span className="block truncate"><UserHoverCard username={lastReply.author} className="text-xs text-muted-foreground hover:text-primary transition-colors">{lastReply.author}</UserHoverCard></span>
                           <span className="text-[10px] text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
                         </div>
                       </div>
@@ -611,7 +612,7 @@ const CategoryOverview = ({
                           {thread.title}
                         </h3>
                         <p className="text-xs text-muted-foreground mt-1">
-                          av {thread.author} · {cat?.label}
+                          av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard> · {cat?.label}
                         </p>
                       </div>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
@@ -629,7 +630,7 @@ const CategoryOverview = ({
                         {thread.title}
                       </h3>
                       <p className="text-[11px] text-muted-foreground mt-0.5">
-                        av {thread.author}
+                        av <UserHoverCard username={thread.author} className="text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard>
                       </p>
                     </div>
 
@@ -645,7 +646,7 @@ const CategoryOverview = ({
                         <div className="flex items-center gap-1">
                           <CornerDownRight className="w-3 h-3 shrink-0 text-muted-foreground/50" />
                           <div className="min-w-0">
-                            <span className="block truncate">{lastReply.author}</span>
+                            <span className="block truncate"><UserHoverCard username={lastReply.author} className="text-xs text-muted-foreground hover:text-primary transition-colors">{lastReply.author}</UserHoverCard></span>
                             <span className="text-[10px] text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
                           </div>
                         </div>
@@ -743,7 +744,7 @@ const ThreadCard = ({
                   {thread.authorInitials}
                 </AvatarFallback>
               </Avatar>
-              <span className="font-medium text-foreground/70">{thread.author}</span>
+              <UserHoverCard username={thread.author} className="font-medium text-[11px] text-foreground/70 hover:text-primary transition-colors">{thread.author}</UserHoverCard>
             </div>
             <AuthorBadge type={thread.authorBadge} />
             <span className="text-muted-foreground/40">·</span>
@@ -869,7 +870,7 @@ const ReplyItem = ({
                 {reply.authorInitials}
               </AvatarFallback>
             </Avatar>
-            <span className="font-medium">{reply.author}</span>
+            <UserHoverCard username={reply.author} className="font-medium text-xs text-muted-foreground hover:text-primary transition-colors">{reply.author}</UserHoverCard>
             <span className="text-muted-foreground/50">·</span>
             <span>{replyLikeCount} poäng</span>
             <span className="text-muted-foreground/50">·</span>
@@ -916,9 +917,9 @@ const ReplyItem = ({
             </Avatar>
 
             <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-              <span className={`text-[13px] font-semibold ${reply.isOP ? "text-primary" : "text-foreground"}`}>
+              <UserHoverCard username={reply.author} className={`text-[13px] font-semibold ${reply.isOP ? "text-primary" : "text-foreground"} hover:underline transition-colors`}>
                 {reply.author}
-              </span>
+              </UserHoverCard>
               <AuthorBadge type={reply.authorBadge} />
               {reply.isOP && (
                 <span className="text-[9px] font-bold text-primary-foreground bg-primary px-1.5 py-px rounded text-center leading-tight">
@@ -1133,7 +1134,7 @@ const ThreadDetail = ({
                 </AvatarFallback>
               </Avatar>
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-sm font-semibold text-foreground">{thread.author}</span>
+                <UserHoverCard username={thread.author} className="text-sm font-semibold text-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard>
                 <AuthorBadge type={thread.authorBadge} />
                 <span className="text-xs text-muted-foreground">· {thread.authorRole}</span>
               </div>
@@ -1858,7 +1859,7 @@ const Threads = () => {
                                   {thread.title}
                                 </h3>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  av {thread.author} · {thread.timeAgo} sedan
+                                  av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard> · {thread.timeAgo} sedan
                                 </p>
                               </div>
                               <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
@@ -1874,7 +1875,7 @@ const Threads = () => {
                               <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
                                 {thread.title}
                               </h3>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">av {thread.author}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">av <UserHoverCard username={thread.author} className="text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard></p>
                             </div>
 
                             <div className="flex items-center gap-1.5">
@@ -1887,7 +1888,7 @@ const Threads = () => {
                                 <div className="flex items-center gap-1">
                                   <CornerDownRight className="w-3 h-3 shrink-0 text-muted-foreground/50" />
                                   <div className="min-w-0">
-                                    <span className="block truncate">{lastReply.author}</span>
+                                    <span className="block truncate"><UserHoverCard username={lastReply.author} className="text-xs text-muted-foreground hover:text-primary transition-colors">{lastReply.author}</UserHoverCard></span>
                                     <span className="text-[10px] text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
                                   </div>
                                 </div>
