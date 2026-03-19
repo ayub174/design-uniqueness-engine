@@ -1894,7 +1894,7 @@ const Threads = () => {
                 >
                   <span className="relative inline-block">
                     <span className="relative z-10">{item.label}</span>
-                    <svg className="absolute inset-0 w-full h-full z-0 text-primary/30" viewBox="0 0 80 28" fill="none" preserveAspectRatio="none">
+                    <svg className="absolute inset-0 w-full h-full z-0 text-foreground/30" viewBox="0 0 80 28" fill="none" preserveAspectRatio="none">
                       <path d="M2 20 C12 8, 20 24, 32 12 C44 0, 52 22, 64 10 C72 2, 76 18, 78 8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" fill="none" />
                       <path d="M4 24 C14 14, 28 26, 38 16 C48 6, 56 20, 68 14 C74 10, 78 22, 80 16" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" fill="none" />
                     </svg>
