@@ -1117,6 +1117,8 @@ const ThreadDetail = ({
 
   const [isDragging, setIsDragging] = useState(false);
   const [scrubberLeft, setScrubberLeft] = useState<number | null>(null);
+  const [scrubberTop, setScrubberTop] = useState<number | null>(null);
+  const postCardRef = React.useRef<HTMLDivElement>(null);
   const scrubberTrackRef = React.useRef<HTMLDivElement>(null);
 
   // Position scrubber right after the content container
@@ -1129,8 +1131,22 @@ const ThreadDetail = ({
     };
     updatePos();
     window.addEventListener("resize", updatePos);
-    window.addEventListener("scroll", updatePos, { passive: true });
-    return () => { window.removeEventListener("resize", updatePos); window.removeEventListener("scroll", updatePos); };
+    return () => { window.removeEventListener("resize", updatePos); };
+  }, []);
+
+  // Keep scrubber top aligned with the post card (sticky at nav height when scrolled past)
+  React.useEffect(() => {
+    const updateTop = () => {
+      const card = postCardRef.current;
+      if (!card) return;
+      const cardTop = card.getBoundingClientRect().top;
+      const navHeight = 72; // nav h-14 + some padding
+      setScrubberTop(Math.max(navHeight, cardTop));
+    };
+    updateTop();
+    window.addEventListener("scroll", updateTop, { passive: true });
+    window.addEventListener("resize", updateTop);
+    return () => { window.removeEventListener("scroll", updateTop); window.removeEventListener("resize", updateTop); };
   }, []);
 
   const handleScrubberDrag = React.useCallback((clientY: number) => {
@@ -1173,7 +1189,7 @@ const ThreadDetail = ({
       </button>
 
       {/* ─── Original Post Card — Reddit-style with vote sidebar ─── */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden mb-6">
+      <div ref={postCardRef} className="rounded-xl border border-border bg-card overflow-hidden mb-6">
         {/* Category bar */}
         <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 border-b border-border">
           <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full ${cat?.color || "bg-muted text-muted-foreground"}`}>
@@ -1384,7 +1400,7 @@ const ThreadDetail = ({
 
       {/* ─── Discourse-style Timeline Scrubber ─── */}
       {totalReplyCount > 0 && (
-        <div className="hidden lg:block fixed z-40 flex flex-col items-center" style={{ top: "33%", transform: "translateY(-50%)", left: scrubberLeft ?? undefined, display: scrubberLeft ? undefined : "none" }}>
+        <div className="hidden lg:block fixed z-40 flex flex-col items-center" style={{ top: scrubberTop ?? undefined, left: scrubberLeft ?? undefined, display: scrubberLeft ? undefined : "none" }}>
           {/* Current position */}
           <span className="text-xs font-bold text-foreground tabular-nums mb-2">
             {scrubberState.current} / {scrubberState.total}
