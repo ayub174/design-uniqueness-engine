@@ -119,3 +119,118 @@
   pointer-events: none;
   z-index: 1;
 }
+
+/* ─── Newspaper Design Utilities ─── */
+
+/* Decorative double rule */
+.newspaper-rule {
+  border: none;
+  border-top: 2px solid hsl(var(--foreground));
+  border-bottom: 1px solid hsl(var(--foreground));
+  height: 5px;
+}
+
+.newspaper-rule-thin {
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+  height: 0;
+}
+
+.newspaper-rule-ornament {
+  border: none;
+  position: relative;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.newspaper-rule-ornament::before,
+.newspaper-rule-ornament::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid hsl(var(--foreground) / 0.2);
+}
+.newspaper-rule-ornament::before {
+  margin-right: 12px;
+}
+.newspaper-rule-ornament::after {
+  margin-left: 12px;
+}
+
+/* Drop cap */
+.drop-cap::first-letter {
+  float: left;
+  font-family: var(--font-serif);
+  font-size: 3.2em;
+  line-height: 0.8;
+  padding-right: 8px;
+  padding-top: 4px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+/* Small caps */
+.small-caps {
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+}
+
+/* Editorial dateline */
+.dateline {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Column divider for multi-column layouts */
+.column-divider {
+  border-left: 1px solid hsl(var(--border));
+}
+
+/* Masthead text styling */
+.masthead-text {
+  font-family: var(--font-serif);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+/* Byline styling */
+.byline {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+/* Pull quote */
+.pull-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  border-top: 2px solid hsl(var(--foreground));
+  border-bottom: 1px solid hsl(var(--foreground));
+  padding: 0.75rem 0;
+  margin: 1rem 0;
+  color: hsl(var(--foreground));
+}
+
+/* Section label */
+.section-label {
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: hsl(var(--primary));
+}
+
+/* Paper texture background */
+.paper-bg {
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, hsl(var(--primary) / 0.01) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, hsl(var(--primary) / 0.008) 0%, transparent 50%);
+}
