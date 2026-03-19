@@ -1400,31 +1400,55 @@ const ThreadDetail = ({
 
       {/* ─── Discourse-style Timeline Scrubber ─── */}
       {totalReplyCount > 0 && (
-        <div className="hidden lg:block fixed z-40 flex flex-col items-center" style={{ top: scrubberTop ?? undefined, left: scrubberLeft ?? undefined, display: scrubberLeft ? undefined : "none" }}>
-          {/* Current position */}
-          <span className="text-xs font-bold text-foreground tabular-nums mb-2">
-            {scrubberState.current} / {scrubberState.total}
+        <div className="hidden lg:flex fixed z-40 flex-col items-start gap-0" style={{ top: scrubberTop ?? undefined, left: scrubberLeft ?? undefined, display: scrubberLeft ? undefined : "none" }}>
+          {/* Top date label */}
+          <span className="text-xs text-muted-foreground mb-2 ml-1">
+            {sortedReplies[0]?.timeAgo || ""} sedan
           </span>
 
           {/* Track */}
-          <div
-            ref={scrubberTrackRef}
-            className="relative w-1.5 rounded-full bg-border cursor-pointer"
-            style={{ height: "140px" }}
-            onClick={handleScrubberClick}
-            onMouseDown={(e) => { e.preventDefault(); setIsDragging(true); handleScrubberDrag(e.clientY); }}
-          >
-            {/* Progress fill */}
+          <div className="flex items-start gap-0">
+            {/* Vertical line + thumb */}
             <div
-              className="absolute top-0 left-0 w-full bg-primary rounded-full transition-all duration-100"
-              style={{ height: `${scrubberState.progress * 100}%` }}
-            />
-            {/* Thumb */}
+              ref={scrubberTrackRef}
+              className="relative cursor-pointer"
+              style={{ height: "280px", width: "3px" }}
+              onClick={handleScrubberClick}
+              onMouseDown={(e) => { e.preventDefault(); setIsDragging(true); handleScrubberDrag(e.clientY); }}
+            >
+              {/* Full track line */}
+              <div className="absolute inset-0 bg-primary/40 rounded-full" />
+              
+              {/* Thumb — tall pill like Discourse */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 w-2 rounded-full bg-primary shadow-md cursor-grab active:cursor-grabbing"
+                style={{
+                  height: "36px",
+                  top: `calc(${scrubberState.progress * 100}% - 18px)`,
+                  transition: isDragging ? "none" : "top 0.3s ease-out",
+                }}
+              />
+            </div>
+
+            {/* Position label next to thumb */}
             <div
-              className="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-2 border-primary-foreground shadow-md cursor-grab active:cursor-grabbing transition-all duration-100"
-              style={{ top: `calc(${scrubberState.progress * 100}% - 8px)` }}
-            />
+              className="ml-3 flex flex-col"
+              style={{
+                position: "relative",
+                top: `calc(${scrubberState.progress * 100}% * 2.8 - 18px)`,
+                transition: isDragging ? "none" : "top 0.3s ease-out",
+              }}
+            >
+              <span className="text-sm font-bold text-foreground tabular-nums leading-tight">
+                {scrubberState.current} / {scrubberState.total}
+              </span>
+            </div>
           </div>
+
+          {/* Bottom date label */}
+          <span className="text-xs text-muted-foreground mt-2 ml-1">
+            {sortedReplies[sortedReplies.length - 1]?.timeAgo || ""} sedan
+          </span>
         </div>
       )}
     </motion.div>
