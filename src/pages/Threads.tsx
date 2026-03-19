@@ -1479,6 +1479,8 @@ const ThreadDetail = ({
               replyLikes={replyLikes}
               toggleReplyLike={toggleReplyLike}
               onQuoteReply={handleQuoteReply}
+              onEditReply={onEditReply}
+              onDeleteReply={onDeleteReply}
             />
           </div>
         ))}
