@@ -1380,6 +1380,9 @@ const ThreadDetail = ({
       <div ref={repliesStartRef}>
         {sortedReplies.map((reply, i) => (
           <div key={reply.id} data-reply-index={i}>
+            {i > 0 && (
+              <div className="border-t border-border my-1" />
+            )}
             <ReplyItem
               reply={reply}
               depth={0}
