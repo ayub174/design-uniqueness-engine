@@ -1566,11 +1566,11 @@ const SidebarContentBlock = ({
   return (
     <div className="h-full flex flex-col">
       {/* Stats */}
-      <div className="px-4 py-3 border-b border-border">
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1"><Users className="w-3 h-3 text-primary" /> 12 400</span>
+      <div className="px-4 py-4 border-b border-border">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-primary" /> 12 400</span>
           <span className="text-border">|</span>
-          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> 347 online</span>
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-primary animate-pulse" /> 347 online</span>
         </div>
       </div>
 
