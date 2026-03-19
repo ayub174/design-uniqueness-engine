@@ -891,7 +891,7 @@ const ReplyItem = ({
     );
   }
 
-  return (
+  const innerContent = (
     <div className={`${effectiveDepth > 0 ? "ml-4 sm:ml-5" : ""}`}>
       <div className={`relative ${effectiveDepth > 0 ? `border-l-2 ${threadColor} pl-3 sm:pl-4` : ""}`}>
         {/* Clickable thread line area for collapsing */}
@@ -909,7 +909,7 @@ const ReplyItem = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.15 }}
-          className="pt-3 pb-1"
+          className={effectiveDepth > 0 ? "pt-3 pb-1" : "p-5"}
         >
           {/* Header row — avatar + meta */}
           <div className="flex items-center gap-2 mb-1.5">
