@@ -1128,15 +1128,25 @@ const ThreadDetail = ({
       if (!el) return;
       const rect = el.getBoundingClientRect();
       setScrubberLeft(rect.right + 16);
-      const card = postCardRef.current;
-      if (card) {
-        const cardRect = card.getBoundingClientRect();
-        setScrubberTop(cardRect.top + window.scrollY);
-      }
     };
     updatePos();
     window.addEventListener("resize", updatePos);
     return () => { window.removeEventListener("resize", updatePos); };
+  }, []);
+
+  // Keep scrubber top aligned with the post card (sticky at nav height when scrolled past)
+  React.useEffect(() => {
+    const updateTop = () => {
+      const card = postCardRef.current;
+      if (!card) return;
+      const cardTop = card.getBoundingClientRect().top;
+      const navHeight = 72; // nav h-14 + some padding
+      setScrubberTop(Math.max(navHeight, cardTop));
+    };
+    updateTop();
+    window.addEventListener("scroll", updateTop, { passive: true });
+    window.addEventListener("resize", updateTop);
+    return () => { window.removeEventListener("scroll", updateTop); window.removeEventListener("resize", updateTop); };
   }, []);
 
   const handleScrubberDrag = React.useCallback((clientY: number) => {
