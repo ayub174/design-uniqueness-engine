@@ -9,6 +9,7 @@ import {
   BookOpen, UserCheck, Pin, ChevronDown,
   Menu, MessageCircleQuestion, EyeIcon, Quote, CornerDownRight,
   Feather, Hash, ArrowRight, Flame, Sparkles,
+  Compass, FileText, Coins, Coffee, Network, MessagesSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
