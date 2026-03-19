@@ -453,23 +453,6 @@ const CategoryOverview = ({
         </p>
       </div>
 
-      {/* Stats bar */}
-      <div className="flex items-center justify-center gap-6 mb-8">
-        {[
-          { icon: MessageSquare, label: `${totalThreads} trådar`, color: "text-primary" },
-          { icon: Reply, label: `${totalReplies} svar`, color: "text-primary" },
-          { icon: Users, label: "12 400 medlemmar", color: "text-primary" },
-        ].map((stat, i) => (
-          <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <stat.icon className={`w-3.5 h-3.5 ${stat.color}`} />
-            {stat.label}
-          </div>
-        ))}
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          347 online
-        </div>
-      </div>
 
       {/* Search */}
       <div className="relative mb-10 max-w-lg mx-auto">
