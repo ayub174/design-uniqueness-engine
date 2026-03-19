@@ -744,7 +744,7 @@ const ThreadCard = ({
                   {thread.authorInitials}
                 </AvatarFallback>
               </Avatar>
-              <span className="font-medium text-foreground/70">{thread.author}</span>
+              <UserHoverCard username={thread.author} className="font-medium text-[11px] text-foreground/70 hover:text-primary transition-colors">{thread.author}</UserHoverCard>
             </div>
             <AuthorBadge type={thread.authorBadge} />
             <span className="text-muted-foreground/40">·</span>
