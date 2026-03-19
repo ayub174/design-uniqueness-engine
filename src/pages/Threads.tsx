@@ -366,7 +366,8 @@ const initialThreads: Thread[] = [
   },
 ];
 
-/* ─── Helpers ─── */
+const initialThreads: Thread[] = [...baseThreads, ...dummyKarriarThreads as Thread[]];
+
 const THREADS_PER_PAGE = 15;
 
 const timeToMinutes = (t: string) => {
