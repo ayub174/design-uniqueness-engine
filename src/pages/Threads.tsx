@@ -1038,6 +1038,9 @@ const ThreadDetail = ({
   const [quotedReply, setQuotedReply] = useState<{ author: string; content: string } | null>(null);
   const [sortReplies, setSortReplies] = useState<"top" | "new" | "old">("top");
   const replyRef = React.useRef<HTMLTextAreaElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const repliesStartRef = React.useRef<HTMLDivElement>(null);
+  const [scrubberState, setScrubberState] = useState({ current: 0, total: 0, progress: 0 });
   const cat = categories[thread.category];
   const CatIcon = cat?.icon || Briefcase;
   const isLiked = likedThreads.has(thread.id);
@@ -1076,13 +1079,74 @@ const ThreadDetail = ({
     }
   }, [thread.replyData, sortReplies]);
 
+  // Timeline scrubber scroll tracking
+  React.useEffect(() => {
+    if (totalReplyCount === 0) return;
+    const handleScroll = () => {
+      const container = containerRef.current;
+      if (!container) return;
+      // Find all top-level reply elements
+      const replyElements = container.querySelectorAll("[data-reply-index]");
+      if (replyElements.length === 0) return;
+      const viewportMid = window.innerHeight / 2;
+      let currentIndex = 0;
+      replyElements.forEach((el, i) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < viewportMid) currentIndex = i;
+      });
+      const total = replyElements.length;
+      const progress = total <= 1 ? 0 : currentIndex / (total - 1);
+      setScrubberState({ current: currentIndex + 1, total, progress });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [totalReplyCount, sortedReplies]);
+
+  const handleScrubberClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickY = e.clientY - rect.top;
+    const ratio = Math.max(0, Math.min(1, clickY / rect.height));
+    const container = containerRef.current;
+    if (!container) return;
+    const replyElements = container.querySelectorAll("[data-reply-index]");
+    const targetIndex = Math.round(ratio * (replyElements.length - 1));
+    const target = replyElements[targetIndex];
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const [isDragging, setIsDragging] = useState(false);
+  const scrubberTrackRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScrubberDrag = React.useCallback((clientY: number) => {
+    const track = scrubberTrackRef.current;
+    const container = containerRef.current;
+    if (!track || !container) return;
+    const rect = track.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+    const replyElements = container.querySelectorAll("[data-reply-index]");
+    const targetIndex = Math.round(ratio * (replyElements.length - 1));
+    const target = replyElements[targetIndex];
+    if (target) target.scrollIntoView({ behavior: "auto", block: "start" });
+  }, []);
+
+  React.useEffect(() => {
+    if (!isDragging) return;
+    const onMove = (e: MouseEvent) => { e.preventDefault(); handleScrubberDrag(e.clientY); };
+    const onUp = () => setIsDragging(false);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+  }, [isDragging, handleScrubberDrag]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="max-w-4xl"
+      className="max-w-4xl relative"
+      ref={containerRef}
     >
       {/* Back */}
       <button
@@ -1282,16 +1346,17 @@ const ThreadDetail = ({
       </div>
 
       {/* ─── Replies tree ─── */}
-      <div>
-        {sortedReplies.map((reply) => (
-          <ReplyItem
-            key={reply.id}
-            reply={reply}
-            depth={0}
-            replyLikes={replyLikes}
-            toggleReplyLike={toggleReplyLike}
-            onQuoteReply={handleQuoteReply}
-          />
+      <div ref={repliesStartRef}>
+        {sortedReplies.map((reply, i) => (
+          <div key={reply.id} data-reply-index={i}>
+            <ReplyItem
+              reply={reply}
+              depth={0}
+              replyLikes={replyLikes}
+              toggleReplyLike={toggleReplyLike}
+              onQuoteReply={handleQuoteReply}
+            />
+          </div>
         ))}
       </div>
 
@@ -1299,6 +1364,45 @@ const ThreadDetail = ({
         <div className="text-center py-12 rounded-xl border border-border bg-card">
           <MessageSquare className="w-8 h-8 text-muted-foreground/20 mx-auto mb-3" />
           <p className="text-sm text-muted-foreground">Inga svar ännu — bli den första!</p>
+        </div>
+      )}
+
+      {/* ─── Discourse-style Timeline Scrubber ─── */}
+      {totalReplyCount > 0 && (
+        <div className="hidden lg:block fixed right-8 top-1/2 -translate-y-1/2 z-40" style={{ width: "80px" }}>
+          <div className="bg-card border border-border rounded-xl shadow-lg p-3 flex flex-col items-center gap-1">
+            {/* Current position */}
+            <span className="text-xs font-bold text-foreground tabular-nums">
+              {scrubberState.current} / {scrubberState.total}
+            </span>
+            <span className="text-[10px] text-muted-foreground">
+              {sortedReplies[scrubberState.current - 1]?.timeAgo || ""}
+            </span>
+
+            {/* Track */}
+            <div
+              ref={scrubberTrackRef}
+              className="relative w-1.5 rounded-full bg-border cursor-pointer my-2"
+              style={{ height: "140px" }}
+              onClick={handleScrubberClick}
+              onMouseDown={(e) => { e.preventDefault(); setIsDragging(true); handleScrubberDrag(e.clientY); }}
+            >
+              {/* Progress fill */}
+              <div
+                className="absolute top-0 left-0 w-full bg-primary rounded-full transition-all duration-100"
+                style={{ height: `${scrubberState.progress * 100}%` }}
+              />
+              {/* Thumb */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-2 border-primary-foreground shadow-md cursor-grab active:cursor-grabbing transition-all duration-100"
+                style={{ top: `calc(${scrubberState.progress * 100}% - 8px)` }}
+              />
+            </div>
+
+            <span className="text-[10px] text-muted-foreground">
+              {sortedReplies[sortedReplies.length - 1]?.timeAgo || ""}
+            </span>
+          </div>
         </div>
       )}
     </motion.div>
