@@ -1859,7 +1859,7 @@ const Threads = () => {
                                   {thread.title}
                                 </h3>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  av {thread.author} · {thread.timeAgo} sedan
+                                  av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard> · {thread.timeAgo} sedan
                                 </p>
                               </div>
                               <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
