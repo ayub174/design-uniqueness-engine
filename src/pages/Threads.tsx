@@ -1119,11 +1119,13 @@ const ReplyItem = ({
 
 /* ─── Detail View — Reddit post + Discourse reply layout ─── */
 const ThreadDetail = ({
-  thread, onBack, likedThreads, toggleLike, onAddReply,
+  thread, onBack, likedThreads, toggleLike, onAddReply, onEditReply, onDeleteReply,
 }: {
   thread: Thread; onBack: () => void; likedThreads: Set<string>;
   toggleLike: (id: string) => void;
   onAddReply: (threadId: string, content: string, quoted?: { author: string; content: string }) => void;
+  onEditReply: (replyId: string, newContent: string) => void;
+  onDeleteReply: (replyId: string) => void;
 }) => {
   const [replyLikes, setReplyLikes] = useState<Set<string>>(new Set());
   const [replyText, setReplyText] = useState("");
