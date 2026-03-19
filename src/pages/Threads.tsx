@@ -1280,26 +1280,44 @@ const CategorySidebar = ({
   onSelectCategory: (id: string) => void; onBackToOverview: () => void;
   view: string; allThreads: Thread[]; onNewThread: () => void;
 }) => (
-  <motion.aside
-    animate={{ width: collapsed ? 0 : "24%" }}
-    transition={{ duration: 0.25, ease: "easeInOut" }}
-    className="shrink-0 overflow-hidden border-r border-border bg-card/50 hidden md:block"
-    style={{ minWidth: collapsed ? 0 : "200px", maxWidth: collapsed ? 0 : "280px" }}
-  >
-    <div style={{ minWidth: "200px" }} className="h-full flex flex-col">
-      <div className="flex items-center justify-between p-4 border-b border-border">
-        <h2 className="font-semibold text-sm text-foreground">Kategorier</h2>
+  <div className="relative shrink-0 hidden md:flex">
+    <motion.aside
+      animate={{ width: collapsed ? 0 : 260 }}
+      transition={{ duration: 0.25, ease: "easeInOut" }}
+      className="overflow-hidden border-r border-border bg-card/50"
+    >
+      <div style={{ width: "260px" }} className="h-full flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="font-semibold text-sm text-foreground">Kategorier</h2>
+          <button onClick={onToggle} className="p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Fäll in menyn">
+            <ChevronRight className="h-4 w-4 rotate-180" />
+          </button>
+        </div>
+        <SidebarContentBlock
+          selectedCategory={selectedCategory}
+          onSelectCategory={onSelectCategory}
+          onBackToOverview={onBackToOverview}
+          view={view}
+          allThreads={allThreads}
+          onNewThread={onNewThread}
+        />
       </div>
-      <SidebarContentBlock
-        selectedCategory={selectedCategory}
-        onSelectCategory={onSelectCategory}
-        onBackToOverview={onBackToOverview}
-        view={view}
-        allThreads={allThreads}
-        onNewThread={onNewThread}
-      />
-    </div>
-  </motion.aside>
+    </motion.aside>
+    <AnimatePresence>
+      {collapsed && (
+        <motion.button
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -8 }}
+          onClick={onToggle}
+          className="absolute top-3 left-2 z-10 p-1.5 rounded-lg bg-card border border-border shadow-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+          title="Visa menyn"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  </div>
 );
 
 /* ─── Create Thread View ─── */
