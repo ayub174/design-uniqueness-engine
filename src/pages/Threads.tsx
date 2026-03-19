@@ -1654,7 +1654,17 @@ const Threads = () => {
   const categoryThreads = selectedCategory ? allThreads.filter((t) => t.category === selectedCategory) : [];
 
   const sortedCategoryThreads = useMemo(() => {
-    const sorted = [...categoryThreads].sort((a, b) => {
+    let filtered = [...categoryThreads];
+    if (categorySearchQuery.trim()) {
+      const q = categorySearchQuery.toLowerCase();
+      filtered = filtered.filter(t =>
+        t.title.toLowerCase().includes(q) ||
+        t.content.toLowerCase().includes(q) ||
+        t.author.toLowerCase().includes(q) ||
+        t.tags.some(tag => tag.toLowerCase().includes(q))
+      );
+    }
+    filtered.sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
       switch (sortBy) {
@@ -1666,8 +1676,8 @@ const Threads = () => {
         default: return 0;
       }
     });
-    return sorted;
-  }, [categoryThreads, sortBy]);
+    return filtered;
+  }, [categoryThreads, sortBy, categorySearchQuery]);
 
   const totalPages = Math.ceil(sortedCategoryThreads.length / THREADS_PER_PAGE);
   const paginatedThreads = sortedCategoryThreads.slice((currentPage - 1) * THREADS_PER_PAGE, currentPage * THREADS_PER_PAGE);
