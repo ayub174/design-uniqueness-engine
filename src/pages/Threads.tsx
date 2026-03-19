@@ -1888,11 +1888,20 @@ const Threads = () => {
                 <button
                   key={item.label}
                   onClick={item.onClick}
-                  className={`text-xl px-3 py-1.5 rounded-lg transition-colors font-serif italic tracking-tight ${
+                  className={`relative text-xl px-3 py-1.5 rounded-lg transition-colors font-serif italic tracking-tight ${
                     item.active ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {item.label}
+                  <span className="relative">
+                    {item.label}
+                    {/* Decorative thread lines */}
+                    <svg className="absolute -left-4 top-1/2 -translate-y-1/2 w-5 h-8 text-primary/60" viewBox="0 0 20 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
+                      <path d="M16 2 C10 6, 14 12, 8 16 C2 20, 12 24, 6 30" />
+                    </svg>
+                    <svg className="absolute -right-4 top-1/2 -translate-y-1/2 w-5 h-8 text-primary/60" viewBox="0 0 20 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
+                      <path d="M4 2 C10 6, 6 12, 12 16 C18 20, 8 24, 14 30" />
+                    </svg>
+                  </span>
                 </button>
               ))}
               {view !== "overview" && view !== "create" && selectedCatData && (
