@@ -1599,16 +1599,16 @@ const SidebarContentBlock = ({
             <button
               key={catId}
               onClick={() => handleSelectCategory(catId)}
-              className={`w-full flex items-center gap-2.5 px-4 py-2 text-sm transition-all rounded-lg mx-1 group ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-base transition-all rounded-lg mx-1 group ${
                 isActive
                   ? "text-primary font-semibold bg-primary/5"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
               style={{ width: "calc(100% - 8px)" }}
             >
-              <CatIcon className={`w-4 h-4 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
-              <span className="flex-1 text-left truncate text-xs font-medium">{cat.label}</span>
-              <span className="text-xs text-muted-foreground/40 tabular-nums">{stats.threadCount}</span>
+              <CatIcon className={`w-5 h-5 shrink-0 ${isActive ? "text-primary" : "group-hover:text-foreground"}`} />
+              <span className="flex-1 text-left truncate text-sm font-medium">{cat.label}</span>
+              <span className="text-sm text-muted-foreground/40 tabular-nums">{stats.threadCount}</span>
             </button>
           );
         })}
