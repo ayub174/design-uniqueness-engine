@@ -1038,6 +1038,9 @@ const ThreadDetail = ({
   const [quotedReply, setQuotedReply] = useState<{ author: string; content: string } | null>(null);
   const [sortReplies, setSortReplies] = useState<"top" | "new" | "old">("top");
   const replyRef = React.useRef<HTMLTextAreaElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const repliesStartRef = React.useRef<HTMLDivElement>(null);
+  const [scrubberState, setScrubberState] = useState({ current: 0, total: 0, progress: 0 });
   const cat = categories[thread.category];
   const CatIcon = cat?.icon || Briefcase;
   const isLiked = likedThreads.has(thread.id);
@@ -1076,13 +1079,74 @@ const ThreadDetail = ({
     }
   }, [thread.replyData, sortReplies]);
 
+  // Timeline scrubber scroll tracking
+  React.useEffect(() => {
+    if (totalReplyCount === 0) return;
+    const handleScroll = () => {
+      const container = containerRef.current;
+      if (!container) return;
+      // Find all top-level reply elements
+      const replyElements = container.querySelectorAll("[data-reply-index]");
+      if (replyElements.length === 0) return;
+      const viewportMid = window.innerHeight / 2;
+      let currentIndex = 0;
+      replyElements.forEach((el, i) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < viewportMid) currentIndex = i;
+      });
+      const total = replyElements.length;
+      const progress = total <= 1 ? 0 : currentIndex / (total - 1);
+      setScrubberState({ current: currentIndex + 1, total, progress });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [totalReplyCount, sortedReplies]);
+
+  const handleScrubberClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickY = e.clientY - rect.top;
+    const ratio = Math.max(0, Math.min(1, clickY / rect.height));
+    const container = containerRef.current;
+    if (!container) return;
+    const replyElements = container.querySelectorAll("[data-reply-index]");
+    const targetIndex = Math.round(ratio * (replyElements.length - 1));
+    const target = replyElements[targetIndex];
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const [isDragging, setIsDragging] = useState(false);
+  const scrubberTrackRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScrubberDrag = React.useCallback((clientY: number) => {
+    const track = scrubberTrackRef.current;
+    const container = containerRef.current;
+    if (!track || !container) return;
+    const rect = track.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+    const replyElements = container.querySelectorAll("[data-reply-index]");
+    const targetIndex = Math.round(ratio * (replyElements.length - 1));
+    const target = replyElements[targetIndex];
+    if (target) target.scrollIntoView({ behavior: "auto", block: "start" });
+  }, []);
+
+  React.useEffect(() => {
+    if (!isDragging) return;
+    const onMove = (e: MouseEvent) => { e.preventDefault(); handleScrubberDrag(e.clientY); };
+    const onUp = () => setIsDragging(false);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+  }, [isDragging, handleScrubberDrag]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="max-w-4xl"
+      className="max-w-4xl relative"
+      ref={containerRef}
     >
       {/* Back */}
       <button
