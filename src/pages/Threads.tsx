@@ -1617,11 +1617,11 @@ const SidebarContentBlock = ({
       {/* Footer */}
       <div className="p-4 border-t border-border">
         <Button
-          size="sm"
-          className="w-full gap-2 h-9"
+          size="default"
+          className="w-full gap-2 h-11 text-sm"
           onClick={() => { onNewThread?.(); onClose?.(); }}
         >
-          <Plus className="w-4 h-4" /> Ny tråd
+          <Plus className="w-5 h-5" /> Ny tråd
         </Button>
       </div>
     </div>
