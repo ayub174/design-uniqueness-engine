@@ -1624,7 +1624,7 @@ const Threads = () => {
     setSavedThreads((prev) => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
   };
 
-  const handleSelectCategory = (catId: string) => { setSelectedCategory(catId); setView("category"); setSearchQuery(""); setCurrentPage(1); };
+  const handleSelectCategory = (catId: string) => { setSelectedCategory(catId); setView("category"); setSearchQuery(""); setCategorySearchQuery(""); setCurrentPage(1); };
   const handleOpenThread = (threadId: string) => { setActiveThread(threadId); setView("detail"); };
   const handleBackToOverview = () => { setView("overview"); setSelectedCategory(null); setSearchQuery(""); setCurrentPage(1); };
   const handleBackToCategory = () => { setView("category"); setActiveThread(null); };
