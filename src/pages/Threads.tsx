@@ -630,7 +630,7 @@ const CategoryOverview = ({
                         {thread.title}
                       </h3>
                       <p className="text-[11px] text-muted-foreground mt-0.5">
-                        av {thread.author}
+                        av <UserHoverCard username={thread.author} className="text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard>
                       </p>
                     </div>
 
