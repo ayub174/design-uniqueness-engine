@@ -612,10 +612,10 @@ const CategoryOverview = ({
                   <div className="sm:hidden p-4">
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-2 leading-snug">
+                        <h3 className="text-base font-medium text-primary group-hover:underline line-clamp-2 leading-snug">
                           {thread.title}
                         </h3>
-                        <p className="text-xs text-muted-foreground/60 mt-0.5 line-clamp-2">{thread.content}</p>
+                        <p className="text-sm text-foreground/70 mt-0.5 line-clamp-2">{thread.content}</p>
                         <p className="text-xs text-muted-foreground mt-1">
                           av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard> · {cat?.label}
                         </p>
