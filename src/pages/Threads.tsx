@@ -870,7 +870,7 @@ const ReplyItem = ({
                 {reply.authorInitials}
               </AvatarFallback>
             </Avatar>
-            <span className="font-medium">{reply.author}</span>
+            <UserHoverCard username={reply.author} className="font-medium text-xs text-muted-foreground hover:text-primary transition-colors">{reply.author}</UserHoverCard>
             <span className="text-muted-foreground/50">·</span>
             <span>{replyLikeCount} poäng</span>
             <span className="text-muted-foreground/50">·</span>
