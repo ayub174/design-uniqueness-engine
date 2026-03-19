@@ -1179,7 +1179,7 @@ const ThreadDetail = ({
       </button>
 
       {/* ─── Original Post Card — Reddit-style with vote sidebar ─── */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden mb-6">
+      <div ref={postCardRef} className="rounded-xl border border-border bg-card overflow-hidden mb-6">
         {/* Category bar */}
         <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 border-b border-border">
           <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full ${cat?.color || "bg-muted text-muted-foreground"}`}>
