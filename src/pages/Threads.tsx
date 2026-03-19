@@ -1369,7 +1369,7 @@ const ThreadDetail = ({
 
       {/* ─── Discourse-style Timeline Scrubber ─── */}
       {totalReplyCount > 0 && (
-        <div className="hidden lg:block fixed right-8 top-1/2 -translate-y-1/2 z-40" style={{ width: "80px" }}>
+        <div className="hidden lg:block absolute -right-24 top-1/2 -translate-y-1/2 z-40 sticky-scrubber" style={{ width: "80px", position: "fixed" }}>
           <div className="bg-card border border-border rounded-xl shadow-lg p-3 flex flex-col items-center gap-1">
             {/* Current position */}
             <span className="text-xs font-bold text-foreground tabular-nums">
