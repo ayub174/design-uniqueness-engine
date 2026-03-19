@@ -482,54 +482,6 @@ const CategoryOverview = ({
         />
       </div>
 
-      {/* Category grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
-        {filteredCats.map(([catId, cat], i) => {
-          const stats = getCategoryStats(catId, allThreads);
-          const CatIcon = cat.icon;
-          const latest = stats.latestThread;
-
-          return (
-            <motion.button
-              key={catId}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05, duration: 0.3 }}
-              onClick={() => onSelectCategory(catId)}
-              className="group text-left p-5 rounded-xl border border-border bg-card hover:shadow-md hover:border-primary/20 transition-all duration-200"
-            >
-              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${cat.color} mb-3`}>
-                <CatIcon className="w-5 h-5" />
-              </div>
-
-              <h3 className="font-semibold text-sm text-foreground mb-1 group-hover:text-primary transition-colors">
-                {cat.label}
-              </h3>
-
-              <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-                {cat.description}
-              </p>
-
-              <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-                <span>{stats.threadCount} trådar</span>
-                <span className="text-border">·</span>
-                <span>{stats.replyCount} svar</span>
-              </div>
-
-              {latest && (
-                <div className="mt-3 pt-3 border-t border-border">
-                  <p className="text-xs font-medium text-foreground leading-snug line-clamp-1 group-hover:text-primary transition-colors">
-                    {latest.title}
-                  </p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">
-                    {latest.author} · {latest.timeAgo} sedan
-                  </p>
-                </div>
-              )}
-            </motion.button>
-          );
-        })}
-      </div>
 
       {/* Trending threads */}
       <div>
