@@ -1610,6 +1610,7 @@ const Threads = () => {
   const [activeThread, setActiveThread] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("popular");
   const [searchQuery, setSearchQuery] = useState("");
+  const [categorySearchQuery, setCategorySearchQuery] = useState("");
   const [likedThreads, setLikedThreads] = useState<Set<string>>(new Set());
   const [savedThreads, setSavedThreads] = useState<Set<string>>(new Set());
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -1623,7 +1624,7 @@ const Threads = () => {
     setSavedThreads((prev) => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
   };
 
-  const handleSelectCategory = (catId: string) => { setSelectedCategory(catId); setView("category"); setSearchQuery(""); setCurrentPage(1); };
+  const handleSelectCategory = (catId: string) => { setSelectedCategory(catId); setView("category"); setSearchQuery(""); setCategorySearchQuery(""); setCurrentPage(1); };
   const handleOpenThread = (threadId: string) => { setActiveThread(threadId); setView("detail"); };
   const handleBackToOverview = () => { setView("overview"); setSelectedCategory(null); setSearchQuery(""); setCurrentPage(1); };
   const handleBackToCategory = () => { setView("category"); setActiveThread(null); };
@@ -1653,7 +1654,17 @@ const Threads = () => {
   const categoryThreads = selectedCategory ? allThreads.filter((t) => t.category === selectedCategory) : [];
 
   const sortedCategoryThreads = useMemo(() => {
-    const sorted = [...categoryThreads].sort((a, b) => {
+    let filtered = [...categoryThreads];
+    if (categorySearchQuery.trim()) {
+      const q = categorySearchQuery.toLowerCase();
+      filtered = filtered.filter(t =>
+        t.title.toLowerCase().includes(q) ||
+        t.content.toLowerCase().includes(q) ||
+        t.author.toLowerCase().includes(q) ||
+        t.tags.some(tag => tag.toLowerCase().includes(q))
+      );
+    }
+    filtered.sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
       switch (sortBy) {
@@ -1665,8 +1676,8 @@ const Threads = () => {
         default: return 0;
       }
     });
-    return sorted;
-  }, [categoryThreads, sortBy]);
+    return filtered;
+  }, [categoryThreads, sortBy, categorySearchQuery]);
 
   const totalPages = Math.ceil(sortedCategoryThreads.length / THREADS_PER_PAGE);
   const paginatedThreads = sortedCategoryThreads.slice((currentPage - 1) * THREADS_PER_PAGE, currentPage * THREADS_PER_PAGE);
@@ -1804,8 +1815,25 @@ const Threads = () => {
                     </div>
                   </div>
 
-                  {/* Sort + new thread */}
+                  {/* Search + Sort + new thread */}
                   <div className="flex items-center gap-2 mb-5 flex-wrap">
+                    <div className="relative flex-1 max-w-xs">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                      <Input
+                        placeholder="Sök i kategorin..."
+                        value={categorySearchQuery}
+                        onChange={(e) => { setCategorySearchQuery(e.target.value); setCurrentPage(1); }}
+                        className="pl-9 h-9 bg-card border-border text-sm rounded-lg"
+                      />
+                      {categorySearchQuery && (
+                        <button
+                          onClick={() => { setCategorySearchQuery(""); setCurrentPage(1); }}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-foreground"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                     <div className="flex items-center bg-muted rounded-lg p-0.5 gap-0.5">
                       {sortOptions.map((s) => {
                         const Icon = s.icon;
