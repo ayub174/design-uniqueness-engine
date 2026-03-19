@@ -1337,15 +1337,14 @@ const ThreadDetail = ({
             )}
           </AnimatePresence>
 
-          <Textarea
-            ref={replyRef}
-            placeholder="Vad tycker du? Dela dina tankar..."
+          <RichTextEditor
             value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-            className="min-h-[80px] bg-background border-border resize-none text-sm rounded-lg leading-relaxed focus:min-h-[120px] transition-all"
+            onChange={setReplyText}
+            placeholder="Vad tycker du? Dela dina tankar..."
+            minHeight="80px"
+            maxLength={5000}
           />
-          <div className="flex items-center justify-between mt-3">
-            <p className="text-xs text-muted-foreground/40">Markdown stöds</p>
+          <div className="flex items-center justify-end mt-3">
             <Button
               size="sm"
               className="gap-2 px-5 h-9"
