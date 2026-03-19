@@ -10,9 +10,11 @@ import {
   Menu, MessageCircleQuestion, EyeIcon, Quote, CornerDownRight,
   Feather, Hash, ArrowRight, Flame, Sparkles,
   Compass, FileText, Coins, Coffee, Network, MessagesSquare,
+  Pencil, Trash2, Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import RichTextEditor from "@/components/RichTextEditor";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
@@ -842,12 +844,17 @@ const PaginationNav = ({
 
 /* ─── Reply Item — Reddit/Discourse hybrid ─── */
 const ReplyItem = ({
-  reply, depth, replyLikes, toggleReplyLike, onQuoteReply,
+  reply, depth, replyLikes, toggleReplyLike, onQuoteReply, onEditReply, onDeleteReply,
 }: {
   reply: ReplyData; depth: number; replyLikes: Set<string>;
   toggleReplyLike: (id: string) => void; onQuoteReply: (reply: ReplyData) => void;
+  onEditReply?: (id: string, newContent: string) => void;
+  onDeleteReply?: (id: string) => void;
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(reply.content);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const isReplyLiked = replyLikes.has(reply.id);
   const replyLikeCount = reply.likes + (isReplyLiked ? 1 : 0);
   const maxDepth = 5;
@@ -967,42 +974,115 @@ const ReplyItem = ({
 
           {/* Content */}
           <div className="ml-9">
-            <p className="text-[15px] text-foreground/90 leading-[1.65] whitespace-pre-line">
-              {reply.content}
-            </p>
+            {isEditing ? (
+              <div className="space-y-2">
+                <RichTextEditor
+                  value={editContent}
+                  onChange={setEditContent}
+                  placeholder="Redigera ditt svar..."
+                  minHeight="80px"
+                  maxLength={5000}
+                />
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    className="gap-1.5 h-8 text-xs px-3"
+                    disabled={!editContent.trim()}
+                    onClick={() => {
+                      onEditReply?.(reply.id, editContent.trim());
+                      setIsEditing(false);
+                    }}
+                  >
+                    <Check className="w-3 h-3" /> Spara
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs px-3"
+                    onClick={() => { setIsEditing(false); setEditContent(reply.content); }}
+                  >
+                    Avbryt
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-[15px] text-foreground/90 leading-[1.65] whitespace-pre-line">
+                {reply.content}
+              </p>
+            )}
 
-            {/* Action bar — Reddit-style inline */}
-            <div className="flex items-center gap-0.5 mt-1.5 -ml-1.5">
-              <button
-                onClick={() => toggleReplyLike(reply.id)}
-                className={`flex items-center gap-1 text-sm font-medium px-2 py-1 rounded-md transition-colors ${
-                  isReplyLiked
-                    ? "text-primary"
-                    : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/60"
-                }`}
-              >
-                <ThumbsUp className={`w-3.5 h-3.5 ${isReplyLiked ? "fill-primary" : ""}`} />
-                <span className="tabular-nums">{replyLikeCount}</span>
-              </button>
-              <button
-                onClick={() => onQuoteReply(reply)}
-                className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
-              >
-                <Reply className="w-3.5 h-3.5" />
-                Svara
-              </button>
-              <button
-                onClick={() => onQuoteReply(reply)}
-                className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
-              >
-                <Quote className="w-3.5 h-3.5" />
-                Citera
-              </button>
-              <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors">
-                <Share2 className="w-3.5 h-3.5" />
-                Dela
-              </button>
-            </div>
+            {/* Action bar */}
+            {!isEditing && (
+              <div className="flex items-center gap-0.5 mt-1.5 -ml-1.5">
+                <button
+                  onClick={() => toggleReplyLike(reply.id)}
+                  className={`flex items-center gap-1 text-sm font-medium px-2 py-1 rounded-md transition-colors ${
+                    isReplyLiked
+                      ? "text-primary"
+                      : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/60"
+                  }`}
+                >
+                  <ThumbsUp className={`w-3.5 h-3.5 ${isReplyLiked ? "fill-primary" : ""}`} />
+                  <span className="tabular-nums">{replyLikeCount}</span>
+                </button>
+                <button
+                  onClick={() => onQuoteReply(reply)}
+                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+                >
+                  <Reply className="w-3.5 h-3.5" />
+                  Svara
+                </button>
+                <button
+                  onClick={() => onQuoteReply(reply)}
+                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+                >
+                  <Quote className="w-3.5 h-3.5" />
+                  Citera
+                </button>
+                <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors">
+                  <Share2 className="w-3.5 h-3.5" />
+                  Dela
+                </button>
+
+                {/* Edit / Delete — shown for "own" posts (simulated as Gäst) */}
+                {(reply.author === "Gäst") && (
+                  <>
+                    <div className="w-px h-4 bg-border mx-1" />
+                    <button
+                      onClick={() => { setEditContent(reply.content); setIsEditing(true); }}
+                      className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Redigera
+                    </button>
+                    {showDeleteConfirm ? (
+                      <span className="flex items-center gap-1 text-xs">
+                        <button
+                          onClick={() => { onDeleteReply?.(reply.id); setShowDeleteConfirm(false); }}
+                          className="text-destructive hover:underline font-medium px-1.5 py-1"
+                        >
+                          Bekräfta
+                        </button>
+                        <button
+                          onClick={() => setShowDeleteConfirm(false)}
+                          className="text-muted-foreground hover:text-foreground px-1.5 py-1"
+                        >
+                          Avbryt
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => setShowDeleteConfirm(true)}
+                        className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 px-2 py-1 rounded-md transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Ta bort
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </motion.div>
 
@@ -1017,6 +1097,8 @@ const ReplyItem = ({
                 replyLikes={replyLikes}
                 toggleReplyLike={toggleReplyLike}
                 onQuoteReply={onQuoteReply}
+                onEditReply={onEditReply}
+                onDeleteReply={onDeleteReply}
               />
             ))}
           </div>
@@ -1039,11 +1121,13 @@ const ReplyItem = ({
 
 /* ─── Detail View — Reddit post + Discourse reply layout ─── */
 const ThreadDetail = ({
-  thread, onBack, likedThreads, toggleLike, onAddReply,
+  thread, onBack, likedThreads, toggleLike, onAddReply, onEditReply, onDeleteReply,
 }: {
   thread: Thread; onBack: () => void; likedThreads: Set<string>;
   toggleLike: (id: string) => void;
   onAddReply: (threadId: string, content: string, quoted?: { author: string; content: string }) => void;
+  onEditReply: (replyId: string, newContent: string) => void;
+  onDeleteReply: (replyId: string) => void;
 }) => {
   const [replyLikes, setReplyLikes] = useState<Set<string>>(new Set());
   const [replyText, setReplyText] = useState("");
@@ -1335,15 +1419,14 @@ const ThreadDetail = ({
             )}
           </AnimatePresence>
 
-          <Textarea
-            ref={replyRef}
-            placeholder="Vad tycker du? Dela dina tankar..."
+          <RichTextEditor
             value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-            className="min-h-[80px] bg-background border-border resize-none text-sm rounded-lg leading-relaxed focus:min-h-[120px] transition-all"
+            onChange={setReplyText}
+            placeholder="Vad tycker du? Dela dina tankar..."
+            minHeight="80px"
+            maxLength={5000}
           />
-          <div className="flex items-center justify-between mt-3">
-            <p className="text-xs text-muted-foreground/40">Markdown stöds</p>
+          <div className="flex items-center justify-end mt-3">
             <Button
               size="sm"
               className="gap-2 px-5 h-9"
@@ -1398,6 +1481,8 @@ const ThreadDetail = ({
               replyLikes={replyLikes}
               toggleReplyLike={toggleReplyLike}
               onQuoteReply={handleQuoteReply}
+              onEditReply={onEditReply}
+              onDeleteReply={onDeleteReply}
             />
           </div>
         ))}
@@ -1725,19 +1810,13 @@ const CreateThreadView = ({
 
       {/* Content */}
       <div className="mb-6">
-        <Textarea
-          placeholder="Beskriv din fråga, erfarenhet eller tanke..."
+        <RichTextEditor
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={setContent}
+          placeholder="Beskriv din fråga, erfarenhet eller tanke..."
+          minHeight="220px"
           maxLength={5000}
-          className="w-full min-h-[220px] bg-background text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/30 border-border resize-none rounded-lg"
         />
-        <div className="flex items-center justify-between mt-1.5">
-          {content.length > 0 && content.length < 10 && (
-            <p className="text-xs text-destructive">Minst 10 tecken</p>
-          )}
-          <p className="text-xs text-muted-foreground ml-auto">{content.length}/5000</p>
-        </div>
       </div>
 
       {/* Actions */}
@@ -1813,6 +1892,34 @@ const Threads = () => {
       return { ...t, replies: t.replies + 1, replyData: [...(t.replyData || []), newReply] };
     }));
     toast.success("Ditt svar har publicerats!");
+  }, []);
+
+  const handleEditReply = useCallback((replyId: string, newContent: string) => {
+    const editInTree = (replies: ReplyData[]): ReplyData[] =>
+      replies.map(r => {
+        if (r.id === replyId) return { ...r, content: newContent };
+        if (r.children) return { ...r, children: editInTree(r.children) };
+        return r;
+      });
+    setAllThreads(prev => prev.map(t => ({
+      ...t,
+      replyData: t.replyData ? editInTree(t.replyData) : t.replyData,
+    })));
+    toast.success("Svaret har uppdaterats!");
+  }, []);
+
+  const handleDeleteReply = useCallback((replyId: string) => {
+    const removeFromTree = (replies: ReplyData[]): ReplyData[] =>
+      replies.filter(r => r.id !== replyId).map(r => ({
+        ...r,
+        children: r.children ? removeFromTree(r.children) : undefined,
+      }));
+    setAllThreads(prev => prev.map(t => ({
+      ...t,
+      replies: Math.max(0, t.replies - 1),
+      replyData: t.replyData ? removeFromTree(t.replyData) : t.replyData,
+    })));
+    toast.success("Svaret har tagits bort.");
   }, []);
 
   const categoryThreads = selectedCategory ? allThreads.filter((t) => t.category === selectedCategory) : [];
@@ -1962,6 +2069,8 @@ const Threads = () => {
                   likedThreads={likedThreads}
                   toggleLike={toggleLike}
                   onAddReply={handleAddReply}
+                  onEditReply={handleEditReply}
+                  onDeleteReply={handleDeleteReply}
                 />
               ) : view === "category" && selectedCatData ? (
                 <motion.div key="category" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
