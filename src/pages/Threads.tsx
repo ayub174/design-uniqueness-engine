@@ -917,9 +917,9 @@ const ReplyItem = ({
             </Avatar>
 
             <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-              <span className={`text-[13px] font-semibold ${reply.isOP ? "text-primary" : "text-foreground"}`}>
+              <UserHoverCard username={reply.author} className={`text-[13px] font-semibold ${reply.isOP ? "text-primary" : "text-foreground"} hover:underline transition-colors`}>
                 {reply.author}
-              </span>
+              </UserHoverCard>
               <AuthorBadge type={reply.authorBadge} />
               {reply.isOP && (
                 <span className="text-[9px] font-bold text-primary-foreground bg-primary px-1.5 py-px rounded text-center leading-tight">
