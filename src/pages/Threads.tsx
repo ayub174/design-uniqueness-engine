@@ -1888,8 +1888,8 @@ const Threads = () => {
                 <button
                   key={item.label}
                   onClick={item.onClick}
-                  className={`text-sm px-3 py-1.5 rounded-lg transition-colors font-serif italic tracking-tight ${
-                    item.active ? "text-foreground font-medium bg-muted" : "text-muted-foreground hover:text-foreground"
+                  className={`text-base px-3 py-1.5 rounded-lg transition-colors font-serif italic tracking-tight ${
+                    item.active ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {item.label}
