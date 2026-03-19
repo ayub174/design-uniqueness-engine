@@ -1128,11 +1128,15 @@ const ThreadDetail = ({
       if (!el) return;
       const rect = el.getBoundingClientRect();
       setScrubberLeft(rect.right + 16);
+      const card = postCardRef.current;
+      if (card) {
+        const cardRect = card.getBoundingClientRect();
+        setScrubberTop(cardRect.top + window.scrollY);
+      }
     };
     updatePos();
     window.addEventListener("resize", updatePos);
-    window.addEventListener("scroll", updatePos, { passive: true });
-    return () => { window.removeEventListener("resize", updatePos); window.removeEventListener("scroll", updatePos); };
+    return () => { window.removeEventListener("resize", updatePos); };
   }, []);
 
   const handleScrubberDrag = React.useCallback((clientY: number) => {
