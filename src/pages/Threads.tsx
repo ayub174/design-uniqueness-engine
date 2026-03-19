@@ -508,7 +508,7 @@ const CategoryOverview = ({
                         {thread.title}
                       </h3>
                       <p className="text-xs text-muted-foreground mt-1">
-                        av {thread.author} · {cat?.label}
+                        av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard> · {cat?.label}
                       </p>
                     </div>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
