@@ -485,38 +485,96 @@ const CategoryOverview = ({
 
       {/* Trending threads */}
       <div>
-        <div className="flex items-center gap-2 mb-4">
-          <Flame className="w-4 h-4 text-primary" />
-          <h2 className="font-semibold text-base text-foreground">Populärt just nu</h2>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Flame className="w-4 h-4 text-primary" />
+            <h2 className="font-semibold text-base text-foreground">Populärt just nu</h2>
+          </div>
+          <span className="text-xs text-muted-foreground">Topp {trendingThreads.length}</span>
         </div>
-        <div className="space-y-3">
+
+        {/* Table header */}
+        <div className="hidden sm:grid grid-cols-[1fr_120px_140px_80px_60px] gap-2 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+          <span>Rubrik</span>
+          <span>Kategori</span>
+          <span>Senaste svar</span>
+          <span className="text-right">Visningar</span>
+          <span className="text-right">Svar</span>
+        </div>
+
+        <div className="divide-y divide-border">
           {trendingThreads.map((thread, i) => {
             const cat = categories[thread.category];
+            const lastReply = thread.replyData?.[thread.replyData.length - 1];
             return (
               <motion.button
                 key={thread.id}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 + i * 0.08 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 + i * 0.05 }}
                 onClick={() => onSelectCategory(thread.category)}
-                className="w-full flex items-start gap-4 p-4 rounded-xl border border-border bg-card hover:shadow-sm hover:border-primary/20 transition-all text-left group"
+                className="w-full text-left group hover:bg-muted/30 transition-colors"
               >
-                <span className="text-2xl font-serif font-bold text-primary/20 mt-0.5 select-none">{i + 1}</span>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
-                    {thread.title}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
-                    <span>{thread.author}</span>
-                    <span className="text-border">·</span>
-                    <span className="flex items-center gap-1"><Heart className="w-3 h-3" /> {thread.likes}</span>
-                    <span className="text-border">·</span>
-                    <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3" /> {thread.replies}</span>
+                {/* Mobile */}
+                <div className="sm:hidden p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg font-serif font-bold text-primary/30 select-none mt-0.5">{i + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-2 leading-snug">
+                        {thread.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        av {thread.author} · {cat?.label}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
+                      <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{thread.views >= 1000 ? `${(thread.views / 1000).toFixed(1)}k` : thread.views}</span>
+                      <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3" />{thread.replies}</span>
+                    </div>
                   </div>
                 </div>
-                <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${cat?.color || "bg-muted text-muted-foreground"}`}>
-                  {cat?.label}
-                </span>
+
+                {/* Desktop */}
+                <div className="hidden sm:grid grid-cols-[1fr_120px_140px_80px_60px] gap-2 items-center px-4 py-3">
+                  <div className="min-w-0 flex items-center gap-3">
+                    <span className="text-base font-serif font-bold text-primary/25 select-none w-5 text-center shrink-0">{i + 1}</span>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
+                        {thread.title}
+                      </h3>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">av {thread.author}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-primary/40 shrink-0" />
+                    <span className="text-xs text-muted-foreground truncate">{cat?.label}</span>
+                  </div>
+
+                  <div className="text-xs text-muted-foreground">
+                    {lastReply ? (
+                      <div className="flex items-center gap-1">
+                        <CornerDownRight className="w-3 h-3 shrink-0 text-muted-foreground/50" />
+                        <div className="min-w-0">
+                          <span className="block truncate">{lastReply.author}</span>
+                          <span className="text-[10px] text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground/40">—</span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
+                    <Eye className="w-3 h-3" />
+                    {thread.views >= 1000 ? `${(thread.views / 1000).toFixed(1)}k` : thread.views}
+                  </div>
+
+                  <div className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
+                    <MessageSquare className="w-3 h-3" />
+                    {thread.replies}
+                  </div>
+                </div>
               </motion.button>
             );
           })}
