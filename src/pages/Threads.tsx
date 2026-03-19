@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 import UserHoverCard from "@/components/UserHoverCard";
+import dummyKarriarThreads from "@/data/dummyThreads";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -71,7 +72,7 @@ const categories: Record<string, CategoryDef> = {
 };
 
 /* ─── Thread data ─── */
-const initialThreads: Thread[] = [
+const baseThreads: Thread[] = [
   {
     id: "1",
     title: "Bytte från lärare till UX-designer — så här gick jag tillväga",
@@ -365,7 +366,8 @@ const initialThreads: Thread[] = [
   },
 ];
 
-/* ─── Helpers ─── */
+const initialThreads: Thread[] = [...baseThreads, ...dummyKarriarThreads as Thread[]];
+
 const THREADS_PER_PAGE = 15;
 
 const timeToMinutes = (t: string) => {
