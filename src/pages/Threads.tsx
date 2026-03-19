@@ -1578,15 +1578,15 @@ const SidebarContentBlock = ({
       <div className="flex-1 overflow-y-auto py-2">
         <button
           onClick={handleBackToOverview}
-          className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm transition-all rounded-lg mx-1 ${
+          className={`w-full flex items-center gap-3 px-4 py-3 text-base transition-all rounded-lg mx-1 ${
             view === "overview"
               ? "text-primary font-semibold bg-primary/5"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
           }`}
           style={{ width: "calc(100% - 8px)" }}
         >
-          <MessageSquare className="w-4 h-4 shrink-0" />
-          <span className="text-xs font-medium">Alla kategorier</span>
+          <MessageSquare className="w-5 h-5 shrink-0" />
+          <span className="text-sm font-medium">Alla kategorier</span>
         </button>
 
         <div className="h-px bg-border mx-4 my-2" />
