@@ -1117,6 +1117,8 @@ const ThreadDetail = ({
 
   const [isDragging, setIsDragging] = useState(false);
   const [scrubberLeft, setScrubberLeft] = useState<number | null>(null);
+  const [scrubberTop, setScrubberTop] = useState<number | null>(null);
+  const postCardRef = React.useRef<HTMLDivElement>(null);
   const scrubberTrackRef = React.useRef<HTMLDivElement>(null);
 
   // Position scrubber right after the content container
