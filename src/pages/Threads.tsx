@@ -1400,7 +1400,7 @@ const ThreadDetail = ({
 
       {/* ─── Discourse-style Timeline Scrubber ─── */}
       {totalReplyCount > 0 && (
-        <div className="hidden lg:block absolute z-40 flex flex-col items-center" style={{ top: scrubberTop ? `${scrubberTop}px` : undefined, left: scrubberLeft ?? undefined, display: scrubberLeft ? undefined : "none", position: "fixed" }}>
+        <div className="hidden lg:block fixed z-40 flex flex-col items-center" style={{ top: scrubberTop ?? undefined, left: scrubberLeft ?? undefined, display: scrubberLeft ? undefined : "none" }}>
           {/* Current position */}
           <span className="text-xs font-bold text-foreground tabular-nums mb-2">
             {scrubberState.current} / {scrubberState.total}
