@@ -1158,7 +1158,7 @@ const ThreadDetail = ({
     const replyElements = container.querySelectorAll("[data-reply-index]");
     const targetIndex = Math.round(ratio * (replyElements.length - 1));
     const target = replyElements[targetIndex];
-    if (target) target.scrollIntoView({ behavior: "auto", block: "start" });
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
   React.useEffect(() => {
