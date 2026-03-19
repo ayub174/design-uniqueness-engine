@@ -1116,7 +1116,22 @@ const ThreadDetail = ({
   };
 
   const [isDragging, setIsDragging] = useState(false);
+  const [scrubberLeft, setScrubberLeft] = useState<number | null>(null);
   const scrubberTrackRef = React.useRef<HTMLDivElement>(null);
+
+  // Position scrubber right after the content container
+  React.useEffect(() => {
+    const updatePos = () => {
+      const el = containerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setScrubberLeft(rect.right + 16);
+    };
+    updatePos();
+    window.addEventListener("resize", updatePos);
+    window.addEventListener("scroll", updatePos, { passive: true });
+    return () => { window.removeEventListener("resize", updatePos); window.removeEventListener("scroll", updatePos); };
+  }, []);
 
   const handleScrubberDrag = React.useCallback((clientY: number) => {
     const track = scrubberTrackRef.current;
@@ -1369,7 +1384,7 @@ const ThreadDetail = ({
 
       {/* ─── Discourse-style Timeline Scrubber ─── */}
       {totalReplyCount > 0 && (
-        <div className="hidden lg:block fixed right-8 top-1/2 -translate-y-1/2 z-40" style={{ width: "80px" }}>
+        <div className="hidden lg:block fixed top-1/2 -translate-y-1/2 z-40" style={{ width: "80px", left: scrubberLeft ?? undefined, display: scrubberLeft ? undefined : "none" }}>
           <div className="bg-card border border-border rounded-xl shadow-lg p-3 flex flex-col items-center gap-1">
             {/* Current position */}
             <span className="text-xs font-bold text-foreground tabular-nums">
