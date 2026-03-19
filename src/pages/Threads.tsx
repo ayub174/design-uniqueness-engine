@@ -1890,6 +1890,34 @@ const Threads = () => {
     toast.success("Ditt svar har publicerats!");
   }, []);
 
+  const handleEditReply = useCallback((replyId: string, newContent: string) => {
+    const editInTree = (replies: ReplyData[]): ReplyData[] =>
+      replies.map(r => {
+        if (r.id === replyId) return { ...r, content: newContent };
+        if (r.children) return { ...r, children: editInTree(r.children) };
+        return r;
+      });
+    setAllThreads(prev => prev.map(t => ({
+      ...t,
+      replyData: t.replyData ? editInTree(t.replyData) : t.replyData,
+    })));
+    toast.success("Svaret har uppdaterats!");
+  }, []);
+
+  const handleDeleteReply = useCallback((replyId: string) => {
+    const removeFromTree = (replies: ReplyData[]): ReplyData[] =>
+      replies.filter(r => r.id !== replyId).map(r => ({
+        ...r,
+        children: r.children ? removeFromTree(r.children) : undefined,
+      }));
+    setAllThreads(prev => prev.map(t => ({
+      ...t,
+      replies: Math.max(0, t.replies - 1),
+      replyData: t.replyData ? removeFromTree(t.replyData) : t.replyData,
+    })));
+    toast.success("Svaret har tagits bort.");
+  }, []);
+
   const categoryThreads = selectedCategory ? allThreads.filter((t) => t.category === selectedCategory) : [];
 
   const sortedCategoryThreads = useMemo(() => {
