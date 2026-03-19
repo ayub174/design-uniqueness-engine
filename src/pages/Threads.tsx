@@ -974,42 +974,115 @@ const ReplyItem = ({
 
           {/* Content */}
           <div className="ml-9">
-            <p className="text-[15px] text-foreground/90 leading-[1.65] whitespace-pre-line">
-              {reply.content}
-            </p>
+            {isEditing ? (
+              <div className="space-y-2">
+                <RichTextEditor
+                  value={editContent}
+                  onChange={setEditContent}
+                  placeholder="Redigera ditt svar..."
+                  minHeight="80px"
+                  maxLength={5000}
+                />
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    className="gap-1.5 h-8 text-xs px-3"
+                    disabled={!editContent.trim()}
+                    onClick={() => {
+                      onEditReply?.(reply.id, editContent.trim());
+                      setIsEditing(false);
+                    }}
+                  >
+                    <Check className="w-3 h-3" /> Spara
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs px-3"
+                    onClick={() => { setIsEditing(false); setEditContent(reply.content); }}
+                  >
+                    Avbryt
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-[15px] text-foreground/90 leading-[1.65] whitespace-pre-line">
+                {reply.content}
+              </p>
+            )}
 
-            {/* Action bar — Reddit-style inline */}
-            <div className="flex items-center gap-0.5 mt-1.5 -ml-1.5">
-              <button
-                onClick={() => toggleReplyLike(reply.id)}
-                className={`flex items-center gap-1 text-sm font-medium px-2 py-1 rounded-md transition-colors ${
-                  isReplyLiked
-                    ? "text-primary"
-                    : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/60"
-                }`}
-              >
-                <ThumbsUp className={`w-3.5 h-3.5 ${isReplyLiked ? "fill-primary" : ""}`} />
-                <span className="tabular-nums">{replyLikeCount}</span>
-              </button>
-              <button
-                onClick={() => onQuoteReply(reply)}
-                className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
-              >
-                <Reply className="w-3.5 h-3.5" />
-                Svara
-              </button>
-              <button
-                onClick={() => onQuoteReply(reply)}
-                className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
-              >
-                <Quote className="w-3.5 h-3.5" />
-                Citera
-              </button>
-              <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors">
-                <Share2 className="w-3.5 h-3.5" />
-                Dela
-              </button>
-            </div>
+            {/* Action bar */}
+            {!isEditing && (
+              <div className="flex items-center gap-0.5 mt-1.5 -ml-1.5">
+                <button
+                  onClick={() => toggleReplyLike(reply.id)}
+                  className={`flex items-center gap-1 text-sm font-medium px-2 py-1 rounded-md transition-colors ${
+                    isReplyLiked
+                      ? "text-primary"
+                      : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/60"
+                  }`}
+                >
+                  <ThumbsUp className={`w-3.5 h-3.5 ${isReplyLiked ? "fill-primary" : ""}`} />
+                  <span className="tabular-nums">{replyLikeCount}</span>
+                </button>
+                <button
+                  onClick={() => onQuoteReply(reply)}
+                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+                >
+                  <Reply className="w-3.5 h-3.5" />
+                  Svara
+                </button>
+                <button
+                  onClick={() => onQuoteReply(reply)}
+                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+                >
+                  <Quote className="w-3.5 h-3.5" />
+                  Citera
+                </button>
+                <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors">
+                  <Share2 className="w-3.5 h-3.5" />
+                  Dela
+                </button>
+
+                {/* Edit / Delete — shown for "own" posts (simulated as Gäst) */}
+                {(reply.author === "Gäst") && (
+                  <>
+                    <div className="w-px h-4 bg-border mx-1" />
+                    <button
+                      onClick={() => { setEditContent(reply.content); setIsEditing(true); }}
+                      className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-foreground hover:bg-muted/60 px-2 py-1 rounded-md transition-colors"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Redigera
+                    </button>
+                    {showDeleteConfirm ? (
+                      <span className="flex items-center gap-1 text-xs">
+                        <button
+                          onClick={() => { onDeleteReply?.(reply.id); setShowDeleteConfirm(false); }}
+                          className="text-destructive hover:underline font-medium px-1.5 py-1"
+                        >
+                          Bekräfta
+                        </button>
+                        <button
+                          onClick={() => setShowDeleteConfirm(false)}
+                          className="text-muted-foreground hover:text-foreground px-1.5 py-1"
+                        >
+                          Avbryt
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => setShowDeleteConfirm(true)}
+                        className="flex items-center gap-1 text-sm font-medium text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 px-2 py-1 rounded-md transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Ta bort
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </motion.div>
 
