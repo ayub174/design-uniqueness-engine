@@ -8,6 +8,7 @@ import Login from "./pages/Login.tsx";
 import MyJobs from "./pages/MyJobs.tsx";
 import Jobs from "./pages/Jobs.tsx";
 import Threads from "./pages/Threads.tsx";
+import UserProfile from "./pages/UserProfile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/jobb" element={<Jobs />} />
           <Route path="/mina-jobb" element={<MyJobs />} />
           <Route path="/tradar" element={<Threads />} />
+          <Route path="/anvandare/:username" element={<UserProfile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
