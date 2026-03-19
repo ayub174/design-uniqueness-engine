@@ -2065,6 +2065,8 @@ const Threads = () => {
                   likedThreads={likedThreads}
                   toggleLike={toggleLike}
                   onAddReply={handleAddReply}
+                  onEditReply={handleEditReply}
+                  onDeleteReply={handleDeleteReply}
                 />
               ) : view === "category" && selectedCatData ? (
                 <motion.div key="category" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
