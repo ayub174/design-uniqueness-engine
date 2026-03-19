@@ -9,6 +9,7 @@ import {
   BookOpen, UserCheck, Pin, ChevronDown,
   Menu, MessageCircleQuestion, EyeIcon, Quote, CornerDownRight,
   Feather, Hash, ArrowRight, Flame, Sparkles,
+  Compass, FileText, Coins, Coffee, Network, MessagesSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,12 +64,12 @@ interface CategoryDef {
 }
 
 const categories: Record<string, CategoryDef> = {
-  karriar_utbildning: { label: "Karriär & Utbildning", description: "Karriärväxling, utbildning och mentorskap", icon: Rocket, color: "bg-primary/10 text-primary" },
-  cv_jobbsokning: { label: "CV & Jobbsökning", description: "CV, intervjuer och nätverk", icon: GraduationCap, color: "bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400" },
-  lon_forhandling: { label: "Lön & Förhandling", description: "Lön, förmåner och förhandling", icon: DollarSign, color: "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400" },
-  arbetsliv: { label: "Arbetsliv", description: "Arbetsmiljö, ledarskap, remote & hybrid", icon: Building2, color: "bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-400" },
-  bransch_erfarenheter: { label: "Bransch & Erfarenheter", description: "Tech, vård, kreativt, ekonomi", icon: Globe, color: "bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400" },
-  allmant: { label: "Allmänt", description: "Allt annat", icon: MessageSquare, color: "bg-muted text-muted-foreground" },
+  karriar_utbildning: { label: "Karriär & Utbildning", description: "Karriärväxling, utbildning och mentorskap", icon: Compass, color: "text-primary" },
+  cv_jobbsokning: { label: "CV & Jobbsökning", description: "CV, intervjuer och nätverk", icon: FileText, color: "text-primary" },
+  lon_forhandling: { label: "Lön & Förhandling", description: "Lön, förmåner och förhandling", icon: Coins, color: "text-primary" },
+  arbetsliv: { label: "Arbetsliv", description: "Arbetsmiljö, ledarskap, remote & hybrid", icon: Coffee, color: "text-primary" },
+  bransch_erfarenheter: { label: "Bransch & Erfarenheter", description: "Tech, vård, kreativt, ekonomi", icon: Network, color: "text-primary" },
+  allmant: { label: "Allmänt", description: "Allt annat", icon: MessagesSquare, color: "text-muted-foreground" },
 };
 
 /* ─── Thread data ─── */
@@ -1967,8 +1968,8 @@ const Threads = () => {
                   {/* Category header */}
                   <div className="mb-6">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${selectedCatData.color}`}>
-                        {React.createElement(selectedCatData.icon, { className: "w-5 h-5" })}
+                      <div className={`inline-flex items-center justify-center ${selectedCatData.color}`}>
+                        {React.createElement(selectedCatData.icon, { className: "w-7 h-7", strokeWidth: 1.5 })}
                       </div>
                       <div>
                         <h1 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
