@@ -10,9 +10,11 @@ import {
   Menu, MessageCircleQuestion, EyeIcon, Quote, CornerDownRight,
   Feather, Hash, ArrowRight, Flame, Sparkles,
   Compass, FileText, Coins, Coffee, Network, MessagesSquare,
+  Pencil, Trash2, Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import RichTextEditor from "@/components/RichTextEditor";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
