@@ -1815,8 +1815,25 @@ const Threads = () => {
                     </div>
                   </div>
 
-                  {/* Sort + new thread */}
+                  {/* Search + Sort + new thread */}
                   <div className="flex items-center gap-2 mb-5 flex-wrap">
+                    <div className="relative flex-1 max-w-xs">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                      <Input
+                        placeholder="Sök i kategorin..."
+                        value={categorySearchQuery}
+                        onChange={(e) => { setCategorySearchQuery(e.target.value); setCurrentPage(1); }}
+                        className="pl-9 h-9 bg-card border-border text-sm rounded-lg"
+                      />
+                      {categorySearchQuery && (
+                        <button
+                          onClick={() => { setCategorySearchQuery(""); setCurrentPage(1); }}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-foreground"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                     <div className="flex items-center bg-muted rounded-lg p-0.5 gap-0.5">
                       {sortOptions.map((s) => {
                         const Icon = s.icon;
