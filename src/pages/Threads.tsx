@@ -540,7 +540,7 @@ const CategoryOverview = ({
                       <div className="flex items-center gap-1">
                         <CornerDownRight className="w-3 h-3 shrink-0 text-muted-foreground/50" />
                         <div className="min-w-0">
-                          <span className="block truncate">{lastReply.author}</span>
+                          <span className="block truncate"><UserHoverCard username={lastReply.author} className="text-xs text-muted-foreground hover:text-primary transition-colors">{lastReply.author}</UserHoverCard></span>
                           <span className="text-[10px] text-muted-foreground/60">{lastReply.timeAgo} sedan</span>
                         </div>
                       </div>
