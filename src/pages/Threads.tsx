@@ -507,6 +507,7 @@ const CategoryOverview = ({
                       <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-2 leading-snug">
                         {thread.title}
                       </h3>
+                      <p className="text-xs text-muted-foreground/60 mt-0.5 line-clamp-1">{thread.content}</p>
                       <p className="text-xs text-muted-foreground mt-1">
                         av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard> · {cat?.label}
                       </p>
@@ -526,6 +527,7 @@ const CategoryOverview = ({
                       <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
                         {thread.title}
                       </h3>
+                      <p className="text-xs text-muted-foreground/50 mt-0.5 line-clamp-1">{thread.content}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard></p>
                     </div>
                   </div>
@@ -611,6 +613,7 @@ const CategoryOverview = ({
                         <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-2 leading-snug">
                           {thread.title}
                         </h3>
+                        <p className="text-xs text-muted-foreground/60 mt-0.5 line-clamp-1">{thread.content}</p>
                         <p className="text-xs text-muted-foreground mt-1">
                           av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard> · {cat?.label}
                         </p>
@@ -629,6 +632,7 @@ const CategoryOverview = ({
                       <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
                         {thread.title}
                       </h3>
+                      <p className="text-xs text-muted-foreground/50 mt-0.5 line-clamp-1">{thread.content}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard>
                       </p>
@@ -733,9 +737,10 @@ const ThreadCard = ({
             ))}
           </div>
 
-          <h3 className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-1.5">
+          <h3 className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-0.5">
             {thread.title}
           </h3>
+          <p className="text-xs text-muted-foreground/60 line-clamp-1 mb-1.5">{thread.content}</p>
 
           <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
             <div className="flex items-center gap-1.5">
@@ -1858,6 +1863,7 @@ const Threads = () => {
                                 <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-2 leading-snug">
                                   {thread.title}
                                 </h3>
+                                <p className="text-xs text-muted-foreground/60 mt-0.5 line-clamp-1">{thread.content}</p>
                                 <p className="text-xs text-muted-foreground mt-1">
                                   av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard> · {thread.timeAgo} sedan
                                 </p>
@@ -1875,6 +1881,7 @@ const Threads = () => {
                               <h3 className="text-sm font-medium text-primary group-hover:underline line-clamp-1 leading-snug">
                                 {thread.title}
                               </h3>
+                              <p className="text-xs text-muted-foreground/50 mt-0.5 line-clamp-1">{thread.content}</p>
                               <p className="text-xs text-muted-foreground mt-0.5">av <UserHoverCard username={thread.author} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">{thread.author}</UserHoverCard></p>
                             </div>
 
