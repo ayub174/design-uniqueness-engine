@@ -891,7 +891,7 @@ const ReplyItem = ({
     );
   }
 
-  return (
+  const innerContent = (
     <div className={`${effectiveDepth > 0 ? "ml-4 sm:ml-5" : ""}`}>
       <div className={`relative ${effectiveDepth > 0 ? `border-l-2 ${threadColor} pl-3 sm:pl-4` : ""}`}>
         {/* Clickable thread line area for collapsing */}
@@ -909,7 +909,7 @@ const ReplyItem = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.15 }}
-          className="pt-3 pb-1"
+          className={effectiveDepth > 0 ? "pt-3 pb-1" : "p-5"}
         >
           {/* Header row — avatar + meta */}
           <div className="flex items-center gap-2 mb-1.5">
@@ -1023,6 +1023,17 @@ const ReplyItem = ({
       </div>
     </div>
   );
+
+  // Wrap depth-0 replies in a card like the original post
+  if (effectiveDepth === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        {innerContent}
+      </div>
+    );
+  }
+
+  return innerContent;
 };
 
 /* ─── Detail View — Reddit post + Discourse reply layout ─── */
@@ -1377,12 +1388,9 @@ const ThreadDetail = ({
       </div>
 
       {/* ─── Replies tree ─── */}
-      <div ref={repliesStartRef}>
+      <div ref={repliesStartRef} className="flex flex-col gap-4">
         {sortedReplies.map((reply, i) => (
           <div key={reply.id} data-reply-index={i}>
-            {i > 0 && (
-              <div className="border-t border-border my-1" />
-            )}
             <ReplyItem
               reply={reply}
               depth={0}
