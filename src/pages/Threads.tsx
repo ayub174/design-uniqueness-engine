@@ -737,9 +737,10 @@ const ThreadCard = ({
             ))}
           </div>
 
-          <h3 className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-1.5">
+          <h3 className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-0.5">
             {thread.title}
           </h3>
+          <p className="text-xs text-muted-foreground/60 line-clamp-1 mb-1.5">{thread.content}</p>
 
           <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
             <div className="flex items-center gap-1.5">
