@@ -844,12 +844,17 @@ const PaginationNav = ({
 
 /* ─── Reply Item — Reddit/Discourse hybrid ─── */
 const ReplyItem = ({
-  reply, depth, replyLikes, toggleReplyLike, onQuoteReply,
+  reply, depth, replyLikes, toggleReplyLike, onQuoteReply, onEditReply, onDeleteReply,
 }: {
   reply: ReplyData; depth: number; replyLikes: Set<string>;
   toggleReplyLike: (id: string) => void; onQuoteReply: (reply: ReplyData) => void;
+  onEditReply?: (id: string, newContent: string) => void;
+  onDeleteReply?: (id: string) => void;
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(reply.content);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const isReplyLiked = replyLikes.has(reply.id);
   const replyLikeCount = reply.likes + (isReplyLiked ? 1 : 0);
   const maxDepth = 5;
