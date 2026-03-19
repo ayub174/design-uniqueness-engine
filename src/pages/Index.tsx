@@ -123,6 +123,7 @@ const Index = () => {
           </span>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">Jobb</a>
+            <a href="/tradar" className="hover:text-foreground transition-colors">Trådar</a>
             <a href="#" className="hover:text-foreground transition-colors">Företag</a>
             <a href="#" className="hover:text-foreground transition-colors">Karriärguide</a>
             <a href="#" className="hover:text-foreground transition-colors">Om oss</a>
