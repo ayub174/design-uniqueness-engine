@@ -446,10 +446,6 @@ const CategoryOverview = ({
     <motion.div key="overview" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
       {/* Hero section */}
       <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 text-xs font-medium text-primary bg-primary/10 px-3 py-1.5 rounded-full mb-4">
-          <Sparkles className="w-3.5 h-3.5" />
-          Sveriges professionella community
-        </div>
         <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight mb-3">
           Diskutera, lär dig,<br />
           <span className="text-primary italic">väx.</span>
