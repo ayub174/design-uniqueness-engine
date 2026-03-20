@@ -447,7 +447,8 @@ const CategoryOverview = ({
       {/* Hero section */}
       <div className="text-center mb-10">
         <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight mb-3">
-          Svaret finns en <span className="text-green-500">Tråd</span> bort
+          Diskutera, lär dig,<br />
+          <span className="text-primary italic">väx.</span>
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
           Karriärråd, branschinsikter och professionella samtal — allt samlat på ett ställe.
