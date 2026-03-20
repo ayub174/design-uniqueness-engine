@@ -446,8 +446,9 @@ const CategoryOverview = ({
     <motion.div key="overview" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
       {/* Hero section */}
       <div className="text-center mb-10">
-        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight mb-3">
-          Svaret finns en <span className="text-primary">Tråd</span> bort
+        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight mb-3 text-center">
+          Svaret finns i<br />
+          <span className="text-primary">Tråden</span>
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
           Karriärråd, branschinsikter och professionella samtal — allt samlat på ett ställe.
