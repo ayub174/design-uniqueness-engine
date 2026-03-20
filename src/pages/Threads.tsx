@@ -450,9 +450,7 @@ const CategoryOverview = ({
           Svaret finns i<br />
           <span className="text-primary">Tråden</span>
         </h1>
-        <p className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
-          Karriärråd, branschinsikter och professionella samtal — allt samlat på ett ställe.
-        </p>
+        <div className="h-12"></div>
       </div>
 
 
