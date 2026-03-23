@@ -165,27 +165,8 @@ const Index = () => {
                 className="font-serif text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.05] tracking-tight text-foreground"
               >
                 Hela din karriär, en{" "}
-                <span className="relative inline-block">
-                  <span className="relative z-10 bg-primary/15 px-2 py-1 rounded-md text-primary font-semibold">
-                    plattform
-                  </span>
-                  {/* Cursor/pointer */}
-                  <svg
-                    className="absolute -right-4 -bottom-3 z-20"
-                    width="28"
-                    height="32"
-                    viewBox="0 0 28 32"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4 2L4 22L9 17L15.5 28L19.5 26L13 15L20 15L4 2Z"
-                      fill="hsl(var(--primary))"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth="1.5"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                <span className="bg-primary/30 px-2 py-1 rounded-md text-primary font-semibold">
+                  plattform
                 </span>
               </motion.h1>
               <motion.p
