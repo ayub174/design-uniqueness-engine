@@ -86,6 +86,9 @@
     --border: 230 18% 20%;
     --input: 230 18% 20%;
     --ring: 168 65% 42%;
+
+    --highlight: 42 95% 58%;
+    --highlight-foreground: 230 30% 12%;
     --sidebar-background: 230 24% 10%;
     --sidebar-foreground: 40 20% 92%;
     --sidebar-primary: 168 65% 42%;
