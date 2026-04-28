@@ -141,51 +141,106 @@ const Index = () => {
       <motion.section
         ref={heroRef}
         style={{ y: heroY, opacity: heroOpacity }}
-        className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-6 md:px-12"
+        className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-6 md:px-12"
       >
+        {/* Soft background wash */}
+        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -left-32 w-[520px] h-[520px] rounded-full bg-primary/[0.06] blur-3xl" />
+          <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full bg-highlight/[0.10] blur-3xl" />
+        </div>
+
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-12 gap-8 items-end">
-            {/* Left — main headline */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left — headline + CTA */}
             <motion.div
-              className="md:col-span-7 lg:col-span-6"
               initial="hidden"
               animate="visible"
               variants={stagger}
             >
-              <motion.p
-                variants={fadeUp}
-                custom={0}
-                className="text-sm font-medium tracking-widest uppercase text-primary mb-6"
-              >
-                Sveriges smartaste karriärplattform
-              </motion.p>
+              <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 mb-8 px-3.5 py-1.5 rounded-full bg-card/80 backdrop-blur-sm border border-border shadow-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-xs font-semibold tracking-wide text-foreground/80">Sveriges smartaste karriärplattform</span>
+              </motion.div>
+
               <motion.h1
                 variants={fadeUp}
                 custom={1}
-                className="font-serif text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.05] tracking-tight text-foreground"
+                className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.02] tracking-tight text-foreground"
               >
-                Hela din karriär, en{" "}
-                <span className="bg-primary/30 px-2 py-1 rounded-md text-primary font-semibold">
-                  plattform
+                Öka chanserna <br className="hidden sm:block" />
+                till din nästa{" "}
+                <span className="relative inline-flex items-center gap-3 align-middle">
+                  <span className="relative inline-block px-3 py-1 rounded-lg bg-primary text-primary-foreground -rotate-1 shadow-[0_8px_30px_-8px_hsl(var(--primary)/0.55)]">
+                    intervju
+                  </span>
+                  <span className="text-5xl md:text-6xl lg:text-7xl leading-none" aria-hidden>🚀</span>
                 </span>
               </motion.h1>
+
               <motion.p
                 variants={fadeUp}
                 custom={2}
-                className="mt-8 text-lg md:text-xl text-muted-foreground max-w-md leading-relaxed"
+                className="mt-8 text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed"
               >
                 Jobb, utbildning, CV och matchning — allt du behöver för nästa steg, samlat i en plattform.
               </motion.p>
 
-              {/* Search mode toggle */}
-              <motion.div variants={fadeUp} custom={3} className="mt-10">
-                <div className="flex items-center gap-1 mb-4 bg-card/80 backdrop-blur-sm border border-border p-1 rounded-full w-fit shadow-sm">
+              <motion.div variants={fadeUp} custom={3} className="mt-10 flex flex-wrap items-center gap-4">
+                <Button className="h-13 px-7 text-base font-semibold bg-highlight text-highlight-foreground hover:bg-highlight/90 hover:shadow-[0_10px_30px_-8px_hsl(var(--highlight)/0.6)] active:scale-[0.98] gap-2 rounded-full transition-all duration-200">
+                  Kom igång gratis
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <a href="#" className="text-sm font-semibold text-foreground/80 hover:text-foreground underline-offset-4 hover:underline transition-colors">
+                  Se hur det funkar →
+                </a>
+              </motion.div>
+
+              <motion.div
+                variants={fadeUp}
+                custom={4}
+                className="mt-10 flex items-center gap-6 text-sm text-muted-foreground"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  4 200+ aktiva jobb
+                </span>
+                <span className="h-4 w-px bg-border" />
+                <span>320+ företag</span>
+              </motion.div>
+            </motion.div>
+
+            {/* Right — search card */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="relative"
+            >
+              {/* Decorative floating accents */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-6 -left-6 w-14 h-14 rounded-2xl bg-primary/15 border border-primary/20 backdrop-blur-sm hidden lg:flex items-center justify-center rotate-[-8deg] shadow-lg"
+              >
+                <Sparkles className="h-6 w-6 text-primary" />
+              </motion.div>
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -bottom-5 -right-4 w-12 h-12 rounded-2xl bg-highlight/25 border border-highlight/40 backdrop-blur-sm hidden lg:flex items-center justify-center rotate-[6deg] shadow-lg"
+              >
+                <Briefcase className="h-5 w-5 text-highlight-foreground" />
+              </motion.div>
+
+              <div className="relative bg-card/90 backdrop-blur-md border border-border rounded-3xl p-5 md:p-6 shadow-[0_20px_60px_-20px_hsl(var(--foreground)/0.18)]">
+                {/* Mode toggle */}
+                <div className="flex items-center gap-1 mb-5 bg-muted/60 p-1 rounded-full w-fit">
                   <button
                     onClick={() => setSearchMode("standard")}
-                    className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all duration-200 ${
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
                       searchMode === "standard"
                         ? "bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.4)]"
-                        : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -193,10 +248,10 @@ const Index = () => {
                   </button>
                   <button
                     onClick={() => setSearchMode("natural")}
-                    className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all duration-200 ${
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
                       searchMode === "natural"
                         ? "bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.4)]"
-                        : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     <Sparkles className="h-3.5 w-3.5" />
@@ -204,22 +259,23 @@ const Index = () => {
                   </button>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 p-2 bg-card/80 backdrop-blur-sm border border-border rounded-2xl shadow-[0_2px_16px_-4px_hsl(var(--foreground)/0.08)]">
+                {/* Search inputs */}
+                <div className="flex flex-col sm:flex-row gap-2 p-2 bg-background/70 border border-border rounded-2xl">
                   {searchMode === "standard" ? (
                     <>
                       <div className="relative flex-1 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" />
                         <Input
-                          placeholder="Titel, kompetens eller företag..."
-                          className="pl-11 h-13 text-base bg-background/60 border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:bg-background hover:bg-background/80 transition-all duration-200 rounded-xl"
+                          placeholder="Yrke, företag eller titel..."
+                          className="pl-11 h-12 text-base bg-transparent border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 rounded-xl"
                         />
                       </div>
                       <div className="hidden sm:block w-px bg-border self-stretch my-2" />
-                      <div className="relative flex-1 sm:max-w-[200px] group">
+                      <div className="relative flex-1 sm:max-w-[180px] group">
                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" />
                         <Input
-                          placeholder="Stad..."
-                          className="pl-11 h-13 text-base bg-background/60 border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:bg-background hover:bg-background/80 transition-all duration-200 rounded-xl"
+                          placeholder="Stad eller postnummer"
+                          className="pl-11 h-12 text-base bg-transparent border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 rounded-xl"
                         />
                       </div>
                     </>
@@ -240,17 +296,18 @@ const Index = () => {
                           if (!naturalInputValue) setIsUserTyping(false);
                         }}
                         placeholder=""
-                        className="pl-11 h-13 text-base bg-background/60 border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:bg-background hover:bg-background/80 transition-all duration-200 rounded-xl"
+                        className="pl-11 h-12 text-base bg-transparent border-transparent shadow-none focus-visible:ring-1 focus-visible:ring-primary/30 rounded-xl"
                       />
                     </div>
                   )}
-                  <Button className="h-13 px-8 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)] active:scale-[0.98] gap-2 rounded-xl transition-all duration-200">
+                  <Button className="h-12 px-6 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)] active:scale-[0.98] gap-2 rounded-xl transition-all duration-200">
                     {searchMode === "standard" ? "Sök jobb" : "Hitta matchningar"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
-                {/* Filter bar */}
-                <div className="mt-4 flex flex-wrap items-center gap-2">
+
+                {/* Quick filters */}
+                <div className="mt-5 flex flex-wrap items-center gap-2">
                   {[
                     { icon: MapPin, label: "Ort" },
                     { icon: Building2, label: "Yrke" },
@@ -260,180 +317,26 @@ const Index = () => {
                   ].map((filter) => (
                     <button
                       key={filter.label}
-                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full border border-border bg-card/60 backdrop-blur-sm text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.3)] active:scale-[0.97] transition-all duration-200"
+                      className="flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium rounded-full border border-border bg-background/60 text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary active:scale-[0.97] transition-all duration-200"
                     >
-                      <filter.icon className="h-3.5 w-3.5" />
+                      <filter.icon className="h-3 w-3" />
                       {filter.label}
                     </button>
                   ))}
                 </div>
-              </motion.div>
 
-              <motion.div
-                variants={fadeUp}
-                custom={4}
-                className="mt-6 flex items-center gap-6 text-sm text-muted-foreground"
-              >
-                <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                  4 200+ aktiva jobb
-                </span>
-                <span>320+ företag</span>
-              </motion.div>
-            </motion.div>
-
-            {/* Right — abstract art */}
-            <motion.div
-              className="md:col-span-5 lg:col-span-6 hidden md:flex items-center justify-center relative"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="relative w-full h-[500px]">
-                {/* Large primary glow */}
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1], rotate: [0, 15, 0] }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-primary/[0.07] blur-3xl"
-                />
-
-                {/* Rotating ring system */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72"
-                >
-                  <div className="w-full h-full rounded-full border border-primary/10" />
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/40" />
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 rounded-full bg-primary/25" />
-                </motion.div>
-
-                <motion.div
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96"
-                >
-                  <div className="w-full h-full rounded-full border border-dashed border-primary/[0.06]" />
-                </motion.div>
-
-                {/* SVG decorative arcs */}
-                <svg className="absolute inset-0 w-full h-full opacity-[0.04]" viewBox="0 0 500 500">
-                  <circle cx="250" cy="250" r="180" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="8 12" />
-                  <circle cx="250" cy="250" r="120" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.8" strokeDasharray="4 10" />
-                </svg>
-
-                {/* Floating career cards */}
-                {/* CV card */}
-                <motion.div
-                  animate={{ y: [0, -14, 0], rotate: [0, 2, 0] }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-[12%] right-[8%] bg-card/80 backdrop-blur-md border border-border rounded-2xl p-4 shadow-lg shadow-primary/[0.04] w-48"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <FileText className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-foreground">CV uppdaterat</p>
-                      <p className="text-[10px] text-muted-foreground">Just nu</p>
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="h-1.5 rounded-full bg-primary/20 w-full" />
-                    <div className="h-1.5 rounded-full bg-primary/12 w-3/4" />
-                    <div className="h-1.5 rounded-full bg-primary/8 w-1/2" />
-                  </div>
-                </motion.div>
-
-                {/* Match notification */}
-                <motion.div
-                  animate={{ y: [0, 10, 0], x: [0, -5, 0] }}
-                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-                  className="absolute top-[45%] left-[5%] bg-card/80 backdrop-blur-md border border-primary/20 rounded-2xl p-3.5 shadow-lg shadow-primary/[0.06] w-52"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-foreground">3 nya matchningar!</p>
-                      <p className="text-[10px] text-muted-foreground">Baserat på din profil</p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Salary insight card */}
-                <motion.div
-                  animate={{ y: [0, -8, 0], x: [0, 6, 0] }}
-                  transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-                  className="absolute bottom-[18%] right-[5%] bg-card/80 backdrop-blur-md border border-border rounded-2xl p-3.5 shadow-lg shadow-primary/[0.04] w-44"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <TrendingUp className="w-4 h-4 text-primary" />
-                    <p className="text-[11px] font-semibold text-foreground">Löneutveckling</p>
-                  </div>
-                  <div className="flex items-end gap-1 h-8">
-                    {[35, 45, 40, 55, 50, 65, 70].map((h, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${h}%` }}
-                        transition={{ delay: 1 + i * 0.1, duration: 0.6 }}
-                        className="flex-1 rounded-sm bg-primary/25"
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-
-                {/* Interview badge */}
-                <motion.div
-                  animate={{ y: [0, 6, 0] }}
-                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                  className="absolute top-[22%] left-[25%] bg-card/80 backdrop-blur-md border border-border rounded-full px-3.5 py-2 shadow-md flex items-center gap-2"
-                >
-                  <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center">
-                    <Calendar className="w-3 h-3 text-primary" />
-                  </div>
-                  <span className="text-[11px] font-medium text-foreground">Intervju imorgon 09:00</span>
-                </motion.div>
-
-                {/* Small floating skill tags */}
-                <motion.div
-                  animate={{ y: [0, -6, 0], opacity: [0.7, 1, 0.7] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                  className="absolute bottom-[35%] left-[20%] bg-primary/10 text-primary text-[10px] font-semibold px-3 py-1.5 rounded-full border border-primary/15"
-                >
-                  React
-                </motion.div>
-                <motion.div
-                  animate={{ y: [0, 8, 0], opacity: [0.6, 1, 0.6] }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                  className="absolute top-[60%] right-[22%] bg-primary/10 text-primary text-[10px] font-semibold px-3 py-1.5 rounded-full border border-primary/15"
-                >
-                  Projektledning
-                </motion.div>
-                <motion.div
-                  animate={{ y: [0, -5, 0], opacity: [0.5, 0.9, 0.5] }}
-                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-                  className="absolute bottom-[12%] left-[35%] bg-primary/10 text-primary text-[10px] font-semibold px-3 py-1.5 rounded-full border border-primary/15"
-                >
-                  UX Design
-                </motion.div>
-
-                {/* Floating particles */}
-                {[
-                  { top: "8%", left: "50%", size: "w-1.5 h-1.5", delay: 0, dur: 6 },
-                  { top: "75%", left: "55%", size: "w-1 h-1", delay: 2, dur: 8 },
-                  { top: "40%", left: "85%", size: "w-1.5 h-1.5", delay: 4, dur: 5 },
-                ].map((p, i) => (
-                  <motion.div
-                    key={i}
-                    animate={{ y: [0, -10, 0], opacity: [0.15, 0.5, 0.15] }}
-                    transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
-                    className={`absolute ${p.size} rounded-full bg-primary/30`}
-                    style={{ top: p.top, left: p.left }}
-                  />
-                ))}
+                {/* Trending searches */}
+                <div className="mt-5 pt-5 border-t border-border flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">Populärt:</span>
+                  {["UX Designer", "Data Scientist", "Remote", "Stockholm"].map((tag) => (
+                    <button
+                      key={tag}
+                      className="text-xs font-medium text-foreground/70 hover:text-primary transition-colors"
+                    >
+                      #{tag.toLowerCase().replace(" ", "")}
+                    </button>
+                  ))}
+                </div>
               </div>
             </motion.div>
           </div>
